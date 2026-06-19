@@ -1,0 +1,196 @@
+"use client"
+
+import { useState } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { LogIn, Eye, EyeOff } from "lucide-react"
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPass, setShowPass] = useState(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError("")
+    setLoading(true)
+
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+
+    setLoading(false)
+
+    if (res?.error) {
+      setError("מייל או סיסמה שגויים")
+    } else {
+      router.push("/dashboard")
+      router.refresh()
+    }
+  }
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16,
+        background: "var(--background)",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          background: "var(--card)",
+          border: "1px solid var(--card-border)",
+          borderRadius: 20,
+          padding: 40,
+          boxShadow: "0 4px 24px rgba(99,102,241,0.08)",
+        }}
+      >
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 40, marginBottom: 8 }}>🏟️</div>
+          <h1
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              background: "linear-gradient(135deg, #6366f1, #f43f5e)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              margin: 0,
+            }}
+          >
+            Study Arena
+          </h1>
+          <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>
+            התחבר לחשבון שלך
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <label style={{ display: "block", marginBottom: 6, fontSize: 14, color: "var(--muted)" }}>
+              מייל
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="your@email.com"
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                background: "var(--muted-bg)",
+                border: "1px solid var(--card-border)",
+                borderRadius: 10,
+                color: "var(--foreground)",
+                fontSize: 15,
+                outline: "none",
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: "block", marginBottom: 6, fontSize: 14, color: "var(--muted)" }}>
+              סיסמה
+            </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPass ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                style={{
+                  width: "100%",
+                  padding: "10px 14px",
+                  paddingLeft: 44,
+                  background: "var(--muted-bg)",
+                  border: "1px solid var(--card-border)",
+                  borderRadius: 10,
+                  color: "var(--foreground)",
+                  fontSize: 15,
+                  outline: "none",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                style={{
+                  position: "absolute",
+                  left: 12,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--muted)",
+                  padding: 0,
+                }}
+              >
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div
+              style={{
+                background: "rgba(239,68,68,0.1)",
+                border: "1px solid rgba(239,68,68,0.3)",
+                borderRadius: 8,
+                padding: "10px 14px",
+                color: "#ef4444",
+                fontSize: 14,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              padding: "12px 24px",
+              background: loading ? "var(--muted)" : "var(--primary)",
+              color: "#fff",
+              border: "none",
+              borderRadius: 10,
+              fontSize: 16,
+              fontWeight: 600,
+              cursor: loading ? "not-allowed" : "pointer",
+              marginTop: 8,
+              transition: "background 0.2s",
+            }}
+          >
+            <LogIn size={18} />
+            {loading ? "מתחבר..." : "התחברות"}
+          </button>
+        </form>
+
+        <p style={{ textAlign: "center", marginTop: 24, color: "var(--muted)", fontSize: 14 }}>
+          אין לך חשבון?{" "}
+          <Link href="/register" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>
+            הרשמה
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  profileImage  String?
+  isAdmin       Boolean   @default(false)
+  isPaid        Boolean   @default(false)
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  coins         Int       @default(0)
+  totalPoints   Int       @default(0)
+  streak        Int       @default(0)
+  lastStudyDate DateTime?
+  createdAt     DateTime  @default(now())
+
+  enrollments     UserCourse[]
+  testResults     TestResult[]
+  achievements    UserAchievement[]
+  paymentRequests PaymentRequest[]
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float    @default(30)
+  image       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  questions   Question[]
+  enrollments UserCourse[]
+  testResults TestResult[]
+}
+
+model UserCourse {
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
+  enrolledAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  courseId      String
+  question      String
+  answerA       String
+  answerB       String
+  answerC       String
+  answerD       String
+  correctAnswer String
+  explanation   String
+  topic         String
+  difficulty    String   @default("Medium")
+  sourceType    String   @default("Generated")
+  examYear      String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  testAnswers TestAnswer[]
+}
+
+model TestResult {
+  id             String   @id @default(cuid())
+  userId         String
+  courseId       String
+  score          Float
+  totalQuestions Int
+  correctAnswers Int
+  timeSpent      Int?
+  createdAt      DateTime @default(now())
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course  Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  answers TestAnswer[]
+}
+
+model TestAnswer {
+  id           String  @id @default(cuid())
+  testResultId String
+  questionId   String
+  userAnswer   String
+  isCorrect    Boolean
+  timeSpent    Int?
+
+  testResult TestResult @relation(fields: [testResultId], references: [id], onDelete: Cascade)
+  question   Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model UserAchievement {
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  unlockedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+}
+
+model PaymentRequest {
+  id             String   @id @default(cuid())
+  userId         String
+  courseId       String?
+  fullName       String
+  email          String
+  lastFourDigits String
+  note           String?
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
