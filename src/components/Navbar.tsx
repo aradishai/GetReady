@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -12,11 +13,18 @@ export default function Navbar() {
 
   if (!session) return null
 
-  const navLinks = [
+  const iconLinks = [
+    { href: "/practice", iconPos: "0 0", label: "תרגול" },
+    { href: "/test", iconPos: "-60px 0", label: "מבחנים" },
+  ]
+
+  const textLinks = [
     { href: "/dashboard", label: "בית" },
     { href: "/leaderboard", label: "דירוג" },
     ...(session.user.isAdmin ? [{ href: "/admin", label: "ניהול" }] : []),
   ]
+
+  const allLinks = [...iconLinks, ...textLinks]
 
   return (
     <>
@@ -42,17 +50,13 @@ export default function Navbar() {
             justifyContent: "space-between",
           }}
         >
-          <span
-            style={{
-              fontSize: 20,
-              fontWeight: 700,
-              background: "linear-gradient(135deg, #38bdf8, #7dd3fc)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Study Arena
-          </span>
+          <Image
+            src="/logo-getready.png"
+            alt="Get Ready"
+            width={140}
+            height={38}
+            style={{ objectFit: "contain" }}
+          />
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -124,7 +128,38 @@ export default function Navbar() {
             height: 116,
           }}
         >
-          {navLinks.map(({ href, label }) => (
+          {/* Icon buttons */}
+          {iconLinks.map(({ href, iconPos, label }) => (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: "none",
+                borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
+                opacity: pathname === href ? 1 : 0.55,
+                transition: "all 0.15s",
+              }}
+            >
+              <div
+                aria-label={label}
+                style={{
+                  width: 60,
+                  height: 60,
+                  backgroundImage: "url(/nav-icons.png)",
+                  backgroundSize: "120px 60px",
+                  backgroundPosition: iconPos,
+                  backgroundRepeat: "no-repeat",
+                }}
+              />
+            </Link>
+          ))}
+
+          {/* Text buttons */}
+          {textLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
@@ -136,8 +171,8 @@ export default function Navbar() {
                 textDecoration: "none",
                 fontSize: 16,
                 fontWeight: pathname === href ? 700 : 500,
-                color: pathname === href ? "var(--primary)" : "var(--muted)",
-                borderTop: pathname === href ? "3px solid var(--primary)" : "3px solid transparent",
+                color: pathname === href ? "var(--foreground)" : "rgba(240,217,168,0.5)",
+                borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
                 transition: "all 0.15s",
               }}
             >
