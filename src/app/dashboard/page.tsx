@@ -130,17 +130,21 @@ export default function DashboardPage() {
               width: 104,
               height: 104,
               borderRadius: "50%",
-              background: "rgba(9,38,71,0.85)",
               border: "2px solid rgba(56,189,248,0.45)",
-              boxShadow: "0 0 28px rgba(56,189,248,0.40), 0 0 60px rgba(56,189,248,0.15), inset 0 0 24px rgba(0,0,0,0.35)",
+              boxShadow: "0 0 28px rgba(56,189,248,0.40), 0 0 60px rgba(56,189,248,0.15)",
+              overflow: "hidden",
+              flexShrink: 0,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              flexShrink: 0,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon-tirgul.png" alt="תרגול" style={{ width: 72, height: 72, objectFit: "contain" }} />
+            <img
+              src="/icon-tirgul.png"
+              alt="תרגול"
+              style={{ width: 148, height: 148, objectFit: "cover", flexShrink: 0 }}
+            />
           </div>
         </div>
 
