@@ -134,18 +134,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Leaderboard */}
-        <Link
-          href="/leaderboard"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 20,
-            overflow: "hidden",
-            textDecoration: "none",
-          }}
-        >
-          <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ width: "100%", borderRadius: 20, display: "block" }} />
+        <Link href="/leaderboard" style={{ display: "block", textDecoration: "none", borderRadius: 20, overflow: "hidden" }}>
+          <img src="/icon-leaderboard.png?v=3" alt="Leaderboard" style={{ width: "100%", display: "block", borderRadius: 20 }} />
         </Link>
       </div>
 
