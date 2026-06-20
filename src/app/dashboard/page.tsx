@@ -109,7 +109,7 @@ export default function DashboardPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
           {[
             { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול", color: "var(--primary)" },
-            { href: "/test", icon: "/icon-mivchan.png", label: "מבחן", color: "var(--accent)" },
+            { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן", color: "var(--accent)" },
           ].map(({ href, icon, label, color }) => (
             <Link
               key={href}
