@@ -105,28 +105,50 @@ export default function DashboardPage() {
           marginBottom: 32,
         }}
       >
-        {[
-          { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(29,111,196,0.08)" },
-          { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(56,189,248,0.08)" },
-          { href: "/leaderboard", title: "Leaderboard", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
-        ].map(({ href, title, color, bg }) => (
-          <Link
-            key={href}
-            href={href}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: bg,
-              border: `1px solid ${color}33`,
-              borderRadius: 16,
-              padding: "28px 20px",
-              textDecoration: "none",
-            }}
-          >
-            <div style={{ fontSize: 20, fontWeight: 700, color }}>{title}</div>
-          </Link>
-        ))}
+        {/* תרגול + מבחן עם אייקונים */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          {[
+            { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול", color: "var(--primary)" },
+            { href: "/test", icon: "/icon-mivchan.png", label: "מבחן", color: "var(--accent)" },
+          ].map(({ href, icon, label, color }) => (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 12,
+                background: "var(--card)",
+                border: `1px solid var(--card-border)`,
+                borderRadius: 20,
+                padding: "32px 20px",
+                textDecoration: "none",
+              }}
+            >
+              <img src={icon} alt={label} style={{ width: 90, height: 90, objectFit: "contain" }} />
+              <div style={{ fontSize: 18, fontWeight: 700, color }}>{label}</div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Leaderboard */}
+        <Link
+          href="/leaderboard"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "var(--card)",
+            border: "1px solid var(--card-border)",
+            borderRadius: 16,
+            padding: "20px",
+            textDecoration: "none",
+          }}
+        >
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#f59e0b" }}>Leaderboard</div>
+        </Link>
       </div>
 
       {/* Recent Results */}

@@ -13,18 +13,11 @@ export default function Navbar() {
 
   if (!session) return null
 
-  const iconLinks = [
-    { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול" },
-    { href: "/test", icon: "/icon-mivchan.png", label: "מבחנים" },
-  ]
-
-  const textLinks = [
+  const navLinks = [
     { href: "/dashboard", label: "בית" },
     { href: "/leaderboard", label: "דירוג" },
     ...(session.user.isAdmin ? [{ href: "/admin", label: "ניהול" }] : []),
   ]
-
-  const allLinks = [...iconLinks, ...textLinks]
 
   return (
     <>
@@ -128,28 +121,7 @@ export default function Navbar() {
             height: 116,
           }}
         >
-          {/* Icon buttons */}
-          {iconLinks.map(({ href, icon, label }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
-                opacity: pathname === href ? 1 : 0.6,
-                transition: "all 0.15s",
-              }}
-            >
-              <img src={icon} alt={label} style={{ width: 56, height: 56, objectFit: "contain" }} />
-            </Link>
-          ))}
-
-          {/* Text buttons */}
-          {textLinks.map(({ href, label }) => (
+          {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
