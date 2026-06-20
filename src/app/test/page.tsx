@@ -187,9 +187,6 @@ export default function TestPage() {
         ))}
       </div>
 
-      <div style={{ marginTop: 12, textAlign: "center", fontSize: 12, color: "var(--muted)" }}>
-        כל שאלה שווה {POINTS_PER_Q} נקודות • סה״כ {questions.length * POINTS_PER_Q} נקודות
-      </div>
     </div>
   )
 }
