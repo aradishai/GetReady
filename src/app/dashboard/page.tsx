@@ -65,14 +65,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Row */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: 16,
-          marginBottom: 32,
-        }}
-      >
+      <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
         {[
           { label: "רמה", value: user.level, color: "var(--primary)" },
           { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "var(--primary)" },
@@ -85,16 +78,16 @@ export default function DashboardPage() {
               background: "var(--card)",
               border: "1px solid var(--card-border)",
               borderRadius: 16,
-              aspectRatio: "1 / 1",
+              padding: "14px 20px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
               textAlign: "center",
+              minWidth: 70,
             }}
           >
-            <div style={{ fontSize: 24, fontWeight: 700, color }}>{value}</div>
-            <div style={{ color: "var(--foreground)", fontSize: 13, marginTop: 4 }}>{label}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color }}>{value}</div>
+            <div style={{ color: "var(--foreground)", fontSize: 12, marginTop: 3 }}>{label}</div>
           </div>
         ))}
       </div>
