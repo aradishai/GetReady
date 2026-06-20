@@ -14,8 +14,8 @@ export default function Navbar() {
   if (!session) return null
 
   const iconLinks = [
-    { href: "/practice", iconPos: "0 0", label: "תרגול" },
-    { href: "/test", iconPos: "-60px 0", label: "מבחנים" },
+    { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול" },
+    { href: "/test", icon: "/icon-mivchan.png", label: "מבחנים" },
   ]
 
   const textLinks = [
@@ -129,7 +129,7 @@ export default function Navbar() {
           }}
         >
           {/* Icon buttons */}
-          {iconLinks.map(({ href, iconPos, label }) => (
+          {iconLinks.map(({ href, icon, label }) => (
             <Link
               key={href}
               href={href}
@@ -140,21 +140,11 @@ export default function Navbar() {
                 justifyContent: "center",
                 textDecoration: "none",
                 borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
-                opacity: pathname === href ? 1 : 0.55,
+                opacity: pathname === href ? 1 : 0.6,
                 transition: "all 0.15s",
               }}
             >
-              <div
-                aria-label={label}
-                style={{
-                  width: 60,
-                  height: 60,
-                  backgroundImage: "url(/nav-icons.png)",
-                  backgroundSize: "120px 60px",
-                  backgroundPosition: iconPos,
-                  backgroundRepeat: "no-repeat",
-                }}
-              />
+              <img src={icon} alt={label} style={{ width: 56, height: 56, objectFit: "contain" }} />
             </Link>
           ))}
 
