@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Trophy, Crown, Medal } from "lucide-react"
 
 interface LeaderboardUser {
   id: string
@@ -31,13 +30,6 @@ export default function LeaderboardPage() {
     }
   }, [session])
 
-  const rankIcon = (i: number) => {
-    if (i === 0) return <Crown size={20} color="#f59e0b" />
-    if (i === 1) return <Medal size={20} color="#9ca3af" />
-    if (i === 2) return <Medal size={20} color="#b45309" />
-    return <span style={{ color: "var(--muted)", fontSize: 15, fontWeight: 700 }}>#{i + 1}</span>
-  }
-
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
@@ -51,8 +43,7 @@ export default function LeaderboardPage() {
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", padding: "32px 16px" }}>
       <div style={{ textAlign: "center", marginBottom: 32 }}>
-        <Trophy size={48} color="#f59e0b" style={{ marginBottom: 12 }} />
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>טבלת מובילים</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>טבלת מובילים 🏆</h1>
         <p style={{ color: "var(--muted)", marginTop: 8 }}>
           {myRank >= 0 ? `הדירוג שלך: #${myRank + 1}` : ""}
         </p>
@@ -60,14 +51,7 @@ export default function LeaderboardPage() {
 
       {/* Top 3 */}
       {users.length >= 3 && (
-        <div
-          style={{
-            display: "flex",
-            gap: 12,
-            marginBottom: 24,
-            alignItems: "flex-end",
-          }}
-        >
+        <div style={{ display: "flex", gap: 12, marginBottom: 24, alignItems: "flex-end" }}>
           {[users[1], users[0], users[2]].map((u, i) => {
             const actualRank = i === 0 ? 2 : i === 1 ? 1 : 3
             const heights = [100, 130, 80]
@@ -119,8 +103,8 @@ export default function LeaderboardPage() {
               gap: 14,
             }}
           >
-            <div style={{ width: 28, textAlign: "center", flexShrink: 0 }}>
-              {rankIcon(i)}
+            <div style={{ width: 28, textAlign: "center", fontWeight: 700, color: "var(--muted)", flexShrink: 0 }}>
+              #{i + 1}
             </div>
 
             <div

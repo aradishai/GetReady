@@ -3,127 +3,152 @@
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
-import { BookOpen, Trophy, User, LogOut, Shield, Zap } from "lucide-react"
+import { useState } from "react"
 
 export default function Navbar() {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   if (!session) return null
 
   const navLinks = [
-    { href: "/dashboard", label: "בית", icon: BookOpen },
-    { href: "/practice", label: "תרגול", icon: Zap },
-    { href: "/leaderboard", label: "דירוג", icon: Trophy },
-    { href: "/profile", label: "פרופיל", icon: User },
+    { href: "/dashboard", label: "בית" },
+    { href: "/practice", label: "תרגול" },
+    { href: "/test", label: "מבחן" },
+    { href: "/leaderboard", label: "דירוג" },
+    { href: "/profile", label: "פרופיל" },
+    ...(session.user.isAdmin ? [{ href: "/admin", label: "ניהול" }] : []),
   ]
 
   return (
-    <nav
-      style={{
-        background: "#ffffff",
-        borderBottom: "1px solid var(--card-border)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-        boxShadow: "0 1px 8px rgba(99,102,241,0.07)",
-      }}
-    >
-      <div
+    <>
+      {/* Top Header */}
+      <header
         style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          padding: "0 20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: 62,
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "#ffffff",
+          borderBottom: "1px solid var(--card-border)",
+          boxShadow: "0 1px 8px rgba(99,102,241,0.06)",
         }}
       >
-        <Link href="/dashboard" style={{ textDecoration: "none" }}>
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            padding: "0 20px",
+            height: 54,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <span
             style={{
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 700,
               background: "linear-gradient(135deg, #6366f1, #f43f5e)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              letterSpacing: -0.5,
             }}
           >
             Study Arena
           </span>
-        </Link>
 
-        <div style={{ display: "flex", gap: 4 }}>
-          {navLinks.map(({ href, label, icon: Icon }) => (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: 22,
+              cursor: "pointer",
+              color: menuOpen ? "var(--primary)" : "var(--muted)",
+              lineHeight: 1,
+              padding: "4px 8px",
+            }}
+          >
+            ☰
+          </button>
+        </div>
+
+        {/* Dropdown */}
+        {menuOpen && (
+          <>
+            <div onClick={() => setMenuOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 20,
+                zIndex: 50,
+                background: "#ffffff",
+                border: "1px solid var(--card-border)",
+                borderRadius: 12,
+                boxShadow: "0 8px 24px rgba(99,102,241,0.12)",
+                minWidth: 200,
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ padding: "12px 16px", fontSize: 13, color: "var(--muted)", borderBottom: "1px solid var(--card-border)" }}>
+                {session.user.name}
+              </div>
+              <button
+                onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/login" }) }}
+                style={{ width: "100%", padding: "12px 16px", background: "none", border: "none", textAlign: "right", fontSize: 14, fontWeight: 600, color: "var(--danger)", cursor: "pointer" }}
+              >
+                יציאה מהחשבון
+              </button>
+            </div>
+          </>
+        )}
+      </header>
+
+      {/* Bottom Nav */}
+      <nav
+        style={{
+          position: "fixed",
+          bottom: 0,
+          right: 0,
+          left: 0,
+          zIndex: 45,
+          background: "#ffffff",
+          borderTop: "1px solid var(--card-border)",
+          boxShadow: "0 -2px 12px rgba(99,102,241,0.07)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 700,
+            margin: "0 auto",
+            display: "flex",
+            alignItems: "stretch",
+            height: 116,
+          }}
+        >
+          {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               style={{
+                flex: 1,
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
-                padding: "7px 14px",
-                borderRadius: 10,
+                justifyContent: "center",
                 textDecoration: "none",
-                fontSize: 14,
-                fontWeight: 500,
-                color: pathname === href ? "#ffffff" : "var(--muted)",
-                background: pathname === href ? "var(--primary)" : "transparent",
+                fontSize: 16,
+                fontWeight: pathname === href ? 700 : 500,
+                color: pathname === href ? "var(--primary)" : "var(--muted)",
+                borderTop: pathname === href ? "3px solid var(--primary)" : "3px solid transparent",
                 transition: "all 0.15s",
               }}
             >
-              <Icon size={15} />
               {label}
             </Link>
           ))}
-          {session.user.isAdmin && (
-            <Link
-              href="/admin"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "7px 14px",
-                borderRadius: 10,
-                textDecoration: "none",
-                fontSize: 14,
-                fontWeight: 500,
-                color: pathname === "/admin" ? "#ffffff" : "#d97706",
-                background: pathname === "/admin" ? "#d97706" : "rgba(245,158,11,0.08)",
-              }}
-            >
-              <Shield size={15} />
-              ניהול
-            </Link>
-          )}
         </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 13, color: "var(--muted)" }}>
-            {session.user.name}
-          </span>
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "6px 12px",
-              borderRadius: 8,
-              border: "1px solid var(--card-border)",
-              background: "transparent",
-              color: "var(--muted)",
-              cursor: "pointer",
-              fontSize: 13,
-            }}
-          >
-            <LogOut size={14} />
-            יציאה
-          </button>
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   )
 }

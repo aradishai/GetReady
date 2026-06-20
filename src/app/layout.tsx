@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <SessionProvider>
           <Navbar />
-          <main>{children}</main>
+          <main style={{ paddingBottom: 130 }}>{children}</main>
         </SessionProvider>
       </body>
     </html>

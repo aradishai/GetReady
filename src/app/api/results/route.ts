@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
       where: { id: session.user.id },
       data: {
         totalPoints: { increment: pointsEarned },
-        coins: { increment: Math.floor(pointsEarned / 2) },
         lastStudyDate: new Date(),
       },
     })

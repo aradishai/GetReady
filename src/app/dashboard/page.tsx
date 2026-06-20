@@ -4,12 +4,10 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ClipboardList, Trophy, BookOpen, Flame, Star, Coins, TrendingUp, Zap } from "lucide-react"
 
 interface UserData {
   name: string
   level: number
-  coins: number
   totalPoints: number
   streak: number
   _count: { testResults: number }
@@ -72,12 +70,11 @@ export default function DashboardPage() {
         }}
       >
         {[
-          { icon: Star, label: "רמה", value: user.level, color: "#6366f1", suffix: "" },
-          { icon: Coins, label: "מטבעות", value: user.coins.toLocaleString(), color: "#10b981", suffix: "" },
-          { icon: TrendingUp, label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1", suffix: "" },
-          { icon: Flame, label: "רצף", value: user.streak, color: "#f43f5e", suffix: " ימים" },
-          { icon: ClipboardList, label: "מבחנים", value: user._count.testResults, color: "#60a5fa", suffix: "" },
-        ].map(({ icon: Icon, label, value, color, suffix }) => (
+          { label: "רמה", value: user.level, color: "#6366f1" },
+          { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
+          { label: "רצף ימים", value: user.streak, color: "#f43f5e" },
+          { label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
+        ].map(({ label, value, color }) => (
           <div
             key={label}
             style={{
@@ -88,9 +85,8 @@ export default function DashboardPage() {
               textAlign: "center",
             }}
           >
-            <Icon size={24} color={color} style={{ marginBottom: 8 }} />
-            <div style={{ fontSize: 24, fontWeight: 700, color }}>{value}{suffix}</div>
-            <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 2 }}>{label}</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color }}>{value}</div>
+            <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 4 }}>{label}</div>
           </div>
         ))}
       </div>
@@ -106,57 +102,26 @@ export default function DashboardPage() {
         }}
       >
         {[
-          {
-            href: "/practice",
-            icon: Zap,
-            title: "תרגול",
-            desc: "תרגל שאלות עם משוב מיידי",
-            color: "var(--primary)",
-            bg: "rgba(99,102,241,0.08)",
-          },
-          {
-            href: "/test",
-            icon: ClipboardList,
-            title: "מבחן",
-            desc: "דמה מבחן אמיתי וקבל ציון",
-            color: "var(--accent)",
-            bg: "rgba(244,63,94,0.08)",
-          },
-          {
-            href: "/leaderboard",
-            icon: Trophy,
-            title: "לידרבורד",
-            desc: "ראה איפה אתה עומד",
-            color: "#f59e0b",
-            bg: "rgba(245,158,11,0.08)",
-          },
-          {
-            href: "/profile",
-            icon: TrendingUp,
-            title: "הישגים",
-            desc: "מעקב ההתקדמות שלך",
-            color: "var(--success)",
-            bg: "rgba(16,185,129,0.08)",
-          },
-        ].map(({ href, icon: Icon, title, desc, color, bg }) => (
+          { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(99,102,241,0.08)" },
+          { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(244,63,94,0.08)" },
+          { href: "/leaderboard", title: "לידרבורד", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
+          { href: "/profile", title: "הישגים", color: "var(--success)", bg: "rgba(16,185,129,0.08)" },
+        ].map(({ href, title, color, bg }) => (
           <Link
             key={href}
             href={href}
             style={{
-              display: "block",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               background: bg,
               border: `1px solid ${color}33`,
               borderRadius: 16,
-              padding: "24px 20px",
+              padding: "28px 20px",
               textDecoration: "none",
-              transition: "transform 0.2s, border-color 0.2s",
             }}
           >
-            <Icon size={32} color={color} style={{ marginBottom: 12 }} />
-            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6, color: "var(--foreground)" }}>
-              {title}
-            </div>
-            <div style={{ fontSize: 14, color: "var(--muted)" }}>{desc}</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color }}>{title}</div>
           </Link>
         ))}
       </div>
@@ -179,13 +144,10 @@ export default function DashboardPage() {
                   justifyContent: "space-between",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <BookOpen size={18} color="var(--muted)" />
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{r.course.name}</div>
-                    <div style={{ color: "var(--muted)", fontSize: 12 }}>
-                      {r.correctAnswers}/{r.totalQuestions} נכון
-                    </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 14 }}>{r.course.name}</div>
+                  <div style={{ color: "var(--muted)", fontSize: 12 }}>
+                    {r.correctAnswers}/{r.totalQuestions} נכון
                   </div>
                 </div>
                 <div

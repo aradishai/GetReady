@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Star, Coins, Flame, ClipboardList, TrendingUp } from "lucide-react"
 
 interface UserData {
   name: string
   email: string
   level: number
-  coins: number
   totalPoints: number
   streak: number
   createdAt: string
@@ -119,13 +117,12 @@ export default function ProfilePage() {
         }}
       >
         {[
-          { icon: Star, label: "רמה", value: user.level, color: "var(--primary)" },
-          { icon: Coins, label: "מטבעות", value: user.coins.toLocaleString(), color: "var(--success)" },
-          { icon: TrendingUp, label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
-          { icon: Flame, label: "רצף", value: `${user.streak} ימים`, color: "#f43f5e" },
-          { icon: ClipboardList, label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
-          { icon: TrendingUp, label: "ממוצע", value: `${avgScore}%`, color: avgScore >= 80 ? "var(--success)" : "var(--warning)" },
-        ].map(({ icon: Icon, label, value, color }) => (
+          { label: "רמה", value: user.level, color: "var(--primary)" },
+          { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
+          { label: "רצף", value: `${user.streak} ימים`, color: "#f43f5e" },
+          { label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
+          { label: "ממוצע", value: `${avgScore}%`, color: avgScore >= 80 ? "var(--success)" : "var(--warning)" },
+        ].map(({ label, value, color }) => (
           <div
             key={label}
             style={{
@@ -136,9 +133,8 @@ export default function ProfilePage() {
               textAlign: "center",
             }}
           >
-            <Icon size={20} color={color} style={{ marginBottom: 6 }} />
             <div style={{ fontSize: 20, fontWeight: 700, color }}>{value}</div>
-            <div style={{ color: "var(--muted)", fontSize: 12 }}>{label}</div>
+            <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 4 }}>{label}</div>
           </div>
         ))}
       </div>
@@ -166,9 +162,6 @@ export default function ProfilePage() {
                     border: "1px solid rgba(245,158,11,0.3)",
                     borderRadius: 10,
                     padding: "8px 14px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
                     fontSize: 13,
                     fontWeight: 600,
                     color: "var(--warning)",

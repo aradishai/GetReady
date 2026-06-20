@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Filter, Zap } from "lucide-react"
 
 interface Question {
   id: string
@@ -113,8 +112,8 @@ export default function PracticePage() {
       gap: 12,
     }
     if (!showResult) return base
-    if (key === q.correctAnswer) return { ...base, background: "rgba(67,217,138,0.15)", border: "1px solid var(--success)" }
-    if (key === selected) return { ...base, background: "rgba(239,68,68,0.15)", border: "1px solid var(--danger)" }
+    if (key === q.correctAnswer) return { ...base, background: "rgba(16,185,129,0.12)", border: "1px solid var(--success)" }
+    if (key === selected) return { ...base, background: "rgba(239,68,68,0.12)", border: "1px solid var(--danger)" }
     return { ...base, opacity: 0.5 }
   }
 
@@ -137,24 +136,13 @@ export default function PracticePage() {
       {/* Top Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div style={{ display: "flex", gap: 16 }}>
-          <div style={{ fontSize: 14, color: "var(--muted)" }}>
-            שאלה {current + 1} / {questions.length}
-          </div>
-          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>
-            ✅ {score.correct}/{score.total}
-          </div>
-          {streak >= 3 && (
-            <div style={{ fontSize: 14, color: "#ff6584", fontWeight: 600 }}>
-              🔥 רצף {streak}
-            </div>
-          )}
+          <div style={{ fontSize: 14, color: "var(--muted)" }}>שאלה {current + 1} / {questions.length}</div>
+          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>✅ {score.correct}/{score.total}</div>
+          {streak >= 3 && <div style={{ fontSize: 14, color: "#f43f5e", fontWeight: 600 }}>🔥 רצף {streak}</div>}
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
             padding: "6px 14px",
             background: showFilters ? "var(--primary)" : "var(--card)",
             border: "1px solid var(--card-border)",
@@ -164,89 +152,31 @@ export default function PracticePage() {
             fontSize: 13,
           }}
         >
-          <Filter size={14} />
           פילטר
         </button>
       </div>
 
       {/* Filters */}
       {showFilters && (
-        <div
-          style={{
-            background: "var(--card)",
-            border: "1px solid var(--card-border)",
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 20,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
+        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: 16, marginBottom: 20, display: "flex", flexWrap: "wrap", gap: 12 }}>
           {[
-            {
-              label: "נושא",
-              key: "topic",
-              options: [{ value: "all", label: "הכל" }, ...topics.map((t) => ({ value: t, label: t }))],
-            },
-            {
-              label: "קושי",
-              key: "difficulty",
-              options: [
-                { value: "all", label: "הכל" },
-                { value: "Easy", label: "קל" },
-                { value: "Medium", label: "בינוני" },
-                { value: "Hard", label: "קשה" },
-              ],
-            },
-            {
-              label: "מקור",
-              key: "sourceType",
-              options: [
-                { value: "all", label: "הכל" },
-                { value: "PreviousExam", label: "מבחנים קודמים" },
-                { value: "Generated", label: "תרגול" },
-                { value: "LecturerQuestion", label: "שאלות מרצה" },
-              ],
-            },
+            { label: "נושא", key: "topic", options: [{ value: "all", label: "הכל" }, ...topics.map((t) => ({ value: t, label: t }))] },
+            { label: "קושי", key: "difficulty", options: [{ value: "all", label: "הכל" }, { value: "Easy", label: "קל" }, { value: "Medium", label: "בינוני" }, { value: "Hard", label: "קשה" }] },
+            { label: "מקור", key: "sourceType", options: [{ value: "all", label: "הכל" }, { value: "PreviousExam", label: "מבחנים קודמים" }, { value: "Generated", label: "תרגול" }, { value: "LecturerQuestion", label: "שאלות מרצה" }] },
           ].map(({ label, key, options }) => (
             <div key={key}>
-              <label style={{ display: "block", fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>
-                {label}
-              </label>
+              <label style={{ display: "block", fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>{label}</label>
               <select
                 value={filters[key as keyof typeof filters]}
                 onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
-                style={{
-                  background: "var(--muted-bg)",
-                  border: "1px solid var(--card-border)",
-                  borderRadius: 8,
-                  color: "var(--foreground)",
-                  padding: "6px 10px",
-                  fontSize: 13,
-                  cursor: "pointer",
-                }}
+                style={{ background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", padding: "6px 10px", fontSize: 13, cursor: "pointer" }}
               >
-                {options.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
+                {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
           ))}
           <div style={{ display: "flex", alignItems: "flex-end" }}>
-            <button
-              onClick={loadQuestions}
-              style={{
-                padding: "6px 16px",
-                background: "var(--primary)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
+            <button onClick={loadQuestions} style={{ padding: "6px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
               החל
             </button>
           </div>
@@ -255,94 +185,36 @@ export default function PracticePage() {
 
       {/* Progress Bar */}
       <div style={{ background: "var(--card-border)", borderRadius: 4, height: 4, marginBottom: 24, overflow: "hidden" }}>
-        <div
-          style={{
-            height: "100%",
-            width: `${((current + 1) / questions.length) * 100}%`,
-            background: "var(--primary)",
-            transition: "width 0.3s",
-          }}
-        />
+        <div style={{ height: "100%", width: `${((current + 1) / questions.length) * 100}%`, background: "var(--primary)", transition: "width 0.3s" }} />
       </div>
 
       {/* Question Card */}
-      <div
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--card-border)",
-          borderRadius: 20,
-          padding: 28,
-          marginBottom: 16,
-        }}
-      >
-        {/* Tags */}
+      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 28, marginBottom: 16 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-          <span
-            style={{
-              fontSize: 12,
-              padding: "3px 10px",
-              borderRadius: 20,
-              background: `${difficultyColor[q.difficulty]}22`,
-              color: difficultyColor[q.difficulty],
-              border: `1px solid ${difficultyColor[q.difficulty]}44`,
-            }}
-          >
+          <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: `${difficultyColor[q.difficulty]}22`, color: difficultyColor[q.difficulty], border: `1px solid ${difficultyColor[q.difficulty]}44` }}>
             {q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"}
           </span>
-          <span
-            style={{
-              fontSize: 12,
-              padding: "3px 10px",
-              borderRadius: 20,
-              background: "rgba(108,99,255,0.1)",
-              color: "var(--primary)",
-              border: "1px solid rgba(108,99,255,0.3)",
-            }}
-          >
+          <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "rgba(99,102,241,0.1)", color: "var(--primary)", border: "1px solid rgba(99,102,241,0.3)" }}>
             {q.topic}
           </span>
           {q.sourceType === "PreviousExam" && (
-            <span
-              style={{
-                fontSize: 12,
-                padding: "3px 10px",
-                borderRadius: 20,
-                background: "rgba(255,209,102,0.1)",
-                color: "var(--warning)",
-                border: "1px solid rgba(255,209,102,0.3)",
-              }}
-            >
+            <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "rgba(245,158,11,0.1)", color: "var(--warning)", border: "1px solid rgba(245,158,11,0.3)" }}>
               מבחן קודם {q.examYear && `• ${q.examYear}`}
             </span>
           )}
         </div>
 
-        <p style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.6, marginBottom: 24 }}>
-          {q.question}
-        </p>
+        <p style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.6, marginBottom: 24 }}>{q.question}</p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {answers.map(({ key, label, text }) => (
             <button key={key} onClick={() => handleAnswer(key)} style={getAnswerStyle(key)}>
               <span
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  background: selected
-                    ? key === q.correctAnswer
-                      ? "var(--success)"
-                      : key === selected
-                      ? "var(--danger)"
-                      : "var(--card-border)"
-                    : "var(--card-border)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  flexShrink: 0,
-                  color: "#fff",
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: selected ? key === q.correctAnswer ? "var(--success)" : key === selected ? "var(--danger)" : "var(--card-border)" : "var(--card-border)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 13, fontWeight: 700, flexShrink: 0, color: "#fff",
                 }}
               >
                 {label}
@@ -355,31 +227,9 @@ export default function PracticePage() {
 
       {/* Feedback */}
       {showResult && (
-        <div
-          style={{
-            background: selected === q.correctAnswer ? "rgba(67,217,138,0.1)" : "rgba(239,68,68,0.1)",
-            border: `1px solid ${selected === q.correctAnswer ? "var(--success)" : "var(--danger)"}44`,
-            borderRadius: 14,
-            padding: 20,
-            marginBottom: 16,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              fontWeight: 700,
-              fontSize: 16,
-              marginBottom: 8,
-              color: selected === q.correctAnswer ? "var(--success)" : "var(--danger)",
-            }}
-          >
-            {selected === q.correctAnswer ? (
-              <><CheckCircle size={20} /> נכון! 🎉</>
-            ) : (
-              <><XCircle size={20} /> לא נכון</>
-            )}
+        <div style={{ background: selected === q.correctAnswer ? "rgba(16,185,129,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${selected === q.correctAnswer ? "var(--success)" : "var(--danger)"}44`, borderRadius: 14, padding: 20, marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: selected === q.correctAnswer ? "var(--success)" : "var(--danger)" }}>
+            {selected === q.correctAnswer ? "נכון! 🎉" : "לא נכון"}
           </div>
           <p style={{ color: "var(--foreground)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
             <strong>הסבר:</strong> {q.explanation}
@@ -391,27 +241,9 @@ export default function PracticePage() {
       {showResult && (
         <button
           onClick={nextQuestion}
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            padding: "14px",
-            background: "var(--primary)",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
+          style={{ width: "100%", padding: "14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
         >
-          {current < questions.length - 1 ? (
-            <><Zap size={16} /> שאלה הבאה <ChevronLeft size={16} /></>
-          ) : (
-            <><ChevronRight size={16} /> סיבוב חדש</>
-          )}
+          {current < questions.length - 1 ? "שאלה הבאה" : "סיבוב חדש"}
         </button>
       )}
     </div>
