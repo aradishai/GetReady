@@ -73,11 +73,11 @@ export default function DashboardPage() {
       {/* ── Stats Row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 32 }}>
         {[
-          { emoji: "🎯", label: "התקדמות", value: `${avgScore}%`, color: progressColor },
-          { emoji: "⭐", label: "רמה",        value: user.level,                         color: "var(--primary)" },
-          { emoji: "📚", label: "מבחנים",    value: user._count.testResults,             color: "var(--accent)" },
-          { emoji: "🏆", label: "נקודות",    value: user.totalPoints.toLocaleString(),   color: "var(--warning)" },
-        ].map(({ emoji, label, value, color }) => (
+          { label: "התקדמות", value: `${avgScore}%`, color: progressColor },
+          { label: "רמה",        value: user.level,                         color: "var(--primary)" },
+          { label: "מבחנים",    value: user._count.testResults,             color: "var(--accent)" },
+          { label: "נקודות",    value: user.totalPoints.toLocaleString(),   color: "var(--warning)" },
+        ].map(({ label, value, color }) => (
           <div
             key={label}
             style={{
@@ -89,8 +89,7 @@ export default function DashboardPage() {
               boxShadow: `0 0 14px ${color}20`,
             }}
           >
-            <div style={{ fontSize: 22 }}>{emoji}</div>
-            <div style={{ fontSize: 17, fontWeight: 800, color, marginTop: 6 }}>{value}</div>
+            <div style={{ fontSize: 17, fontWeight: 800, color }}>{value}</div>
             <div style={{ fontSize: 11, color: "var(--foreground)", opacity: 0.65, marginTop: 3 }}>{label}</div>
           </div>
         ))}
