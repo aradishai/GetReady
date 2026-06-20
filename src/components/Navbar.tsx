@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -29,26 +28,25 @@ export default function Navbar() {
           zIndex: 50,
           background: "var(--card)",
           borderBottom: "1px solid var(--card-border)",
-          boxShadow: "0 1px 8px rgba(56,189,248,0.06)",
+          boxShadow: "0 2px 16px rgba(56,189,248,0.10)",
         }}
       >
         <div
           style={{
             maxWidth: 1100,
             margin: "0 auto",
-            padding: "0 20px",
-            height: 54,
+            padding: "0 24px",
+            height: 76,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/logo-getready.png"
             alt="Get Ready"
-            width={140}
-            height={38}
-            style={{ objectFit: "contain" }}
+            style={{ height: 58, width: "auto", objectFit: "contain", display: "block" }}
           />
 
           <button
@@ -56,11 +54,11 @@ export default function Navbar() {
             style={{
               background: "none",
               border: "none",
-              fontSize: 22,
+              fontSize: 28,
               cursor: "pointer",
               color: menuOpen ? "var(--primary)" : "var(--muted)",
               lineHeight: 1,
-              padding: "4px 8px",
+              padding: "6px 10px",
             }}
           >
             ☰
