@@ -85,12 +85,16 @@ export default function DashboardPage() {
               background: "var(--card)",
               border: "1px solid var(--card-border)",
               borderRadius: 16,
-              padding: "20px 16px",
+              aspectRatio: "1 / 1",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               textAlign: "center",
             }}
           >
             <div style={{ fontSize: 24, fontWeight: 700, color }}>{value}</div>
-            <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 4 }}>{label}</div>
+            <div style={{ color: "var(--foreground)", fontSize: 13, marginTop: 4 }}>{label}</div>
           </div>
         ))}
       </div>
