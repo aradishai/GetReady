@@ -95,48 +95,34 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Action Cards */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>מה רוצה לעשות?</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: 16,
-          marginBottom: 32,
-        }}
-      >
-        {/* תרגול + מבחן עם אייקונים */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-          {[
-            { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול", color: "var(--primary)" },
-            { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן", color: "var(--accent)" },
-          ].map(({ href, icon, label, color }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 12,
-                background: "var(--card)",
-                border: `1px solid var(--card-border)`,
-                borderRadius: 20,
-                padding: "32px 20px",
-                textDecoration: "none",
-              }}
-            >
-              <img src={icon} alt={label} style={{ width: 90, height: 90, objectFit: "contain" }} />
-              <div style={{ fontSize: 18, fontWeight: 700, color }}>{label}</div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Leaderboard */}
-        <Link href="/leaderboard" style={{ display: "block", textDecoration: "none", borderRadius: 20, overflow: "hidden" }}>
-          <img src="/icon-leaderboard.png?v=3" alt="Leaderboard" style={{ width: "100%", display: "block", borderRadius: 20 }} />
-        </Link>
+      {/* Action Buttons */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20 }}>מה רוצה לעשות?</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
+        {[
+          { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול" },
+          { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן" },
+          { href: "/leaderboard", icon: "/icon-leaderboard.png", label: "Leaderboard" },
+        ].map(({ href, icon, label }) => (
+          <Link
+            key={href}
+            href={href}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
+            <img
+              src={icon}
+              alt={label}
+              style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "contain", borderRadius: 16 }}
+            />
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--foreground)" }}>{label}</div>
+          </Link>
+        ))}
       </div>
 
       {/* Recent Results */}
