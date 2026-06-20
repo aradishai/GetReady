@@ -106,19 +106,15 @@ export default function DashboardPage() {
           boxShadow: "0 0 40px rgba(56,189,248,0.18)",
         }}
       >
-        {/* Header row */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/icon-tirgul.png"
-            alt="תרגול"
-            style={{ width: 68, height: 68, objectFit: "contain", flexShrink: 0 }}
-          />
+        {/* Header row — circle left, text right (RTL: text=first, circle=second) */}
+        <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 22 }}>
+
+          {/* Text — right side in RTL */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 5, textTransform: "uppercase" }}>
+            <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 6, textTransform: "uppercase" }}>
               המשך למידה
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.2, marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <div style={{ fontSize: 21, fontWeight: 800, lineHeight: 1.2, marginBottom: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {lastResult ? lastResult.course.name : "בחר קורס להתחלה"}
             </div>
             <div style={{ fontSize: 13, color: "var(--muted)" }}>
@@ -126,6 +122,25 @@ export default function DashboardPage() {
                 ? `${lastResult.correctAnswers} מתוך ${lastResult.totalQuestions} שאלות נכון`
                 : "לא בוצעו מבחנים עדיין"}
             </div>
+          </div>
+
+          {/* Circle icon — left side in RTL */}
+          <div
+            style={{
+              width: 104,
+              height: 104,
+              borderRadius: "50%",
+              background: "rgba(9,38,71,0.85)",
+              border: "2px solid rgba(56,189,248,0.45)",
+              boxShadow: "0 0 28px rgba(56,189,248,0.40), 0 0 60px rgba(56,189,248,0.15), inset 0 0 24px rgba(0,0,0,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon-tirgul.png" alt="תרגול" style={{ width: 72, height: 72, objectFit: "contain" }} />
           </div>
         </div>
 
