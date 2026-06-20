@@ -49,20 +49,26 @@ export default function Navbar() {
             style={{ height: 60, width: "auto", display: "block" }}
           />
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: 30,
-              cursor: "pointer",
-              color: menuOpen ? "var(--primary)" : "var(--muted)",
-              lineHeight: 1,
-              padding: "6px 10px",
-            }}
-          >
-            ☰
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <Link href="/leaderboard" style={{ display: "flex", alignItems: "center", lineHeight: 0 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ height: 44, width: 44, objectFit: "contain" }} />
+            </Link>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: 30,
+                cursor: "pointer",
+                color: menuOpen ? "var(--primary)" : "var(--muted)",
+                lineHeight: 1,
+                padding: "6px 10px",
+              }}
+            >
+              ☰
+            </button>
+          </div>
         </div>
 
         {/* Dropdown */}

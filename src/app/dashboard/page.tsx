@@ -181,25 +181,14 @@ export default function DashboardPage() {
       <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14, opacity: 0.75 }}>
         מה תרצה לעשות?
       </h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 40 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14, marginBottom: 40 }}>
         {[
-          { href: "/practice",    icon: "/icon-tirgul.png",       label: "תרגול",       scale: 1 },
-          { href: "/test-select", icon: "/icon-mivchan.png",      label: "מבחן",        scale: 1 },
-          { href: "/leaderboard", icon: "/icon-leaderboard.png",  label: "Leaderboard", scale: 1.22 },
-        ].map(({ href, icon, label, scale }) => (
-          <Link key={href} href={href} style={{ display: "block", textDecoration: "none", lineHeight: 0, overflow: "hidden" }}>
+          { href: "/practice",    icon: "/icon-tirgul.png",  label: "תרגול" },
+          { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן"  },
+        ].map(({ href, icon, label }) => (
+          <Link key={href} href={href} style={{ display: "block", textDecoration: "none", lineHeight: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={icon}
-              alt={label}
-              style={{
-                width: "100%",
-                aspectRatio: "1 / 1",
-                objectFit: "cover",
-                display: "block",
-                transform: scale !== 1 ? `scale(${scale})` : undefined,
-              }}
-            />
+            <img src={icon} alt={label} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block" }} />
           </Link>
         ))}
       </div>
