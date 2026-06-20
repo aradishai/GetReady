@@ -33,7 +33,7 @@ export default function TestSelectPage() {
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", padding: "40px 16px" }}>
       <div style={{ textAlign: "center", marginBottom: 40 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>בחר נושא למבחן</h1>
+        <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>בחר את הקורס בו תרצה להיבחן</h1>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
