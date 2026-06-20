@@ -96,8 +96,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Action Buttons */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20 }}>מה רוצה לעשות?</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 32 }}>
         {[
           { href: "/practice", icon: "/icon-tirgul.png", label: "תרגול" },
           { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן" },
@@ -106,21 +105,13 @@ export default function DashboardPage() {
           <Link
             key={href}
             href={href}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 12,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
+            style={{ display: "block", textDecoration: "none", lineHeight: 0 }}
           >
             <img
               src={icon}
               alt={label}
-              style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "contain", borderRadius: 16 }}
+              style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block" }}
             />
-            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--foreground)" }}>{label}</div>
           </Link>
         ))}
       </div>
