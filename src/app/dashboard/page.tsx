@@ -138,19 +138,14 @@ export default function DashboardPage() {
           href="/leaderboard"
           style={{
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            gap: 12,
-            background: "var(--card)",
-            border: "1px solid var(--card-border)",
             borderRadius: 20,
-            padding: "32px 20px",
+            overflow: "hidden",
             textDecoration: "none",
           }}
         >
-          <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ width: 180, height: 90, objectFit: "contain" }} />
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#f59e0b" }}>Leaderboard</div>
+          <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ width: "100%", borderRadius: 20, display: "block" }} />
         </Link>
       </div>
 
