@@ -105,7 +105,7 @@ export default function TestPage() {
   const answered = Object.keys(answers).length
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: "24px 16px" }}>
+    <div style={{ maxWidth: 700, margin: "0 auto", padding: "24px 16px", color: "#fff" }}>
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <button
