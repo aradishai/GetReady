@@ -34,7 +34,6 @@ export default function RegisterPage() {
         style={{ width: "100%", maxWidth: 420, background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 40, boxShadow: "0 4px 24px rgba(99,102,241,0.08)" }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>🏟️</div>
           <h1 style={{ fontSize: 26, fontWeight: 800, background: "linear-gradient(135deg, #6366f1, #f43f5e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
             Study Arena
           </h1>

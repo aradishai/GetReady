@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Users, BookOpen, ClipboardList, CheckCircle, XCircle, Plus, Trash2, Edit2, Shield } from "lucide-react"
 
 type Tab = "users" | "payments" | "questions" | "courses"
 
@@ -13,7 +12,6 @@ interface User {
   email: string
   isPaid: boolean
   isAdmin: boolean
-  xp: number
   level: number
   totalPoints: number
   createdAt: string
@@ -62,18 +60,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [newQ, setNewQ] = useState({
-    courseId: "",
-    question: "",
-    answerA: "",
-    answerB: "",
-    answerC: "",
-    answerD: "",
-    correctAnswer: "A",
-    explanation: "",
-    topic: "",
-    difficulty: "Medium",
-    sourceType: "Generated",
-    examYear: "",
+    courseId: "", question: "", answerA: "", answerB: "", answerC: "", answerD: "",
+    correctAnswer: "A", explanation: "", topic: "", difficulty: "Medium",
+    sourceType: "Generated", examYear: "",
   })
 
   useEffect(() => {
@@ -89,11 +78,7 @@ export default function AdminPage() {
       fetch("/api/admin/questions").then((r) => r.json()),
       fetch("/api/admin/courses").then((r) => r.json()),
     ]).then(([u, p, q, c]) => {
-      setUsers(u)
-      setPayments(p)
-      setQuestions(q)
-      setCourses(c)
-      setLoading(false)
+      setUsers(u); setPayments(p); setQuestions(q); setCourses(c); setLoading(false)
     })
   }, [session])
 
@@ -103,16 +88,10 @@ export default function AdminPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestId, action }),
     })
-    setPayments((prev) =>
-      prev.map((p) => (p.id === requestId ? { ...p, status: action === "approve" ? "approved" : "rejected" } : p))
-    )
+    setPayments((prev) => prev.map((p) => (p.id === requestId ? { ...p, status: action === "approve" ? "approved" : "rejected" } : p)))
     if (action === "approve") {
       const req = payments.find((p) => p.id === requestId)
-      if (req) {
-        setUsers((prev) =>
-          prev.map((u) => (u.id === req.user.id ? { ...u, isPaid: true } : u))
-        )
-      }
+      if (req) setUsers((prev) => prev.map((u) => (u.id === req.user.id ? { ...u, isPaid: true } : u)))
     }
   }
 
@@ -146,12 +125,15 @@ export default function AdminPage() {
   }
 
   const pendingPayments = payments.filter((p) => p.status === "pending")
-  const tabs: { key: Tab; label: string; icon: typeof Shield; badge?: number }[] = [
-    { key: "payments", label: "בקשות תשלום", icon: CheckCircle, badge: pendingPayments.length },
-    { key: "users", label: "משתמשים", icon: Users },
-    { key: "questions", label: "שאלות", icon: ClipboardList },
-    { key: "courses", label: "קורסים", icon: BookOpen },
+  const tabs: { key: Tab; label: string; badge?: number }[] = [
+    { key: "payments", label: "בקשות תשלום", badge: pendingPayments.length },
+    { key: "users", label: "משתמשים" },
+    { key: "questions", label: "שאלות" },
+    { key: "courses", label: "קורסים" },
   ]
+
+  const inputStyle = { width: "100%", padding: "8px 12px", background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }
+  const selectStyle = { padding: "8px 12px", background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }
 
   if (loading) {
     return (
@@ -163,10 +145,7 @@ export default function AdminPage() {
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
-        <Shield size={24} color="#ffd166" />
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>אדמין פאנל</h1>
-      </div>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>אדמין פאנל</h1>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
@@ -184,28 +163,20 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--card-border)", paddingBottom: 0 }}>
-        {tabs.map(({ key, label, icon: Icon, badge }) => (
+      <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--card-border)" }}>
+        {tabs.map(({ key, label, badge }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "10px 16px",
-              borderRadius: "8px 8px 0 0",
-              border: "none",
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "10px 16px", borderRadius: "8px 8px 0 0", border: "none",
               background: tab === key ? "var(--card)" : "transparent",
               color: tab === key ? "var(--foreground)" : "var(--muted)",
-              cursor: "pointer",
-              fontSize: 14,
-              fontWeight: tab === key ? 600 : 400,
+              cursor: "pointer", fontSize: 14, fontWeight: tab === key ? 600 : 400,
               borderBottom: tab === key ? "2px solid var(--primary)" : "2px solid transparent",
-              position: "relative",
             }}
           >
-            <Icon size={15} />
             {label}
             {badge !== undefined && badge > 0 && (
               <span style={{ background: "var(--danger)", color: "#fff", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>
@@ -230,29 +201,21 @@ export default function AdminPage() {
                     <div style={{ fontWeight: 600 }}>{p.fullName}</div>
                     <div style={{ color: "var(--muted)", fontSize: 13 }}>{p.email} • 4 ספרות: {p.lastFourDigits}</div>
                     {p.note && <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 2 }}>הערה: {p.note}</div>}
-                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-                      {new Date(p.createdAt).toLocaleDateString("he-IL")}
-                    </div>
+                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>{new Date(p.createdAt).toLocaleDateString("he-IL")}</div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                     {p.status === "pending" ? (
                       <>
-                        <button
-                          onClick={() => approvePayment(p.id, "approve")}
-                          style={{ padding: "7px 16px", background: "var(--success)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}
-                        >
-                          <CheckCircle size={14} /> אשר
+                        <button onClick={() => approvePayment(p.id, "approve")} style={{ padding: "7px 16px", background: "var(--success)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
+                          אשר
                         </button>
-                        <button
-                          onClick={() => approvePayment(p.id, "reject")}
-                          style={{ padding: "7px 14px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 8, cursor: "pointer", fontSize: 13 }}
-                        >
+                        <button onClick={() => approvePayment(p.id, "reject")} style={{ padding: "7px 14px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
                           דחה
                         </button>
                       </>
                     ) : (
                       <span style={{ fontSize: 13, fontWeight: 600, color: p.status === "approved" ? "var(--success)" : "var(--danger)" }}>
-                        {p.status === "approved" ? "✅ אושר" : "❌ נדחה"}
+                        {p.status === "approved" ? "אושר" : "נדחה"}
                       </span>
                     )}
                   </div>
@@ -272,23 +235,14 @@ export default function AdminPage() {
             {users.map((u) => (
               <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600 }}>{u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#ffd166" }}>★ אדמין</span>}</div>
+                  <div style={{ fontWeight: 600 }}>{u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}</div>
                   <div style={{ color: "var(--muted)", fontSize: 12 }}>{u.email} • רמה {u.level} • {u._count.testResults} מבחנים</div>
                 </div>
                 <button
                   onClick={() => togglePaid(u.id, !u.isPaid)}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: 8,
-                    border: "none",
-                    background: u.isPaid ? "rgba(67,217,138,0.15)" : "rgba(239,68,68,0.1)",
-                    color: u.isPaid ? "var(--success)" : "var(--danger)",
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
+                  style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: u.isPaid ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.1)", color: u.isPaid ? "var(--success)" : "var(--danger)", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
                 >
-                  {u.isPaid ? "✅ פעיל" : "⛔ ממתין"}
+                  {u.isPaid ? "פעיל" : "ממתין"}
                 </button>
               </div>
             ))}
@@ -303,9 +257,9 @@ export default function AdminPage() {
             <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({questions.length})</h3>
             <button
               onClick={() => setShowAddQuestion(!showAddQuestion)}
-              style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
             >
-              <Plus size={14} /> הוסף שאלה
+              + הוסף שאלה
             </button>
           </div>
 
@@ -314,38 +268,38 @@ export default function AdminPage() {
               <h4 style={{ margin: "0 0 14px", fontWeight: 700 }}>שאלה חדשה</h4>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <div style={{ gridColumn: "1/-1" }}>
-                  <select value={newQ.courseId} onChange={(e) => setNewQ({ ...newQ, courseId: e.target.value })} style={{ width: "100%", padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }}>
+                  <select value={newQ.courseId} onChange={(e) => setNewQ({ ...newQ, courseId: e.target.value })} style={{ ...selectStyle, width: "100%" }}>
                     <option value="">בחר קורס</option>
                     {courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div style={{ gridColumn: "1/-1" }}>
-                  <textarea value={newQ.question} onChange={(e) => setNewQ({ ...newQ, question: e.target.value })} placeholder="שאלה" rows={2} style={{ width: "100%", padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13, resize: "vertical" }} />
+                  <textarea value={newQ.question} onChange={(e) => setNewQ({ ...newQ, question: e.target.value })} placeholder="שאלה" rows={2} style={{ ...inputStyle, resize: "vertical" }} />
                 </div>
                 {[{ key: "answerA", label: "תשובה א" }, { key: "answerB", label: "תשובה ב" }, { key: "answerC", label: "תשובה ג" }, { key: "answerD", label: "תשובה ד" }].map(({ key, label }) => (
-                  <input key={key} value={newQ[key as keyof typeof newQ]} onChange={(e) => setNewQ({ ...newQ, [key]: e.target.value })} placeholder={label} style={{ padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }} />
+                  <input key={key} value={newQ[key as keyof typeof newQ]} onChange={(e) => setNewQ({ ...newQ, [key]: e.target.value })} placeholder={label} style={inputStyle} />
                 ))}
                 <div style={{ gridColumn: "1/-1" }}>
-                  <textarea value={newQ.explanation} onChange={(e) => setNewQ({ ...newQ, explanation: e.target.value })} placeholder="הסבר" rows={2} style={{ width: "100%", padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13, resize: "vertical" }} />
+                  <textarea value={newQ.explanation} onChange={(e) => setNewQ({ ...newQ, explanation: e.target.value })} placeholder="הסבר" rows={2} style={{ ...inputStyle, resize: "vertical" }} />
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <label style={{ fontSize: 12, color: "var(--muted)" }}>תשובה נכונה:</label>
-                  <select value={newQ.correctAnswer} onChange={(e) => setNewQ({ ...newQ, correctAnswer: e.target.value })} style={{ background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--foreground)", padding: "4px 8px", fontSize: 13 }}>
+                  <select value={newQ.correctAnswer} onChange={(e) => setNewQ({ ...newQ, correctAnswer: e.target.value })} style={selectStyle}>
                     {["A", "B", "C", "D"].map((v) => <option key={v} value={v}>{v}</option>)}
                   </select>
                 </div>
-                <input value={newQ.topic} onChange={(e) => setNewQ({ ...newQ, topic: e.target.value })} placeholder="נושא" style={{ padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }} />
-                <select value={newQ.difficulty} onChange={(e) => setNewQ({ ...newQ, difficulty: e.target.value })} style={{ padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }}>
+                <input value={newQ.topic} onChange={(e) => setNewQ({ ...newQ, topic: e.target.value })} placeholder="נושא" style={inputStyle} />
+                <select value={newQ.difficulty} onChange={(e) => setNewQ({ ...newQ, difficulty: e.target.value })} style={selectStyle}>
                   <option value="Easy">קל</option>
                   <option value="Medium">בינוני</option>
                   <option value="Hard">קשה</option>
                 </select>
-                <select value={newQ.sourceType} onChange={(e) => setNewQ({ ...newQ, sourceType: e.target.value })} style={{ padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }}>
+                <select value={newQ.sourceType} onChange={(e) => setNewQ({ ...newQ, sourceType: e.target.value })} style={selectStyle}>
                   <option value="Generated">תרגול</option>
                   <option value="PreviousExam">מבחן קודם</option>
                   <option value="LecturerQuestion">שאלת מרצה</option>
                 </select>
-                <input value={newQ.examYear} onChange={(e) => setNewQ({ ...newQ, examYear: e.target.value })} placeholder="שנה (למשל 2024A)" style={{ padding: "8px 12px", background: "#0f0f1a", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }} />
+                <input value={newQ.examYear} onChange={(e) => setNewQ({ ...newQ, examYear: e.target.value })} placeholder="שנה (2024A)" style={inputStyle} />
               </div>
               <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                 <button onClick={addQuestion} style={{ padding: "8px 20px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>שמור</button>
@@ -366,8 +320,8 @@ export default function AdminPage() {
                     </span>
                   </div>
                 </div>
-                <button onClick={() => deleteQuestion(q.id)} style={{ padding: "6px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 8, cursor: "pointer" }}>
-                  <Trash2 size={14} />
+                <button onClick={() => deleteQuestion(q.id)} style={{ padding: "6px 12px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
+                  מחק
                 </button>
               </div>
             ))}
@@ -385,9 +339,7 @@ export default function AdminPage() {
                 <div>
                   <div style={{ fontWeight: 600 }}>{c.name}</div>
                   <div style={{ color: "var(--muted)", fontSize: 12 }}>{c.description}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>
-                    {c._count.questions} שאלות • {c._count.enrollments} נרשמים • {c.price}₪
-                  </div>
+                  <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>{c._count.questions} שאלות • {c._count.enrollments} נרשמים • {c.price}₪</div>
                 </div>
                 <span style={{ fontSize: 12, color: c.isActive ? "var(--success)" : "var(--muted)" }}>
                   {c.isActive ? "● פעיל" : "○ לא פעיל"}

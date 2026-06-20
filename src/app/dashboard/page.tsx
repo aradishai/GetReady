@@ -57,7 +57,7 @@ export default function DashboardPage() {
       {/* Welcome */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>
-          שלום, {user.name} 👋
+          שלום, {user.name}
         </h1>
         <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>
           מוכן ללמוד היום?
@@ -76,7 +76,6 @@ export default function DashboardPage() {
         {[
           { label: "רמה", value: user.level, color: "#6366f1" },
           { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
-          { label: "רצף ימים", value: user.streak, color: "#f43f5e" },
           { label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
           { label: "ממוצע", value: `${avgScore}%`, color: avgScore >= 80 ? "var(--success)" : avgScore >= 60 ? "var(--warning)" : avgScore === 0 ? "var(--muted)" : "var(--danger)" },
         ].map(({ label, value, color }) => (
@@ -109,7 +108,7 @@ export default function DashboardPage() {
         {[
           { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(99,102,241,0.08)" },
           { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(244,63,94,0.08)" },
-          { href: "/leaderboard", title: "לידרבורד", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
+          { href: "/leaderboard", title: "Leaderboard", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
         ].map(({ href, title, color, bg }) => (
           <Link
             key={href}

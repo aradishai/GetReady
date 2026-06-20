@@ -71,7 +71,7 @@ export default function ResultsPage() {
       <div style={{ background: "var(--card)", border: `2px solid ${scoreColor}44`, borderRadius: 24, padding: 36, textAlign: "center", marginBottom: 24 }}>
         <div style={{ fontSize: 72, fontWeight: 900, color: scoreColor, lineHeight: 1, marginBottom: 8 }}>{score}%</div>
         <div style={{ fontSize: 20, fontWeight: 600, marginBottom: 20 }}>
-          {score >= 90 ? "מצוין! 🏆" : score >= 80 ? "כל הכבוד! 🎉" : score >= 60 ? "לא רע, המשך להתאמן 💪" : "יש מה לשפר, אל תוותר 🔥"}
+          {score >= 90 ? "מצוין!" : score >= 80 ? "כל הכבוד!" : score >= 60 ? "לא רע, המשך להתאמן" : "יש מה לשפר, אל תוותר"}
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 32 }}>
           <div>

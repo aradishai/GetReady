@@ -39,7 +39,6 @@ export default function PaymentPage() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "var(--background)" }}>
         <div style={{ textAlign: "center", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 48, maxWidth: 440, boxShadow: "0 4px 24px rgba(99,102,241,0.08)" }}>
-          <div style={{ fontSize: 64, marginBottom: 20 }}>✅</div>
           <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>הבקשה נשלחה בהצלחה!</h2>
           <p style={{ color: "var(--muted)", lineHeight: 1.7, marginBottom: 24 }}>
             קיבלנו את אישור התשלום שלך.<br />
@@ -61,7 +60,7 @@ export default function PaymentPage() {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "var(--background)" }}>
       <div style={{ width: "100%", maxWidth: 480 }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>גישה לאפליקציה 🔒</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>גישה לאפליקציה</h1>
           <p style={{ color: "var(--muted)", marginTop: 8, fontSize: 15 }}>כדי להתחיל לתרגל, יש לרכוש גישה</p>
         </div>
 

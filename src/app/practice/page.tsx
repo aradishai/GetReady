@@ -137,8 +137,8 @@ export default function PracticePage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div style={{ display: "flex", gap: 16 }}>
           <div style={{ fontSize: 14, color: "var(--muted)" }}>שאלה {current + 1} / {questions.length}</div>
-          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>✅ {score.correct}/{score.total}</div>
-          {streak >= 3 && <div style={{ fontSize: 14, color: "#f43f5e", fontWeight: 600 }}>🔥 רצף {streak}</div>}
+          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>{score.correct}/{score.total} נכון</div>
+          {streak >= 3 && <div style={{ fontSize: 14, color: "#f43f5e", fontWeight: 600 }}>רצף {streak}</div>}
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -229,7 +229,7 @@ export default function PracticePage() {
       {showResult && (
         <div style={{ background: selected === q.correctAnswer ? "rgba(16,185,129,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${selected === q.correctAnswer ? "var(--success)" : "var(--danger)"}44`, borderRadius: 14, padding: 20, marginBottom: 16 }}>
           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8, color: selected === q.correctAnswer ? "var(--success)" : "var(--danger)" }}>
-            {selected === q.correctAnswer ? "נכון! 🎉" : "לא נכון"}
+            {selected === q.correctAnswer ? "נכון!" : "לא נכון"}
           </div>
           <p style={{ color: "var(--foreground)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
             <strong>הסבר:</strong> {q.explanation}

@@ -139,7 +139,7 @@ export default function TestPage() {
               {[
                 { value: "all", label: "הכל — שאלות תרגול ומבחנים קודמים" },
                 { value: "PreviousExam", label: "רק מבחנים קודמים 📋" },
-                { value: "Generated", label: "רק שאלות תרגול 🎯" },
+                { value: "Generated", label: "רק שאלות תרגול" },
               ].map(({ value, label }) => (
                 <button
                   key={value}
@@ -188,7 +188,7 @@ export default function TestPage() {
             onClick={startTest}
             style={{ width: "100%", padding: "14px", background: "var(--accent)", color: "#fff", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
           >
-            התחל מבחן 🚀
+            התחל מבחן
           </button>
         </div>
       </div>

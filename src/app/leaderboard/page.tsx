@@ -43,7 +43,7 @@ export default function LeaderboardPage() {
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", padding: "32px 16px" }}>
       <div style={{ textAlign: "center", marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>טבלת מובילים 🏆</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>טבלת מובילים</h1>
         <p style={{ color: "var(--muted)", marginTop: 8 }}>
           {myRank >= 0 ? `הדירוג שלך: #${myRank + 1}` : ""}
         </p>
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
 
       {users.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 0", color: "var(--muted)" }}>
-          עדיין אין משתמשים בלידרבורד. היה הראשון! 🚀
+          עדיין אין משתמשים בלידרבורד. היה הראשון!
         </div>
       )}
     </div>

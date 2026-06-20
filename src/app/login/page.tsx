@@ -50,7 +50,6 @@ export default function LoginPage() {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>🏟️</div>
           <h1
             style={{
               fontSize: 28,
