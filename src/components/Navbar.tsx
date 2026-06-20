@@ -36,7 +36,7 @@ export default function Navbar() {
             maxWidth: 1100,
             margin: "0 auto",
             padding: "0 24px",
-            height: 90,
+            height: 200,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -46,13 +46,13 @@ export default function Navbar() {
           <img
             src="/logo-getready.png"
             alt="Get Ready"
-            style={{ height: 60, width: "auto", display: "block" }}
+            style={{ height: 240, width: "auto", display: "block" }}
           />
 
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <Link href="/leaderboard" style={{ display: "flex", alignItems: "center", lineHeight: 0 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ height: 44, width: 44, objectFit: "contain" }} />
+              <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ height: 176, width: 176, objectFit: "contain" }} />
             </Link>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
