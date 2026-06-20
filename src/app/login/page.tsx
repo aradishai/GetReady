@@ -46,7 +46,7 @@ export default function LoginPage() {
           border: "1px solid var(--card-border)",
           borderRadius: 20,
           padding: 40,
-          boxShadow: "0 4px 24px rgba(99,102,241,0.08)",
+          boxShadow: "0 4px 24px rgba(56,189,248,0.08)",
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
@@ -54,7 +54,7 @@ export default function LoginPage() {
             style={{
               fontSize: 28,
               fontWeight: 800,
-              background: "linear-gradient(135deg, #6366f1, #f43f5e)",
+              background: "linear-gradient(135deg, #38bdf8, #7dd3fc)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               margin: 0,

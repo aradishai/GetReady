@@ -31,10 +31,10 @@ export default function RegisterPage() {
       style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "var(--background)" }}
     >
       <div
-        style={{ width: "100%", maxWidth: 420, background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 40, boxShadow: "0 4px 24px rgba(99,102,241,0.08)" }}
+        style={{ width: "100%", maxWidth: 420, background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 40, boxShadow: "0 4px 24px rgba(56,189,248,0.08)" }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, background: "linear-gradient(135deg, #6366f1, #f43f5e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 800, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
             Study Arena
           </h1>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>צור חשבון חדש</p>

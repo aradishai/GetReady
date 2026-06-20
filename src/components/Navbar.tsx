@@ -26,9 +26,9 @@ export default function Navbar() {
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "#ffffff",
+          background: "var(--card)",
           borderBottom: "1px solid var(--card-border)",
-          boxShadow: "0 1px 8px rgba(99,102,241,0.06)",
+          boxShadow: "0 1px 8px rgba(56,189,248,0.06)",
         }}
       >
         <div
@@ -46,7 +46,7 @@ export default function Navbar() {
             style={{
               fontSize: 20,
               fontWeight: 700,
-              background: "linear-gradient(135deg, #6366f1, #f43f5e)",
+              background: "linear-gradient(135deg, #38bdf8, #7dd3fc)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -80,10 +80,10 @@ export default function Navbar() {
                 top: "100%",
                 left: 20,
                 zIndex: 50,
-                background: "#ffffff",
+                background: "var(--card)",
                 border: "1px solid var(--card-border)",
                 borderRadius: 12,
-                boxShadow: "0 8px 24px rgba(99,102,241,0.12)",
+                boxShadow: "0 8px 24px rgba(56,189,248,0.12)",
                 minWidth: 200,
                 overflow: "hidden",
               }}
@@ -110,9 +110,9 @@ export default function Navbar() {
           right: 0,
           left: 0,
           zIndex: 45,
-          background: "#ffffff",
+          background: "var(--card)",
           borderTop: "1px solid var(--card-border)",
-          boxShadow: "0 -2px 12px rgba(99,102,241,0.07)",
+          boxShadow: "0 -2px 12px rgba(56,189,248,0.07)",
         }}
       >
         <div

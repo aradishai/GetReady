@@ -94,7 +94,7 @@ export default function LeaderboardPage() {
           <div
             key={u.id}
             style={{
-              background: u.id === session?.user?.id ? "rgba(99,102,241,0.08)" : "var(--card)",
+              background: u.id === session?.user?.id ? "rgba(29,111,196,0.08)" : "var(--card)",
               border: `1px solid ${u.id === session?.user?.id ? "var(--primary)" : "var(--card-border)"}`,
               borderRadius: 12,
               padding: "14px 18px",

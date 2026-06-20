@@ -138,7 +138,7 @@ export default function PracticePage() {
         <div style={{ display: "flex", gap: 16 }}>
           <div style={{ fontSize: 14, color: "var(--muted)" }}>שאלה {current + 1} / {questions.length}</div>
           <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>{score.correct}/{score.total} נכון</div>
-          {streak >= 3 && <div style={{ fontSize: 14, color: "#f43f5e", fontWeight: 600 }}>רצף {streak}</div>}
+          {streak >= 3 && <div style={{ fontSize: 14, color: "var(--warning)", fontWeight: 600 }}>רצף {streak}</div>}
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -194,7 +194,7 @@ export default function PracticePage() {
           <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: `${difficultyColor[q.difficulty]}22`, color: difficultyColor[q.difficulty], border: `1px solid ${difficultyColor[q.difficulty]}44` }}>
             {q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"}
           </span>
-          <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "rgba(99,102,241,0.1)", color: "var(--primary)", border: "1px solid rgba(99,102,241,0.3)" }}>
+          <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>
             {q.topic}
           </span>
           {q.sourceType === "PreviousExam" && (

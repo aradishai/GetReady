@@ -74,9 +74,9 @@ export default function DashboardPage() {
         }}
       >
         {[
-          { label: "רמה", value: user.level, color: "#6366f1" },
-          { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
-          { label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
+          { label: "רמה", value: user.level, color: "var(--primary)" },
+          { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "var(--primary)" },
+          { label: "מבחנים", value: user._count.testResults, color: "var(--accent)" },
           { label: "ממוצע", value: `${avgScore}%`, color: avgScore >= 80 ? "var(--success)" : avgScore >= 60 ? "var(--warning)" : avgScore === 0 ? "var(--muted)" : "var(--danger)" },
         ].map(({ label, value, color }) => (
           <div
@@ -106,8 +106,8 @@ export default function DashboardPage() {
         }}
       >
         {[
-          { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(99,102,241,0.08)" },
-          { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(244,63,94,0.08)" },
+          { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(29,111,196,0.08)" },
+          { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(56,189,248,0.08)" },
           { href: "/leaderboard", title: "Leaderboard", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
         ].map(({ href, title, color, bg }) => (
           <Link

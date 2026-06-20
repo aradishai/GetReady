@@ -38,7 +38,7 @@ export default function PaymentPage() {
   if (submitted) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "var(--background)" }}>
-        <div style={{ textAlign: "center", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 48, maxWidth: 440, boxShadow: "0 4px 24px rgba(99,102,241,0.08)" }}>
+        <div style={{ textAlign: "center", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 48, maxWidth: 440, boxShadow: "0 4px 24px rgba(56,189,248,0.08)" }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>הבקשה נשלחה בהצלחה!</h2>
           <p style={{ color: "var(--muted)", lineHeight: 1.7, marginBottom: 24 }}>
             קיבלנו את אישור התשלום שלך.<br />
@@ -64,8 +64,8 @@ export default function PaymentPage() {
           <p style={{ color: "var(--muted)", marginTop: 8, fontSize: 15 }}>כדי להתחיל לתרגל, יש לרכוש גישה</p>
         </div>
 
-        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 32, marginBottom: 20, boxShadow: "0 4px 24px rgba(99,102,241,0.08)" }}>
-          <div style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.1), rgba(244,63,94,0.1))", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 14, padding: 20, marginBottom: 24, textAlign: "center" }}>
+        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 32, marginBottom: 20, boxShadow: "0 4px 24px rgba(56,189,248,0.08)" }}>
+          <div style={{ background: "linear-gradient(135deg, rgba(29,111,196,0.1), rgba(56,189,248,0.1))", border: "1px solid rgba(29,111,196,0.2)", borderRadius: 14, padding: 20, marginBottom: 24, textAlign: "center" }}>
             <div style={{ fontSize: 36, fontWeight: 800, color: "var(--primary)", marginBottom: 4 }}>30 ₪</div>
             <div style={{ color: "var(--muted)", fontSize: 14 }}>גישה מלאה לכל הקורסים והפיצ׳רים</div>
           </div>

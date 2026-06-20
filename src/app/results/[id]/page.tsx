@@ -156,7 +156,7 @@ export default function ResultsPage() {
                     </div>
                   )
                 })}
-                <div style={{ marginTop: 10, padding: "10px 12px", background: "rgba(99,102,241,0.06)", borderRadius: 8, fontSize: 13, lineHeight: 1.6, color: "var(--muted)" }}>
+                <div style={{ marginTop: 10, padding: "10px 12px", background: "rgba(56,189,248,0.06)", borderRadius: 8, fontSize: 13, lineHeight: 1.6, color: "var(--muted)" }}>
                   <strong style={{ color: "var(--primary)" }}>הסבר:</strong> {a.question.explanation}
                 </div>
               </div>
