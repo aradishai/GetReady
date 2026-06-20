@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
 :root {
   --background: #f0f4ff;
@@ -36,7 +35,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Varela Round', 'Segoe UI', Arial, Helvetica, sans-serif;
   direction: rtl;
   min-height: 100vh;
 }
