@@ -36,7 +36,7 @@ export default function Navbar() {
             maxWidth: 1100,
             margin: "0 auto",
             padding: "0 24px",
-            height: 76,
+            height: 90,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -46,7 +46,7 @@ export default function Navbar() {
           <img
             src="/logo-getready.png"
             alt="Get Ready"
-            style={{ height: 58, width: "auto", objectFit: "contain", display: "block" }}
+            style={{ height: 60, width: "auto", display: "block" }}
           />
 
           <button
@@ -54,7 +54,7 @@ export default function Navbar() {
             style={{
               background: "none",
               border: "none",
-              fontSize: 28,
+              fontSize: 30,
               cursor: "pointer",
               color: menuOpen ? "var(--primary)" : "var(--muted)",
               lineHeight: 1,
