@@ -46,29 +46,23 @@ export default function Navbar() {
           <img
             src="/logo-getready.png"
             alt="Get Ready"
-            style={{ height: 240, width: "auto", display: "block" }}
+            style={{ height: 180, width: "auto", display: "block" }}
           />
 
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <Link href="/leaderboard" style={{ display: "flex", alignItems: "center", lineHeight: 0 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icon-leaderboard.png" alt="Leaderboard" style={{ height: 176, width: 176, objectFit: "contain" }} />
-            </Link>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              style={{
-                background: "none",
-                border: "none",
-                fontSize: 30,
-                cursor: "pointer",
-                color: menuOpen ? "var(--primary)" : "var(--muted)",
-                lineHeight: 1,
-                padding: "6px 10px",
-              }}
-            >
-              ☰
-            </button>
-          </div>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: 30,
+              cursor: "pointer",
+              color: menuOpen ? "var(--primary)" : "var(--muted)",
+              lineHeight: 1,
+              padding: "6px 10px",
+            }}
+          >
+            ☰
+          </button>
         </div>
 
         {/* Dropdown */}
