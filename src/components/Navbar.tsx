@@ -54,11 +54,11 @@ export default function Navbar() {
             style={{
               background: "none",
               border: "none",
-              fontSize: 68,
+              fontSize: 40,
               cursor: "pointer",
               color: menuOpen ? "var(--primary)" : "var(--muted)",
               lineHeight: 1,
-              height: 100,
+              height: 60,
               display: "flex",
               alignItems: "center",
               padding: "0 10px",
