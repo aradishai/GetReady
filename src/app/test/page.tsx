@@ -71,7 +71,7 @@ export default function TestPage() {
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-        <div style={{ color: "var(--muted)" }}>טוען שאלות...</div>
+        <div style={{ color: "#fff" }}>טוען שאלות...</div>
       </div>
     )
   }
@@ -79,7 +79,7 @@ export default function TestPage() {
   if (questions.length === 0) {
     return (
       <div style={{ maxWidth: 500, margin: "0 auto", padding: "60px 16px", textAlign: "center" }}>
-        <p style={{ color: "var(--muted)", fontSize: 18 }}>אין שאלות זמינות לקורס זה עדיין.</p>
+        <p style={{ color: "#fff", fontSize: 18 }}>אין שאלות זמינות לקורס זה עדיין.</p>
         <button onClick={() => router.back()} style={{ marginTop: 20, padding: "12px 24px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 15 }}>
           חזור
         </button>
@@ -90,7 +90,7 @@ export default function TestPage() {
   if (phase === "submitting") {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-        <div style={{ color: "var(--muted)" }}>שומר תוצאות...</div>
+        <div style={{ color: "#fff" }}>שומר תוצאות...</div>
       </div>
     )
   }
@@ -110,11 +110,11 @@ export default function TestPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <button
           onClick={() => router.push("/test-select")}
-          style={{ padding: "8px 16px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 14 }}
+          style={{ padding: "8px 16px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "#fff", cursor: "pointer", fontSize: 14 }}
         >
           חזור
         </button>
-        <div style={{ fontSize: 14, color: "var(--muted)" }}>
+        <div style={{ fontSize: 14, color: "#fff" }}>
           שאלה {current + 1} / {questions.length}
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function TestPage() {
                 width: "100%", padding: "14px 18px", borderRadius: 12, textAlign: "right", cursor: "pointer",
                 border: `2px solid ${answers[current] === key ? "var(--primary)" : "var(--card-border)"}`,
                 background: answers[current] === key ? "rgba(56,189,248,0.1)" : "var(--card)",
-                color: "var(--foreground)", fontSize: 15,
+                color: "#fff", fontSize: 15,
                 display: "flex", alignItems: "center", gap: 12, transition: "all 0.15s",
               }}
             >
