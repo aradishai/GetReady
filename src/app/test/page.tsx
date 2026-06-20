@@ -115,7 +115,7 @@ export default function TestPage() {
           חזור
         </button>
         <div style={{ fontSize: 14, color: "var(--muted)" }}>
-          שאלה {current + 1} / {questions.length} &nbsp;|&nbsp; ענית {answered}/{questions.length}
+          שאלה {current + 1} / {questions.length}
         </div>
       </div>
 
