@@ -14,10 +14,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/dashboard", label: "בית" },
-    { href: "/practice", label: "תרגול" },
-    { href: "/test", label: "מבחן" },
     { href: "/leaderboard", label: "דירוג" },
-    { href: "/profile", label: "פרופיל" },
     ...(session.user.isAdmin ? [{ href: "/admin", label: "ניהול" }] : []),
   ]
 

@@ -48,6 +48,10 @@ export default function DashboardPage() {
     )
   }
 
+  const avgScore = recentResults.length
+    ? Math.round(recentResults.reduce((a, r) => a + r.score, 0) / recentResults.length)
+    : 0
+
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 16px" }}>
       {/* Welcome */}
@@ -74,6 +78,7 @@ export default function DashboardPage() {
           { label: "נקודות", value: user.totalPoints.toLocaleString(), color: "#6366f1" },
           { label: "רצף ימים", value: user.streak, color: "#f43f5e" },
           { label: "מבחנים", value: user._count.testResults, color: "#60a5fa" },
+          { label: "ממוצע", value: `${avgScore}%`, color: avgScore >= 80 ? "var(--success)" : avgScore >= 60 ? "var(--warning)" : avgScore === 0 ? "var(--muted)" : "var(--danger)" },
         ].map(({ label, value, color }) => (
           <div
             key={label}
@@ -105,7 +110,6 @@ export default function DashboardPage() {
           { href: "/practice", title: "תרגול", color: "var(--primary)", bg: "rgba(99,102,241,0.08)" },
           { href: "/test", title: "מבחן", color: "var(--accent)", bg: "rgba(244,63,94,0.08)" },
           { href: "/leaderboard", title: "לידרבורד", color: "#f59e0b", bg: "rgba(245,158,11,0.08)" },
-          { href: "/profile", title: "הישגים", color: "var(--success)", bg: "rgba(16,185,129,0.08)" },
         ].map(({ href, title, color, bg }) => (
           <Link
             key={href}
