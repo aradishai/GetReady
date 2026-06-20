@@ -135,6 +135,12 @@ export default function PracticePage() {
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "24px 16px" }}>
       {/* Top Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <button
+          onClick={() => router.push("/dashboard")}
+          style={{ padding: "8px 16px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 14 }}
+        >
+          חזור
+        </button>
         <div style={{ display: "flex", gap: 16 }}>
           <div style={{ fontSize: 14, color: "var(--muted)" }}>שאלה {current + 1} / {questions.length}</div>
           <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>{score.correct}/{score.total} נכון</div>

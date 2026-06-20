@@ -14,14 +14,7 @@ export async function POST(req: NextRequest) {
     const correctAnswers = answers.filter((a: { isCorrect: boolean }) => a.isCorrect).length
     const score = Math.round((correctAnswers / answers.length) * 100)
 
-    let pointsEarned = 0
-    for (const answer of answers) {
-      if (answer.isCorrect) {
-        const pts = answer.difficulty === "Hard" ? 3 : answer.difficulty === "Medium" ? 2 : 1
-        const speedBonus = answer.timeSpent && answer.timeSpent < 10 ? 1 : 0
-        pointsEarned += pts + speedBonus
-      }
-    }
+    const pointsEarned = correctAnswers * 4
 
     const result = await prisma.testResult.create({
       data: {
