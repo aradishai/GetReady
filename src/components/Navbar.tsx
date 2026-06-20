@@ -46,7 +46,7 @@ export default function Navbar() {
           <img
             src="/logo-getready.png"
             alt="Get Ready"
-            style={{ height: 84, width: "auto", display: "block" }}
+            style={{ height: 180, width: "auto", display: "block" }}
           />
 
           <button
