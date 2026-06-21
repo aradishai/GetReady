@@ -40,12 +40,14 @@ export default function DashboardPage() {
         שלום, {user.name}
       </h1>
 
-      {/* Course Cards — 3x2 grid, fixed 160×256px per card, centered */}
+      {/* Course Cards — auto-fill grid, 2 cols mobile / 3 cols desktop */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(3, 160px)",
+        gridTemplateColumns: "repeat(auto-fill, 160px)",
         gap: 16,
         justifyContent: "center",
+        maxWidth: 520,
+        margin: "0 auto",
       }}>
         {[
           { id: "course-social",     img: "/icon-social.jpeg",     name: "פסיכולוגיה חברתית" },

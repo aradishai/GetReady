@@ -39,7 +39,7 @@ export default function Navbar() {
           justifyContent: "space-between",
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-getready.png" alt="Get Ready" style={{ height: 110, width: "auto" }} />
+          <img src="/logo-getready.png" alt="Get Ready" style={{ height: 56, width: "auto" }} />
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
