@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface Question {
   id: string
@@ -24,6 +24,8 @@ type Answer = "A" | "B" | "C" | "D"
 export default function PracticePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const courseId = searchParams.get("courseId") || ""
 
   const [questions, setQuestions] = useState<Question[]>([])
   const [current, setCurrent] = useState(0)
@@ -43,13 +45,14 @@ export default function PracticePage() {
   }, [status, session, router])
 
   useEffect(() => {
-    fetch("/api/questions/topics?courseId=").then((r) => r.json()).then(setTopics)
-  }, [])
+    fetch(`/api/questions/topics?courseId=${courseId}`).then((r) => r.json()).then(setTopics)
+  }, [courseId])
 
   const loadQuestions = useCallback(async () => {
     setLoading(true)
     const params = new URLSearchParams({
       limit: "30",
+      ...(courseId && { courseId }),
       ...(filters.topic !== "all" && { topic: filters.topic }),
       ...(filters.difficulty !== "all" && { difficulty: filters.difficulty }),
       ...(filters.sourceType !== "all" && { sourceType: filters.sourceType }),
@@ -60,7 +63,7 @@ export default function PracticePage() {
     setSelected(null)
     setShowResult(false)
     setLoading(false)
-  }, [filters])
+  }, [filters, courseId])
 
   useEffect(() => {
     if (session?.user?.isPaid) loadQuestions()
@@ -136,7 +139,7 @@ export default function PracticePage() {
       {/* Top Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
           style={{ padding: "8px 16px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 14 }}
         >
           חזור

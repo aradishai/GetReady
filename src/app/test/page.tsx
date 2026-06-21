@@ -109,7 +109,7 @@ export default function TestPage() {
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <button
-          onClick={() => router.push("/test-select")}
+          onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
           style={{ padding: "11px 24px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: 17 }}
         >
           חזור
