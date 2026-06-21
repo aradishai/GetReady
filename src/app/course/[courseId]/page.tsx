@@ -64,9 +64,19 @@ export default function CoursePage() {
       {/* Back */}
       <button
         onClick={() => router.push("/dashboard")}
-        style={{ background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontSize: 14, marginBottom: 24, padding: "0" }}
+        style={{
+          background: "var(--card)",
+          border: "1px solid var(--card-border)",
+          borderRadius: 10,
+          color: "var(--foreground)",
+          cursor: "pointer",
+          fontSize: 14,
+          fontWeight: 600,
+          padding: "9px 18px",
+          marginBottom: 24,
+        }}
       >
-        ← חזרה לקורסים
+        חזרה לקורסים
       </button>
 
       {/* Course header */}
