@@ -45,7 +45,7 @@ export default function DashboardPage() {
         {[
           { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
           { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
-          { id: "course-iyut",       img: "/icon-purple.png", name: "אישיות"              },
+          { id: "course-iyut",       img: "/icon-iyut.png",   name: "אישיות"              },
           { id: "course-assessment", img: "/icon-orange.png", name: "אבחון ומיון"         },
         ].map(({ id, img, name }) => (
           <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
