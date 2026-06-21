@@ -14,7 +14,6 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/dashboard", label: "בית" },
-    { href: "/leaderboard", label: "דירוג" },
     ...(session.user.isAdmin ? [{ href: "/admin", label: "ניהול" }] : []),
   ]
 
