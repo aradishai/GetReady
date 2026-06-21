@@ -160,7 +160,7 @@ export default function CoursePage() {
             <div style={{
               height: "100%",
               width: `${totalQ > 0 ? Math.round((practiceDone / totalQ) * 100) : 0}%`,
-              background: "linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.7))",
+              background: "linear-gradient(90deg, #c8b99a, #f0ddb4)",
               borderRadius: 8,
               transition: "width 0.8s ease",
             }} />
