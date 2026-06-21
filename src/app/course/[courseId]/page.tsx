@@ -51,11 +51,12 @@ export default function CoursePage() {
     )
   }
 
-  const avgScore = results.length
-    ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length)
-    : 0
+  const avgScore     = results.length ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0
+  const coursePoints = results.reduce((a, r) => a + r.correctAnswers * 4, 0)
+  const courseLevel  = Math.floor(coursePoints / 50) + 1
+  const lastResult   = results[0] ?? null
 
-  const lastResult = results[0] ?? null
+  const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
 
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 18px 140px" }}>
@@ -78,6 +79,29 @@ export default function CoursePage() {
             {results.length > 0 ? `${results.length} מבחנים הושלמו` : "טרם בוצעו מבחנים"}
           </div>
         </div>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        direction: "ltr",
+        fontSize: 13,
+        marginBottom: 22,
+        letterSpacing: 0.1,
+      }}>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{coursePoints}</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
+        {SEP}
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{results.length}</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>מבחנים</span>
+        {SEP}
+        <span style={{ color: "var(--muted)", marginRight: 5 }}>רמה</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{courseLevel}</span>
+        {SEP}
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>התקדמות</span>
       </div>
 
       {/* Progress card */}
