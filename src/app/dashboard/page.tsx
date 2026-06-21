@@ -52,6 +52,7 @@ export default function DashboardPage() {
           { id: "course-psychodiag", img: "/icon-psychodiag.jpg", name: "פסיכודיאגנוסטיקה"  },
           { id: "course-assessment", img: "/icon-orange.png",     name: "אבחון ומיון"         },
           { id: "course-iyut",       img: "/icon-iyut.png",       name: "אישיות"              },
+          { id: "course-chevrot",    img: "/icon-chevrot.jpg",    name: "חברות בישראל"        },
         ].map(({ id, img, name }) => (
           <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
             <div
