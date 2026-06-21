@@ -40,25 +40,26 @@ export default function DashboardPage() {
         שלום, {user.name}
       </h1>
 
-      {/* Course Cards — 2x2 grid, fixed 220×320px per card, centered */}
+      {/* Course Cards — 3x2 grid, fixed 160×256px per card, centered */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(2, 220px)",
-        gap: 24,
+        gridTemplateColumns: "repeat(3, 160px)",
+        gap: 16,
         justifyContent: "center",
       }}>
         {[
-          { id: "course-social",     img: "/icon-yellow.png",     name: "פסיכולוגיה חברתית" },
-          { id: "course-psychodiag", img: "/icon-psychodiag.jpg", name: "פסיכודיאגנוסטיקה"  },
-          { id: "course-assessment", img: "/icon-orange.png",     name: "אבחון ומיון"         },
-          { id: "course-iyut",       img: "/icon-iyut.png",       name: "אישיות"              },
-          { id: "course-chevrot",    img: "/icon-chevrot.jpg",    name: "חברות בישראל"        },
+          { id: "course-social",     img: "/icon-social.jpeg",     name: "פסיכולוגיה חברתית" },
+          { id: "course-psychodiag", img: "/icon-psychodiag.jpg",  name: "פסיכודיאגנוסטיקה"  },
+          { id: "course-chevrot",    img: "/icon-chevrot.jpg",     name: "חברות בישראל"        },
+          { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון"         },
+          { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות"              },
+          { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים"             },
         ].map(({ id, img, name }) => (
           <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
             <div
               style={{
-                width: 220,
-                height: 320,
+                width: 160,
+                height: 257,
                 overflow: "hidden",
                 borderRadius: 14,
                 cursor: "pointer",
