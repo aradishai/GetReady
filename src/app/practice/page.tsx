@@ -51,7 +51,7 @@ export default function PracticePage() {
   const loadQuestions = useCallback(async () => {
     setLoading(true)
     const params = new URLSearchParams({
-      limit: "30",
+      limit: "1000",
       ...(courseId && { courseId }),
       ...(filters.topic !== "all" && { topic: filters.topic }),
       ...(filters.difficulty !== "all" && { difficulty: filters.difficulty }),
@@ -178,7 +178,6 @@ export default function PracticePage() {
           {[
             { label: "נושא", key: "topic", options: [{ value: "all", label: "הכל" }, ...topics.map((t) => ({ value: t, label: t }))] },
             { label: "קושי", key: "difficulty", options: [{ value: "all", label: "הכל" }, { value: "Easy", label: "קל" }, { value: "Medium", label: "בינוני" }, { value: "Hard", label: "קשה" }] },
-            { label: "מקור", key: "sourceType", options: [{ value: "all", label: "הכל" }, { value: "PreviousExam", label: "מבחנים קודמים" }, { value: "Generated", label: "תרגול" }, { value: "LecturerQuestion", label: "שאלות מרצה" }] },
           ].map(({ label, key, options }) => (
             <div key={key}>
               <label style={{ display: "block", fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>{label}</label>
