@@ -37,7 +37,7 @@ export default function DashboardPage() {
 
       {/* Course Cards — full width, single row */}
       <div style={{ padding: "32px 18px 24px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
           {[
             { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
             { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
