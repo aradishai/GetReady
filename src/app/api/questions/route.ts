@@ -25,6 +25,12 @@ export async function GET(req: NextRequest) {
     if (difficulty && difficulty !== "all") where.difficulty = difficulty
     if (sourceType && sourceType !== "all") where.sourceType = sourceType
 
+    // Count-only mode for progress tracking
+    if (searchParams.get("countOnly") === "true") {
+      const count = await prisma.question.count({ where })
+      return NextResponse.json({ count })
+    }
+
     const questions = await prisma.question.findMany({
       where,
       select: {

@@ -76,6 +76,13 @@ export default function PracticePage() {
     const correct = ans === questions[current].correctAnswer
     setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }))
     setStreak((s) => (correct ? s + 1 : 0))
+    // Track answered question in localStorage
+    if (courseId) {
+      const key = `practice_done_${courseId}`
+      const done: string[] = JSON.parse(localStorage.getItem(key) || "[]")
+      const qId = questions[current].id
+      if (!done.includes(qId)) localStorage.setItem(key, JSON.stringify([...done, qId]))
+    }
   }
 
   function nextQuestion() {

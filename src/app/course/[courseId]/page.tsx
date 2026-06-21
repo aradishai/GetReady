@@ -28,8 +28,10 @@ export default function CoursePage() {
   const courseId = params.courseId as string
   const meta     = COURSE_META[courseId]
 
-  const [results,  setResults]  = useState<CourseResult[]>([])
-  const [loading,  setLoading]  = useState(true)
+  const [results,       setResults]       = useState<CourseResult[]>([])
+  const [loading,       setLoading]       = useState(true)
+  const [totalQ,        setTotalQ]        = useState(0)
+  const [practiceDone,  setPracticeDone]  = useState(0)
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -41,6 +43,11 @@ export default function CoursePage() {
     fetch(`/api/results?courseId=${courseId}`)
       .then(r => r.json())
       .then(data => { setResults(Array.isArray(data) ? data : []); setLoading(false) })
+    fetch(`/api/questions?courseId=${courseId}&countOnly=true`)
+      .then(r => r.json())
+      .then(d => setTotalQ(d.count ?? 0))
+    const done: string[] = JSON.parse(localStorage.getItem(`practice_done_${courseId}`) || "[]")
+    setPracticeDone(done.length)
   }, [session, courseId])
 
   if (!meta) {
@@ -133,6 +140,33 @@ export default function CoursePage() {
           }} />
         </div>
       </div>
+
+      {/* Practice progress */}
+      {totalQ > 0 && (
+        <div style={{
+          background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
+          border: "1.5px solid rgba(255,255,255,0.07)",
+          borderRadius: 20,
+          padding: "22px 22px",
+          marginBottom: 24,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: "var(--muted)" }}>תרגול — שאלות שנפתרו</span>
+            <span style={{ fontSize: 16, fontWeight: 800, color: "var(--foreground)" }}>
+              {practiceDone} / {totalQ}
+            </span>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: 10, overflow: "hidden" }}>
+            <div style={{
+              height: "100%",
+              width: `${totalQ > 0 ? Math.round((practiceDone / totalQ) * 100) : 0}%`,
+              background: "linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.7))",
+              borderRadius: 8,
+              transition: "width 0.8s ease",
+            }} />
+          </div>
+        </div>
+      )}
 
       {/* Mode buttons */}
       <div style={{ display: "flex", gap: 16, marginBottom: 36 }}>
