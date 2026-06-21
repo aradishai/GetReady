@@ -88,41 +88,43 @@ export default function Navbar() {
         )}
       </header>
 
-      {/* ── Bottom Nav ── */}
-      <nav style={{
-        position: "fixed",
-        bottom: 0,
-        right: 0,
-        left: 0,
-        zIndex: 45,
-        background: "rgba(2,5,9,0.82)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderTop: "1px solid rgba(255,255,255,0.04)",
-      }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", display: "flex", alignItems: "stretch", height: 116 }}>
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                fontSize: 16,
-                fontWeight: pathname === href ? 700 : 500,
-                color: pathname === href ? "var(--foreground)" : "rgba(240,217,168,0.5)",
-                borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
-                transition: "all 0.15s",
-              }}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      {/* ── Bottom Nav — admins only ── */}
+      {session.user.isAdmin && (
+        <nav style={{
+          position: "fixed",
+          bottom: 0,
+          right: 0,
+          left: 0,
+          zIndex: 45,
+          background: "rgba(2,5,9,0.82)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+        }}>
+          <div style={{ maxWidth: 700, margin: "0 auto", display: "flex", alignItems: "stretch", height: 116 }}>
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textDecoration: "none",
+                  fontSize: 16,
+                  fontWeight: pathname === href ? 700 : 500,
+                  color: pathname === href ? "var(--foreground)" : "rgba(240,217,168,0.5)",
+                  borderTop: pathname === href ? "3px solid var(--foreground)" : "3px solid transparent",
+                  transition: "all 0.15s",
+                }}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
     </>
   )
 }
