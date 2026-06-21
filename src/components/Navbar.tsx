@@ -38,8 +38,9 @@ export default function Navbar() {
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-getready.png" alt="Get Ready" style={{ height: 56, width: "auto" }} />
+          <span style={{ fontSize: 26, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ fontWeight: 300 }}>Get</span><span style={{ fontWeight: 900 }}>Ready</span>
+          </span>
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
