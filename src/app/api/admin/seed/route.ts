@@ -105,12 +105,10 @@ const QUESTIONS_CHEVROT = [
   { question: "כמה אנשים בישראל לא יכולים להתחתן עקב מגבלות הדין הדתי?", answerA: "כ-50,000", answerB: "כ-100,000", answerC: "כ-300,000", answerD: "כ-500,000", correctAnswer: "C", explanation: "כ-300,000 אנשים בישראל אינם יכולים להתחתן עקב חסמים בדין הדתי: עגונות, ממזרים, ואנשים שנרשמו כ'אין דת' — מצב שמדגיש את בעיית מנופולת הרבנות על נישואין.", topic: "מגדר ומשפחה", difficulty: "Medium" },
 ]
 
-export async function POST(req: NextRequest) {
-  const secret = req.headers.get("x-seed-secret") || req.nextUrl.searchParams.get("secret")
+async function runSeed(secret: string | null) {
   if (secret !== SEED_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
-
   try {
     const results: Record<string, number> = {}
 
@@ -156,4 +154,14 @@ export async function POST(req: NextRequest) {
     console.error(err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
+}
+
+export async function POST(req: NextRequest) {
+  const secret = req.headers.get("x-seed-secret") || req.nextUrl.searchParams.get("secret")
+  return runSeed(secret)
+}
+
+export async function GET(req: NextRequest) {
+  const secret = req.nextUrl.searchParams.get("secret")
+  return runSeed(secret)
 }
