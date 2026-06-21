@@ -21,11 +21,23 @@ interface Question {
 
 type Answer = "A" | "B" | "C" | "D"
 
+function useMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+  return isMobile
+}
+
 function PracticePageInner() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
   const courseId = searchParams.get("courseId") || ""
+  const isMobile = useMobile()
 
   const [questions, setQuestions] = useState<Question[]>([])
   const [current, setCurrent] = useState(0)
@@ -116,18 +128,18 @@ function PracticePageInner() {
   function getAnswerStyle(key: Answer) {
     const base = {
       width: "100%",
-      padding: "18px 22px",
-      borderRadius: 12,
+      padding: isMobile ? "9px 12px" : "18px 22px",
+      borderRadius: 10,
       border: "1px solid var(--card-border)",
       background: "var(--card)",
       color: "var(--foreground)",
       cursor: selected ? "default" : "pointer",
-      fontSize: 18,
+      fontSize: isMobile ? 13 : 18,
       textAlign: "right" as const,
       transition: "all 0.2s",
       display: "flex",
       alignItems: "center",
-      gap: 12,
+      gap: isMobile ? 8 : 12,
     }
     if (!showResult) return base
     if (key === q.correctAnswer) return { ...base, background: "rgba(16,185,129,0.12)", border: "1px solid var(--success)" }
@@ -150,7 +162,7 @@ function PracticePageInner() {
   }
 
   return (
-    <div style={{ maxWidth: 860, margin: "0 auto", padding: "32px 24px" }}>
+    <div style={{ maxWidth: 860, margin: "0 auto", padding: isMobile ? "12px 10px" : "32px 24px" }}>
       {/* Top Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <button
@@ -212,8 +224,8 @@ function PracticePageInner() {
       </div>
 
       {/* Question Card */}
-      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 24, padding: 36, marginBottom: 16 }}>
-        <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: isMobile ? 14 : 24, padding: isMobile ? "14px 12px" : 36, marginBottom: 12 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: isMobile ? 10 : 16, flexWrap: "wrap" }}>
           <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: `${difficultyColor[q.difficulty]}22`, color: difficultyColor[q.difficulty], border: `1px solid ${difficultyColor[q.difficulty]}44` }}>
             {q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"}
           </span>
@@ -227,17 +239,17 @@ function PracticePageInner() {
           )}
         </div>
 
-        <p style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.7, marginBottom: 30 }}>{q.question}</p>
+        <p style={{ fontSize: isMobile ? 15 : 22, fontWeight: 600, lineHeight: 1.6, marginBottom: isMobile ? 12 : 30 }}>{q.question}</p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 7 : 10 }}>
           {answers.map(({ key, label, text }) => (
             <button key={key} onClick={() => handleAnswer(key)} style={getAnswerStyle(key)}>
               <span
                 style={{
-                  width: 28, height: 28, borderRadius: "50%",
+                  width: isMobile ? 22 : 28, height: isMobile ? 22 : 28, borderRadius: "50%",
                   background: selected ? key === q.correctAnswer ? "var(--success)" : key === selected ? "var(--danger)" : "var(--card-border)" : "var(--card-border)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 13, fontWeight: 700, flexShrink: 0, color: "#fff",
+                  fontSize: isMobile ? 11 : 13, fontWeight: 700, flexShrink: 0, color: "#fff",
                 }}
               >
                 {label}
