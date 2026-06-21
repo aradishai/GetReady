@@ -158,30 +158,6 @@ export default function CoursePage() {
         </Link>
       </div>
 
-      {/* Recent results */}
-      {!loading && results.length > 0 && (
-        <>
-          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14, opacity: 0.75 }}>מבחנים אחרונים</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {results.slice(0, 5).map(r => {
-              const c = r.score >= 80 ? "var(--success)" : r.score >= 60 ? "var(--warning)" : "var(--danger)"
-              return (
-                <div key={r.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 16, padding: "16px 20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                    <div style={{ color: "var(--muted)", fontSize: 12 }}>
-                      {r.correctAnswers}/{r.totalQuestions} נכון
-                    </div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: c }}>{r.score}%</div>
-                  </div>
-                  <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 6, height: 6, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${r.score}%`, background: c, borderRadius: 6 }} />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </>
-      )}
 
     </div>
   )
