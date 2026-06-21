@@ -5,6 +5,17 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
+function useMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+  return isMobile
+}
+
 const COURSE_META: Record<string, { name: string; img: string; color: string }> = {
   "course-psychodiag": { name: "פסיכודיאגנוסטיקה",  img: "/icon-psychodiag.jpg",  color: "#22c55e" },
   "course-social":     { name: "פסיכולוגיה חברתית",  img: "/icon-social.jpeg",     color: "#f97316" },
@@ -29,6 +40,7 @@ export default function CoursePage() {
   const { data: session, status } = useSession()
   const courseId = params.courseId as string
   const meta     = COURSE_META[courseId]
+  const isMobile = useMobile()
 
   const [results,       setResults]       = useState<CourseResult[]>([])
   const [loading,       setLoading]       = useState(true)
@@ -68,7 +80,7 @@ export default function CoursePage() {
   const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 18px 140px" }}>
+    <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "32px 18px 140px" }}>
 
       {/* Back */}
       <button
@@ -79,21 +91,21 @@ export default function CoursePage() {
           borderRadius: 10,
           color: "var(--foreground)",
           cursor: "pointer",
-          fontSize: 14,
+          fontSize: isMobile ? 13 : 14,
           fontWeight: 600,
-          padding: "9px 18px",
-          marginBottom: 24,
+          padding: isMobile ? "7px 14px" : "9px 18px",
+          marginBottom: isMobile ? 14 : 24,
         }}
       >
         חזרה לקורסים
       </button>
 
       {/* Course header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 20, marginBottom: isMobile ? 16 : 32 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={meta.img} alt={meta.name} style={{ width: 80, borderRadius: 14, flexShrink: 0 }} />
+        <img src={meta.img} alt={meta.name} style={{ width: isMobile ? 52 : 80, borderRadius: isMobile ? 10 : 14, flexShrink: 0 }} />
         <div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
+          <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
         </div>
       </div>
 
@@ -103,19 +115,19 @@ export default function CoursePage() {
         alignItems: "center",
         justifyContent: "center",
         direction: "ltr",
-        fontSize: 20,
-        marginBottom: 22,
+        fontSize: isMobile ? 14 : 20,
+        marginBottom: isMobile ? 14 : 22,
         letterSpacing: 0.1,
         flexWrap: "wrap",
         gap: "4px 0",
       }}>
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 26 }}>{coursePoints}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{coursePoints}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 26 }}>{courseLevel}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{courseLevel}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 26 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
       </div>
 
@@ -123,18 +135,18 @@ export default function CoursePage() {
       <div style={{
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
         border: `1.5px solid ${meta.color}55`,
-        borderRadius: 20,
-        padding: "22px 22px",
-        marginBottom: 24,
+        borderRadius: isMobile ? 14 : 20,
+        padding: isMobile ? "14px 14px" : "22px 22px",
+        marginBottom: isMobile ? 12 : 24,
         boxShadow: `0 0 32px ${meta.color}18`,
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <span style={{ fontSize: 13, color: "var(--muted)" }}>
-            {lastResult ? `${lastResult.correctAnswers}/${lastResult.totalQuestions} במבחן האחרון` : "התחל להיבחן כדי לעקוב אחרי ההתקדמות"}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)" }}>
+            {lastResult ? `${lastResult.correctAnswers}/${lastResult.totalQuestions} במבחן האחרון` : "התחל להיבחן כדי לעקוב"}
           </span>
-          <span style={{ fontSize: 22, fontWeight: 800, color: meta.color }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+          <span style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: meta.color }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: 10, overflow: "hidden" }}>
+        <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 10, overflow: "hidden" }}>
           <div style={{
             height: "100%",
             width: `${avgScore}%`,
@@ -150,17 +162,17 @@ export default function CoursePage() {
         <div style={{
           background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
           border: "1.5px solid rgba(255,255,255,0.07)",
-          borderRadius: 20,
-          padding: "22px 22px",
-          marginBottom: 24,
+          borderRadius: isMobile ? 14 : 20,
+          padding: isMobile ? "14px 14px" : "22px 22px",
+          marginBottom: isMobile ? 12 : 24,
         }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <span style={{ fontSize: 13, color: "var(--muted)" }}>תרגול — שאלות שנפתרו</span>
-            <span style={{ fontSize: 16, fontWeight: 800, color: "var(--foreground)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)" }}>תרגול — שאלות שנפתרו</span>
+            <span style={{ fontSize: isMobile ? 14 : 16, fontWeight: 800, color: "var(--foreground)" }}>
               {practiceDone} / {totalQ}
             </span>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: 10, overflow: "hidden" }}>
+          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 10, overflow: "hidden" }}>
             <div style={{
               height: "100%",
               width: `${totalQ > 0 ? Math.round((practiceDone / totalQ) * 100) : 0}%`,
@@ -173,13 +185,13 @@ export default function CoursePage() {
       )}
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", gap: 16, marginBottom: 36 }}>
+      <div style={{ display: "flex", gap: isMobile ? 10 : 16, marginBottom: isMobile ? 16 : 36 }}>
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/תרגול 4.png"
             alt="תרגול"
-            style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
+            style={{ width: "100%", display: "block", borderRadius: isMobile ? 12 : 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
             onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           />
@@ -189,7 +201,7 @@ export default function CoursePage() {
           <img
             src="/מבחן 4.png"
             alt="מבחן"
-            style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
+            style={{ width: "100%", display: "block", borderRadius: isMobile ? 12 : 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
             onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           />
