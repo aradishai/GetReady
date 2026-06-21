@@ -101,17 +101,17 @@ export default function CoursePage() {
         alignItems: "center",
         justifyContent: "center",
         direction: "ltr",
-        fontSize: 13,
+        fontSize: 65,
         marginBottom: 22,
         letterSpacing: 0.1,
       }}>
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{coursePoints}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 75 }}>{coursePoints}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{courseLevel}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 75 }}>{courseLevel}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: 75 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
       </div>
 
