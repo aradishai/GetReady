@@ -43,7 +43,7 @@ export default function DashboardPage() {
       {/* Course Cards — 2x2, compact */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, maxWidth: 320 }}>
         {[
-          { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
+          { id: "course-psychodiag", img: "/icon-psychodiag.png", name: "פסיכודיאגנוסטיקה"  },
           { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
           { id: "course-iyut",       img: "/icon-iyut.png",   name: "אישיות"              },
           { id: "course-assessment", img: "/icon-orange.png", name: "אבחון ומיון"         },
