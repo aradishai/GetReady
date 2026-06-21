@@ -55,63 +55,33 @@ export default function CoursePage() {
 
       {/* Course name */}
       <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center" }}>{meta.name}</h1>
-      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 44, textAlign: "center" }}>
+      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 36, textAlign: "center" }}>
         בחר את סוג הלמידה
       </p>
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%" }}>
+      <div style={{ display: "flex", gap: 20, width: "100%", justifyContent: "center" }}>
 
-        {/* Practice */}
-        <Link
-          href={`/practice?courseId=${courseId}`}
-          style={{ textDecoration: "none" }}
-        >
-          <div
-            style={{
-              background: "var(--card)",
-              border: `1.5px solid ${meta.color}55`,
-              borderRadius: 20,
-              padding: "24px 28px",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              boxShadow: `0 0 20px ${meta.color}18`,
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 32px ${meta.color}44`; (e.currentTarget as HTMLDivElement).style.borderColor = meta.color }}
-            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px ${meta.color}18`; (e.currentTarget as HTMLDivElement).style.borderColor = `${meta.color}55` }}
-          >
-            <div style={{ fontSize: 22, marginBottom: 6 }}>✏️</div>
-            <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>תרגול</div>
-            <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
-              שאלה אחת בכל פעם עם הסבר מיידי. לא נשמר כמבחן.
-            </div>
-          </div>
+        <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/btn-practice.png"
+            alt="תרגול"
+            style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
+            onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+          />
         </Link>
 
-        {/* Test */}
-        <Link
-          href={`/test?courseId=${courseId}`}
-          style={{ textDecoration: "none" }}
-        >
-          <div
-            style={{
-              background: "var(--card)",
-              border: `1.5px solid ${meta.color}55`,
-              borderRadius: 20,
-              padding: "24px 28px",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              boxShadow: `0 0 20px ${meta.color}18`,
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 32px ${meta.color}44`; (e.currentTarget as HTMLDivElement).style.borderColor = meta.color }}
-            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 20px ${meta.color}18`; (e.currentTarget as HTMLDivElement).style.borderColor = `${meta.color}55` }}
-          >
-            <div style={{ fontSize: 22, marginBottom: 6 }}>📝</div>
-            <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>מבחן</div>
-            <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
-              25 שאלות ללא הסברים באמצע. התוצאה נשמרת בפרופיל שלך.
-            </div>
-          </div>
+        <Link href={`/test?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/btn-test.png"
+            alt="מבחן"
+            style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
+            onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+          />
         </Link>
 
       </div>
