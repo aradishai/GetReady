@@ -91,8 +91,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(result)
     }
 
+    const courseId = searchParams.get("courseId")
     const results = await prisma.testResult.findMany({
-      where: { userId: session.user.id },
+      where: { userId: session.user.id, ...(courseId ? { courseId } : {}) },
       include: { course: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
       take: 10,
