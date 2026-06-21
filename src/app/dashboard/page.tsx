@@ -62,7 +62,7 @@ export default function DashboardPage() {
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)" }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
+              <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
           </Link>
         ))}
