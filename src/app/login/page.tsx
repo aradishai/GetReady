@@ -51,7 +51,7 @@ export default function LoginPage() {
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-getready.png" alt="GetReady" style={{ height: 64, width: "auto" }} />
+          <img src="/logo-getready.png" alt="GetReady" style={{ height: 90, width: "auto", display: "block", margin: "0 auto" }} />
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>התחבר לחשבון שלך</p>
         </div>
 
