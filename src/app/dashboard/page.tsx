@@ -37,7 +37,7 @@ export default function DashboardPage() {
 
       {/* Greeting */}
       <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 24px", lineHeight: 1.2 }}>
-        👋 שלום, {user.name}
+        שלום, {user.name}
       </h1>
 
       {/* Course Cards — 2x2, compact */}
