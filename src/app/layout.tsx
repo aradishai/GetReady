@@ -11,7 +11,7 @@ const varelaRound = Varela_Round({
 })
 
 export const metadata: Metadata = {
-  title: "Study Arena | זירת המבחן",
+  title: "GetReady",
   description: "למד, תתחרה, תנצח",
 }
 

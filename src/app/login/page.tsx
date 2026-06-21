@@ -60,7 +60,7 @@ export default function LoginPage() {
               margin: 0,
             }}
           >
-            Study Arena
+            GetReady
           </h1>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>התחבר לחשבון שלך</p>
         </div>

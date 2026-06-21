@@ -35,7 +35,7 @@ export default function RegisterPage() {
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
-            Study Arena
+            GetReady
           </h1>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>צור חשבון חדש</p>
         </div>
