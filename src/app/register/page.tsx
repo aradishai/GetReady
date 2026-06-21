@@ -34,8 +34,8 @@ export default function RegisterPage() {
         style={{ width: "100%", maxWidth: 420, background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 40, boxShadow: "0 4px 24px rgba(56,189,248,0.08)" }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
-            GetReady
+          <h1 style={{ fontSize: 26, margin: 0, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ fontWeight: 300 }}>Get</span><span style={{ fontWeight: 900 }}>Ready</span>
           </h1>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>צור חשבון חדש</p>
         </div>

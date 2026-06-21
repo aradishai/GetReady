@@ -50,17 +50,8 @@ export default function LoginPage() {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <h1
-            style={{
-              fontSize: 28,
-              fontWeight: 800,
-              background: "linear-gradient(135deg, #38bdf8, #7dd3fc)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              margin: 0,
-            }}
-          >
-            GetReady
+          <h1 style={{ fontSize: 28, margin: 0, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ fontWeight: 300 }}>Get</span><span style={{ fontWeight: 900 }}>Ready</span>
           </h1>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>התחבר לחשבון שלך</p>
         </div>
