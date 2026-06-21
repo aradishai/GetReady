@@ -65,7 +65,7 @@ export default function CoursePage() {
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/btn-practice.png"
+            src="/תרגול 4.png"
             alt="תרגול"
             style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
@@ -76,7 +76,7 @@ export default function CoursePage() {
         <Link href={`/test?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/btn-test.png"
+            src="/מבחן 4.png"
             alt="מבחן"
             style={{ width: "100%", display: "block", borderRadius: 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
