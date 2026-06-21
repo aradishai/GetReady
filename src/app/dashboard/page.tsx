@@ -35,18 +35,8 @@ export default function DashboardPage() {
   return (
     <div>
 
-      {/* Greeting */}
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 18px 24px" }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
-          👋 שלום, {user.name}
-        </h1>
-        <p style={{ color: "var(--muted)", fontSize: 15, margin: "8px 0 0" }}>
-          מוכן ללמוד היום?
-        </p>
-      </div>
-
       {/* Course Cards — full width, single row */}
-      <div style={{ padding: "0 18px 140px" }}>
+      <div style={{ padding: "32px 18px 24px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
           {[
             { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
@@ -66,6 +56,13 @@ export default function DashboardPage() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* Greeting */}
+      <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 18px 140px" }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
+          👋 שלום, {user.name}
+        </h1>
       </div>
 
     </div>
