@@ -98,147 +98,23 @@ export default function DashboardPage() {
       {/* ── Course Cards ── */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
-
-          {/* פסיכודיאגנוסטיקה — green */}
-          <Link href="/course/course-psychodiag" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                background: "linear-gradient(170deg, #0c1222 0%, #050a16 100%)",
-                border: "2px solid #22c55e",
-                borderRadius: 18,
-                padding: "26px 10px 20px",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-                boxShadow: "0 0 6px #22c55e, 0 0 18px #22c55ecc, 0 0 42px #22c55e66, 0 0 72px #22c55e28, inset 0 0 22px #22c55e0d",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)")}
-              onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1)")}
-            >
-              <div style={{ filter: "drop-shadow(0 0 8px #22c55e) drop-shadow(0 0 18px #22c55e)" }}>
-                <svg width="68" height="68" viewBox="0 0 64 64" fill="none">
-                  <path d="M32 7C20 7 10 15 10 26C10 36 16 43 25 46V51H39V46C48 43 54 36 54 26C54 15 44 7 32 7Z"
-                    stroke="#22c55e" strokeWidth="2.5" strokeLinejoin="round" fill="rgba(34,197,94,0.08)"/>
-                  <line x1="32" y1="8" x2="32" y2="50" stroke="#22c55e" strokeWidth="1.5"/>
-                  <path d="M10 22C6 22 4 26 6 30C8 34 10 33 10 29" stroke="#22c55e" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  <path d="M54 22C58 22 60 26 58 30C56 34 54 33 54 29" stroke="#22c55e" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  <circle cx="42" cy="44" r="9" stroke="#22c55e" strokeWidth="2.5" fill="rgba(34,197,94,0.08)"/>
-                  <line x1="48" y1="51" x2="55" y2="58" stroke="#22c55e" strokeWidth="3" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.4, textAlign: "center" }}>
-                פסיכודיאגנוסטיקה
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #22c55e88",
-                display: "flex", alignItems: "center", justifyContent: "center", color: "#22c55e", fontSize: 15 }}>›</div>
-            </div>
-          </Link>
-
-          {/* פסיכולוגיה חברתית — yellow */}
-          <Link href="/course/course-social" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                background: "linear-gradient(170deg, #121008 0%, #0a0c06 100%)",
-                border: "2px solid #eab308",
-                borderRadius: 18,
-                padding: "26px 10px 20px",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-                boxShadow: "0 0 6px #eab308, 0 0 18px #eab308cc, 0 0 42px #eab30866, 0 0 72px #eab30828, inset 0 0 22px #eab3080d",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)")}
-              onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1)")}
-            >
-              <div style={{ filter: "drop-shadow(0 0 8px #eab308) drop-shadow(0 0 18px #eab308)" }}>
-                <svg width="68" height="68" viewBox="0 0 64 64" fill="none">
-                  <circle cx="32" cy="17" r="9" stroke="#eab308" strokeWidth="2.5" fill="rgba(234,179,8,0.1)"/>
-                  <path d="M18 54C18 43 24 37 32 37C40 37 46 43 46 54" stroke="#eab308" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-                  <circle cx="13" cy="21" r="7" stroke="#eab308" strokeWidth="2" fill="rgba(234,179,8,0.07)" opacity="0.85"/>
-                  <path d="M3 54C3 45 7 41 13 41" stroke="#eab308" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.85"/>
-                  <circle cx="51" cy="21" r="7" stroke="#eab308" strokeWidth="2" fill="rgba(234,179,8,0.07)" opacity="0.85"/>
-                  <path d="M61 54C61 45 57 41 51 41" stroke="#eab308" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.85"/>
-                </svg>
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.4, textAlign: "center" }}>
-                פסיכולוגיה חברתית
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #eab30888",
-                display: "flex", alignItems: "center", justifyContent: "center", color: "#eab308", fontSize: 15 }}>›</div>
-            </div>
-          </Link>
-
-          {/* אישיות — purple */}
-          <Link href="/course/course-iyut" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                background: "linear-gradient(170deg, #0e0c1e 0%, #080616 100%)",
-                border: "2px solid #a855f7",
-                borderRadius: 18,
-                padding: "26px 10px 20px",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-                boxShadow: "0 0 6px #a855f7, 0 0 18px #a855f7cc, 0 0 42px #a855f766, 0 0 72px #a855f728, inset 0 0 22px #a855f70d",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)")}
-              onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1)")}
-            >
-              <div style={{ filter: "drop-shadow(0 0 8px #a855f7) drop-shadow(0 0 18px #a855f7)" }}>
-                <svg width="68" height="68" viewBox="0 0 64 64" fill="none">
-                  <circle cx="32" cy="24" r="18" stroke="#a855f7" strokeWidth="2.5" fill="rgba(168,85,247,0.08)"/>
-                  <path d="M23 41C23 49 41 49 41 41" stroke="#a855f7" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  <circle cx="32" cy="24" r="4" stroke="#a855f7" strokeWidth="1.8"/>
-                  <circle cx="32" cy="24" r="9" stroke="#a855f7" strokeWidth="1.4" strokeDasharray="4 3"/>
-                  <circle cx="32" cy="24" r="14" stroke="#a855f7" strokeWidth="1.1" strokeDasharray="3 4" opacity="0.7"/>
-                </svg>
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.4, textAlign: "center" }}>
-                אישיות
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #a855f788",
-                display: "flex", alignItems: "center", justifyContent: "center", color: "#a855f7", fontSize: 15 }}>›</div>
-            </div>
-          </Link>
-
-          {/* אבחון ומיון — orange */}
-          <Link href="/course/course-assessment" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                background: "linear-gradient(170deg, #120c06 0%, #0a0804 100%)",
-                border: "2px solid #f97316",
-                borderRadius: 18,
-                padding: "26px 10px 20px",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-                boxShadow: "0 0 6px #f97316, 0 0 18px #f97316cc, 0 0 42px #f9731666, 0 0 72px #f9731628, inset 0 0 22px #f973160d",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)")}
-              onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.transform = "scale(1)")}
-            >
-              <div style={{ filter: "drop-shadow(0 0 8px #f97316) drop-shadow(0 0 18px #f97316)" }}>
-                <svg width="68" height="68" viewBox="0 0 64 64" fill="none">
-                  <rect x="8" y="12" width="40" height="46" rx="5" stroke="#f97316" strokeWidth="2.5" fill="rgba(249,115,22,0.07)"/>
-                  <rect x="18" y="6" width="20" height="12" rx="4" stroke="#f97316" strokeWidth="2.5" fill="rgba(249,115,22,0.1)"/>
-                  <rect x="14" y="26" width="9" height="9" rx="2" stroke="#f97316" strokeWidth="1.8" fill="none"/>
-                  <path d="M16 30.5L19 33.5L24 27" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="27" y1="30" x2="42" y2="30" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round"/>
-                  <rect x="14" y="39" width="9" height="9" rx="2" stroke="#f97316" strokeWidth="1.8" fill="none"/>
-                  <path d="M16 43.5L19 46.5L24 40" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="27" y1="43" x2="42" y2="43" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round"/>
-                  <circle cx="48" cy="48" r="12" stroke="#f97316" strokeWidth="2.5" fill="#080e1c"/>
-                  <path d="M42 48L46 52L54 43" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.4, textAlign: "center" }}>
-                אבחון ומיון
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #f9731688",
-                display: "flex", alignItems: "center", justifyContent: "center", color: "#f97316", fontSize: 15 }}>›</div>
-            </div>
-          </Link>
-
+          {[
+            { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
+            { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
+            { id: "course-iyut",       img: "/icon-purple.png", name: "אישיות"              },
+            { id: "course-assessment", img: "/icon-orange.png", name: "אבחון ומיון"         },
+          ].map(({ id, img, name }) => (
+            <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img}
+                alt={name}
+                style={{ width: "100%", display: "block", cursor: "pointer", transition: "transform 0.15s ease" }}
+                onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.04)")}
+                onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+              />
+            </Link>
+          ))}
         </div>
       </div>
 
