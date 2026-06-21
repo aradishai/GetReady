@@ -23,7 +23,7 @@ export default function LeaderboardPage() {
   }, [status, session, router])
 
   useEffect(() => {
-    if (session?.user?.isPaid) {
+    if (session?.user) {
       fetch("/api/leaderboard")
         .then((r) => r.json())
         .then((data) => { setUsers(data); setLoading(false) })

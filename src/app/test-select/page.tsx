@@ -22,7 +22,7 @@ export default function TestSelectPage() {
   }, [status, session, router])
 
   useEffect(() => {
-    if (session?.user?.isPaid) {
+    if (session?.user) {
       fetch("/api/courses").then((r) => r.json()).then(setCourses)
     }
   }, [session])

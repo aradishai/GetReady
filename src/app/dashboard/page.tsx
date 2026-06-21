@@ -20,7 +20,7 @@ export default function DashboardPage() {
   }, [status, session, router])
 
   useEffect(() => {
-    if (session?.user?.isPaid)
+    if (session?.user)
       fetch("/api/user/me").then(r => r.json()).then(setUser)
   }, [session])
 

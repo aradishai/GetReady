@@ -66,7 +66,7 @@ export default function PracticePage() {
   }, [filters, courseId])
 
   useEffect(() => {
-    if (session?.user?.isPaid) loadQuestions()
+    if (session?.user) loadQuestions()
   }, [session, loadQuestions])
 
   function handleAnswer(ans: Answer) {

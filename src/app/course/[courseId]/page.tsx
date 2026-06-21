@@ -41,7 +41,7 @@ export default function CoursePage() {
   }, [status, session, router])
 
   useEffect(() => {
-    if (!session?.user?.isPaid) return
+    if (!session?.user) return
     fetch(`/api/results?courseId=${courseId}`)
       .then(r => r.json())
       .then(data => { setResults(Array.isArray(data) ? data : []); setLoading(false) })
