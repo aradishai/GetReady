@@ -88,6 +88,9 @@ export default function Navbar() {
         )}
       </header>
 
+      {/* ── Inject bottom padding for admin bottom nav ── */}
+      {session.user.isAdmin && <style>{`main { padding-bottom: 130px !important; }`}</style>}
+
       {/* ── Bottom Nav — admins only ── */}
       {session.user.isAdmin && (
         <nav style={{
