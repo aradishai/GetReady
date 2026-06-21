@@ -59,6 +59,7 @@ export default function AdminPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddQuestion, setShowAddQuestion] = useState(false)
+  const [questionCourseFilter, setQuestionCourseFilter] = useState("all")
   const [newQ, setNewQ] = useState({
     courseId: "", question: "", answerA: "", answerB: "", answerC: "", answerD: "",
     correctAnswer: "A", explanation: "", topic: "", difficulty: "Medium",
@@ -110,6 +111,12 @@ export default function AdminPage() {
     setQuestions((prev) => prev.filter((q) => q.id !== id))
   }
 
+  async function deleteAllInCourse(courseId: string, courseName: string) {
+    if (!confirm(`למחוק את כל השאלות של "${courseName}"?`)) return
+    await fetch(`/api/admin/questions?courseId=${courseId}`, { method: "DELETE" })
+    setQuestions(prev => prev.filter(q => q.course.name !== courseName))
+  }
+
   async function addQuestion() {
     const res = await fetch("/api/admin/questions", {
       method: "POST",
@@ -125,6 +132,12 @@ export default function AdminPage() {
   }
 
   const pendingPayments = payments.filter((p) => p.status === "pending")
+  const filteredQuestions = questionCourseFilter === "all"
+    ? questions
+    : questions.filter(q => {
+        const c = courses.find(c => c.id === questionCourseFilter)
+        return c ? q.course.name === c.name : true
+      })
   const tabs: { key: Tab; label: string; badge?: number }[] = [
     { key: "payments", label: "בקשות תשלום", badge: pendingPayments.length },
     { key: "users", label: "משתמשים" },
@@ -253,14 +266,37 @@ export default function AdminPage() {
       {/* Questions Tab */}
       {tab === "questions" && (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({questions.length})</h3>
-            <button
-              onClick={() => setShowAddQuestion(!showAddQuestion)}
-              style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
-            >
-              + הוסף שאלה
-            </button>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({filteredQuestions.length})</h3>
+              <select
+                value={questionCourseFilter}
+                onChange={e => setQuestionCourseFilter(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="all">כל הקורסים</option>
+                {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              {questionCourseFilter !== "all" && (
+                <button
+                  onClick={() => {
+                    const c = courses.find(c => c.id === questionCourseFilter)
+                    if (c) deleteAllInCourse(c.id, c.name)
+                  }}
+                  style={{ padding: "8px 14px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+                >
+                  מחק הכל
+                </button>
+              )}
+              <button
+                onClick={() => setShowAddQuestion(!showAddQuestion)}
+                style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              >
+                + הוסף שאלה
+              </button>
+            </div>
           </div>
 
           {showAddQuestion && courses.length > 0 && (
@@ -309,7 +345,7 @@ export default function AdminPage() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {questions.slice(0, 50).map((q) => (
+            {filteredQuestions.map((q) => (
               <div key={q.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1, overflow: "hidden" }}>
                   <div style={{ fontWeight: 500, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{q.question}</div>

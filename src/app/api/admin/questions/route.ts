@@ -64,8 +64,14 @@ export async function DELETE(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const id = searchParams.get("id")
-    if (!id) return NextResponse.json({ error: "חסר ID" }, { status: 400 })
+    const courseId = searchParams.get("courseId")
 
+    if (courseId && !id) {
+      const { count } = await prisma.question.deleteMany({ where: { courseId } })
+      return NextResponse.json({ success: true, count })
+    }
+
+    if (!id) return NextResponse.json({ error: "חסר ID" }, { status: 400 })
     await prisma.question.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch {
