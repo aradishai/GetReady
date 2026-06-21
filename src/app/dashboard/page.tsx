@@ -40,12 +40,11 @@ export default function DashboardPage() {
         שלום, {user.name}
       </h1>
 
-      {/* Course Cards — auto-fill grid, 2 cols mobile / 3 cols desktop */}
+      {/* Course Cards — always 3 columns */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, 160px)",
-        gap: 16,
-        justifyContent: "center",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: 10,
         maxWidth: 520,
         margin: "0 auto",
       }}>
@@ -60,8 +59,8 @@ export default function DashboardPage() {
           <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
             <div
               style={{
-                width: 160,
-                height: 257,
+                width: "100%",
+                aspectRatio: "160 / 257",
                 overflow: "hidden",
                 borderRadius: 14,
                 cursor: "pointer",
