@@ -19,6 +19,18 @@ export async function GET(req: NextRequest) {
     const sourceType = searchParams.get("sourceType")
     const limit = parseInt(searchParams.get("limit") || "10")
 
+    // Fetch specific questions by IDs (competition mode)
+    const idsParam = searchParams.get("ids")
+    if (idsParam) {
+      const ids = idsParam.split(",").filter(Boolean)
+      const questions = await prisma.question.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, question: true, answerA: true, answerB: true, answerC: true, answerD: true, correctAnswer: true, explanation: true, topic: true, difficulty: true, sourceType: true, examYear: true },
+      })
+      const ordered = ids.map(id => questions.find(q => q.id === id)).filter(Boolean)
+      return NextResponse.json(ordered)
+    }
+
     const where: Record<string, unknown> = { isActive: true }
     if (courseId) where.courseId = courseId
     if (topic && topic !== "all") where.topic = topic

@@ -114,6 +114,35 @@ model UserAchievement {
   @@unique([userId, type])
 }
 
+model Competition {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  status      String   @default("waiting")
+  courseId    String?
+  difficulty  String   @default("all")
+  questionIds String   @default("[]")
+  hostId      String
+  createdAt   DateTime @default(now())
+
+  participants CompetitionParticipant[]
+}
+
+model CompetitionParticipant {
+  id             String    @id @default(cuid())
+  competitionId  String
+  userId         String
+  userName       String
+  score          Float?
+  correctAnswers Int?
+  totalQuestions Int?
+  finishedAt     DateTime?
+  joinedAt       DateTime  @default(now())
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, userId])
+}
+
 model PaymentRequest {
   id             String   @id @default(cuid())
   userId         String

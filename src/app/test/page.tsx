@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -16,8 +16,17 @@ interface Question {
   difficulty: string
 }
 
+interface CompParticipant {
+  userId: string
+  userName: string
+  score: number | null
+  correctAnswers: number | null
+  totalQuestions: number | null
+  finished: boolean
+}
+
 type Answer = "A" | "B" | "C" | "D"
-type Phase = "setup" | "test" | "submitting"
+type Phase = "setup" | "test" | "submitting" | "results"
 
 const QUESTION_COUNT = 25
 
@@ -35,28 +44,77 @@ const TIME_OPTIONS = [
 ]
 
 export default function TestPage() {
-  const { data: session, status } = useSession()
+  const { data: session, status: authStatus } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const courseId = searchParams.get("courseId") || ""
+  const courseId      = searchParams.get("courseId") || ""
+  const competitionCode = searchParams.get("competitionCode") || ""
 
-  const [phase, setPhase]               = useState<Phase>("setup")
+  const [phase, setPhase]               = useState<Phase>(competitionCode ? "test" : "setup")
   const [difficulty, setDifficulty]     = useState("all")
   const [timeLimitPerQ, setTimeLimitPerQ] = useState(0)
+  const [joinMode, setJoinMode]         = useState<"solo" | "join">("solo")
+  const [joinCode, setJoinCode]         = useState("")
+  const [joinError, setJoinError]       = useState("")
+  const [creatingRoom, setCreatingRoom] = useState(false)
 
   const [questions, setQuestions] = useState<Question[]>([])
   const [answers, setAnswers]     = useState<Record<number, Answer>>({})
   const [current, setCurrent]     = useState(0)
-  const [loading, setLoading]     = useState(false)
+  const [loading, setLoading]     = useState(competitionCode ? true : false)
   const [timeLeft, setTimeLeft]   = useState<number | null>(null)
   const startTime = useRef(Date.now())
 
-  useEffect(() => {
-    if (status === "unauthenticated") router.push("/login")
-    if (status === "authenticated" && !session.user.isPaid) router.push("/payment")
-  }, [status, session, router])
+  // Competition state
+  const [compParticipants, setCompParticipants] = useState<CompParticipant[]>([])
+  const [finishedCount, setFinishedCount]       = useState(0)
+  const [compResults, setCompResults]           = useState<CompParticipant[]>([])
+  const [allFinished, setAllFinished]           = useState(false)
 
-  // Timer — resets on every question change
+  useEffect(() => {
+    if (authStatus === "unauthenticated") router.push("/login")
+    if (authStatus === "authenticated" && !session.user.isPaid) router.push("/payment")
+  }, [authStatus, session, router])
+
+  // Load competition questions on mount
+  useEffect(() => {
+    if (!competitionCode || authStatus !== "authenticated") return
+    setLoading(true)
+    fetch(`/api/competition/${competitionCode}`)
+      .then(r => r.json())
+      .then(async data => {
+        const ids: string[] = data.questionIds
+        if (!ids.length) { setLoading(false); return }
+        const qs = await fetch(`/api/questions?ids=${ids.join(",")}`).then(r => r.json())
+        setQuestions(Array.isArray(qs) ? qs : [])
+        setCompParticipants(data.participants)
+        setFinishedCount(data.participants.filter((p: CompParticipant) => p.finished).length)
+        startTime.current = Date.now()
+        setLoading(false)
+      })
+  }, [competitionCode, authStatus])
+
+  // Poll competition status during test
+  const pollComp = useCallback(async () => {
+    if (!competitionCode) return
+    const data = await fetch(`/api/competition/${competitionCode}`).then(r => r.json())
+    const finished = data.participants.filter((p: CompParticipant) => p.finished).length
+    setFinishedCount(finished)
+    setCompParticipants(data.participants)
+    if (data.allFinished && phase === "submitting") {
+      setCompResults(data.participants.sort((a: CompParticipant, b: CompParticipant) => (b.score ?? 0) - (a.score ?? 0)))
+      setAllFinished(true)
+      setPhase("results")
+    }
+  }, [competitionCode, phase])
+
+  useEffect(() => {
+    if (!competitionCode || phase !== "submitting") return
+    const interval = setInterval(pollComp, 2500)
+    return () => clearInterval(interval)
+  }, [competitionCode, phase, pollComp])
+
+  // Timer
   useEffect(() => {
     if (phase !== "test" || timeLimitPerQ === 0) return
     setTimeLeft(timeLimitPerQ)
@@ -87,25 +145,66 @@ export default function TestPage() {
     setPhase("test")
   }
 
+  async function createRoom() {
+    setCreatingRoom(true)
+    const res = await fetch("/api/competition", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ courseId: courseId || null, difficulty }),
+    })
+    const data = await res.json()
+    if (data.code) router.push(`/competition/${data.code}`)
+    else setCreatingRoom(false)
+  }
+
+  async function joinRoom() {
+    if (!joinCode.trim()) return
+    const code = joinCode.trim().toUpperCase()
+    const joinRes = await fetch(`/api/competition/${code}/join`, { method: "POST" })
+    if (joinRes.ok) router.push(`/competition/${code}`)
+    else setJoinError("קוד לא נמצא — נסה שוב")
+  }
+
   function selectAnswer(key: Answer) {
     setAnswers(a => ({ ...a, [current]: key }))
   }
 
   async function submitTest() {
     setPhase("submitting")
+    const correct = questions.filter((q, i) => (answers[i] || "A") === q.correctAnswer).length
+    const total = questions.length
+    const score = Math.round((correct / total) * 100)
     const timeSpent = Math.round((Date.now() - startTime.current) / 1000)
-    const answersPayload = questions.map((q, i) => ({
-      questionId: q.id,
-      userAnswer: answers[i] || "A",
-      isCorrect: (answers[i] || "A") === q.correctAnswer,
-    }))
-    const res = await fetch("/api/results", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ courseId: courseId || questions[0]?.id, answers: answersPayload, timeSpent }),
-    })
-    const result = await res.json()
-    if (result.resultId) router.push(`/results/${result.resultId}`)
+
+    if (competitionCode) {
+      // Competition mode: submit to competition finish
+      const res = await fetch(`/api/competition/${competitionCode}/finish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ score, correctAnswers: correct, totalQuestions: total }),
+      })
+      const data = await res.json()
+      if (data.allFinished) {
+        setCompResults(data.results)
+        setAllFinished(true)
+        setPhase("results")
+      }
+      // else keep polling (useEffect above)
+    } else {
+      // Normal mode: save result
+      const answersPayload = questions.map((q, i) => ({
+        questionId: q.id,
+        userAnswer: answers[i] || "A",
+        isCorrect: (answers[i] || "A") === q.correctAnswer,
+      }))
+      const res = await fetch("/api/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId: courseId || questions[0]?.id, answers: answersPayload, timeSpent }),
+      })
+      const result = await res.json()
+      if (result.resultId) router.push(`/results/${result.resultId}`)
+    }
   }
 
   /* ── SETUP SCREEN ── */
@@ -144,44 +243,161 @@ export default function TestPage() {
           </div>
         </div>
 
-        {/* Time per question */}
-        <div style={{ marginBottom: 40 }}>
-          <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>זמן לשאלה</div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            {TIME_OPTIONS.map(opt => (
-              <button key={opt.value} onClick={() => setTimeLimitPerQ(opt.value)} style={btnBase(timeLimitPerQ === opt.value)}>
-                {opt.label}
-              </button>
-            ))}
+        {/* Time per question (solo only) */}
+        {joinMode === "solo" && (
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>זמן לשאלה</div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {TIME_OPTIONS.map(opt => (
+                <button key={opt.value} onClick={() => setTimeLimitPerQ(opt.value)} style={btnBase(timeLimitPerQ === opt.value)}>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mode selector */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>מצב משחק</div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => setJoinMode("solo")} style={btnBase(joinMode === "solo")}>יחיד</button>
+            <button onClick={() => setJoinMode("join")} style={btnBase(joinMode === "join")}>תחרות עם חברים</button>
           </div>
         </div>
 
-        <button
-          onClick={startTest}
-          disabled={loading}
-          style={{ width: "100%", padding: "16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 17, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
-        >
-          {loading ? "טוען שאלות..." : "התחל מבחן"}
-        </button>
+        {/* Competition options */}
+        {joinMode === "join" && (
+          <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: 20, marginBottom: 28 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <button
+                onClick={createRoom}
+                disabled={creatingRoom}
+                style={{ width: "100%", padding: "13px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
+              >
+                {creatingRoom ? "יוצר חדר..." : "צור חדר חדש"}
+              </button>
+              <div style={{ textAlign: "center", color: "var(--muted)", fontSize: 13 }}>או</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  value={joinCode}
+                  onChange={e => { setJoinCode(e.target.value.toUpperCase()); setJoinError("") }}
+                  placeholder="הכנס קוד (4 ספרות)"
+                  maxLength={4}
+                  style={{
+                    flex: 1, padding: "12px 14px", background: "var(--muted-bg)", border: `1px solid ${joinError ? "var(--danger)" : "var(--card-border)"}`,
+                    borderRadius: 10, color: "var(--foreground)", fontSize: 16, fontFamily: "monospace", letterSpacing: 4, textAlign: "center",
+                  }}
+                />
+                <button
+                  onClick={joinRoom}
+                  style={{ padding: "12px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 14, fontWeight: 600 }}
+                >
+                  הצטרף
+                </button>
+              </div>
+              {joinError && <div style={{ color: "var(--danger)", fontSize: 13 }}>{joinError}</div>}
+            </div>
+          </div>
+        )}
+
+        {joinMode === "solo" && (
+          <button
+            onClick={startTest}
+            disabled={loading}
+            style={{ width: "100%", padding: "16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 17, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
+          >
+            {loading ? "טוען שאלות..." : "התחל מבחן"}
+          </button>
+        )}
       </div>
     )
   }
 
+  /* ── WAITING FOR RESULTS ── */
   if (phase === "submitting") {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-        <div style={{ color: "#fff" }}>שומר תוצאות...</div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", gap: 16 }}>
+        <div style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>סיימת! ממתין לשאר...</div>
+        {competitionCode && compParticipants.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: 360 }}>
+            {compParticipants.map(p => (
+              <div key={p.userId} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontWeight: 600 }}>{p.userName}</span>
+                <span style={{ fontSize: 13, color: p.finished ? "var(--success)" : "var(--muted)" }}>
+                  {p.finished ? "✓ סיים" : "בתהליך..."}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        {!competitionCode && <div style={{ color: "var(--muted)" }}>שומר תוצאות...</div>}
       </div>
     )
   }
 
-  if (questions.length === 0) {
+  /* ── COMPETITION RESULTS POPUP ── */
+  if (phase === "results" && competitionCode) {
+    const myScore = compResults.find(p => p.userId === session?.user?.id)
+    const winner = compResults[0]
+    const iWon = winner?.userId === session?.user?.id
+
     return (
-      <div style={{ maxWidth: 500, margin: "0 auto", padding: "60px 16px", textAlign: "center" }}>
-        <p style={{ color: "#fff", fontSize: 18 }}>אין שאלות זמינות לקורס זה עדיין.</p>
-        <button onClick={() => setPhase("setup")} style={{ marginTop: 20, padding: "12px 24px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 15 }}>
-          חזור להגדרות
-        </button>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+        <div style={{
+          background: "var(--card)",
+          border: `2px solid ${iWon ? "var(--warning)" : "var(--card-border)"}`,
+          borderRadius: 24,
+          padding: "40px 32px",
+          maxWidth: 440,
+          width: "100%",
+          boxShadow: iWon ? "0 0 40px rgba(234,179,8,0.3)" : "none",
+          textAlign: "center",
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 8 }}>{iWon ? "🏆" : "🎯"}</div>
+          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 4 }}>
+            {iWon ? "ניצחת!" : `${winner?.userName} ניצח!`}
+          </h2>
+          <p style={{ color: "var(--muted)", marginBottom: 28 }}>תוצאות התחרות</p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
+            {compResults.map((p, i) => (
+              <div key={p.userId} style={{
+                background: i === 0 ? "rgba(234,179,8,0.08)" : "var(--muted-bg)",
+                border: `1.5px solid ${i === 0 ? "rgba(234,179,8,0.4)" : "var(--card-border)"}`,
+                borderRadius: 12,
+                padding: "12px 18px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}>
+                <span style={{ fontSize: 20, width: 28 }}>{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</span>
+                <span style={{ flex: 1, fontWeight: 700, textAlign: "right" }}>{p.userName}</span>
+                <span style={{ fontWeight: 800, color: i === 0 ? "var(--warning)" : "var(--foreground)", fontSize: 18 }}>
+                  {p.score !== null ? `${Math.round(p.score)}%` : "—"}
+                </span>
+                <span style={{ color: "var(--muted)", fontSize: 13 }}>
+                  {p.correctAnswers}/{p.totalQuestions}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
+            style={{ width: "100%", padding: "14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer" }}
+          >
+            חזרה לקורס
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading || questions.length === 0) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
+        <div style={{ color: "#fff" }}>{loading ? "טוען שאלות..." : "אין שאלות זמינות"}</div>
       </div>
     )
   }
@@ -208,7 +424,12 @@ export default function TestPage() {
         >
           חזור
         </button>
-        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+          {competitionCode && (
+            <div style={{ fontSize: 13, color: "var(--muted)", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, padding: "5px 12px" }}>
+              {finishedCount}/{compParticipants.length} סיימו
+            </div>
+          )}
           {timeLeft !== null && timeLimitPerQ > 0 && (
             <div style={{ fontSize: 22, fontWeight: 800, color: timerColor, minWidth: 50, textAlign: "center" }}>
               {timeLeft}s
