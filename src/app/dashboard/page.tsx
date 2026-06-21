@@ -58,7 +58,10 @@ export default function DashboardPage() {
     avgScore >= 80 ? "var(--success)" : avgScore >= 60 ? "var(--warning)" : "var(--primary)"
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 18px 140px" }}>
+    <div>
+
+      {/* ── Narrow section: Greeting + Stats ── */}
+      <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 18px 0" }}>
 
       {/* ── Greeting ── */}
       <div style={{ marginBottom: 32 }}>
@@ -95,9 +98,11 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* ── Course Cards ── */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+      </div>{/* end narrow section */}
+
+      {/* ── Course Cards — full width, single row ── */}
+      <div style={{ padding: "0 18px", marginBottom: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
           {[
             { id: "course-psychodiag", img: "/icon-green.png",  name: "פסיכודיאגנוסטיקה"  },
             { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
@@ -109,7 +114,7 @@ export default function DashboardPage() {
               <img
                 src={img}
                 alt={name}
-                style={{ width: "100%", display: "block", cursor: "pointer", transition: "transform 0.15s ease" }}
+                style={{ width: "100%", display: "block", cursor: "pointer", transition: "transform 0.15s ease", borderRadius: 8 }}
                 onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.04)")}
                 onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
               />
@@ -117,6 +122,9 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+
+      {/* ── Narrow section: Progress + Results ── */}
+      <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 18px 140px" }}>
 
       {/* ── Main Card: המשך למידה ── */}
       <div
@@ -240,6 +248,7 @@ export default function DashboardPage() {
           </div>
         </>
       )}
+      </div>{/* end narrow section */}
     </div>
   )
 }
