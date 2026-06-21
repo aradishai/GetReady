@@ -111,7 +111,7 @@ export default function CoursePage() {
         <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{courseLevel}</span>
         {SEP}
         <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>התקדמות</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
       </div>
 
       {/* Progress card */}
