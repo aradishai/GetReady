@@ -108,13 +108,13 @@ export default function PracticePage() {
   function getAnswerStyle(key: Answer) {
     const base = {
       width: "100%",
-      padding: "14px 18px",
+      padding: "18px 22px",
       borderRadius: 12,
       border: "1px solid var(--card-border)",
       background: "var(--card)",
       color: "var(--foreground)",
       cursor: selected ? "default" : "pointer",
-      fontSize: 15,
+      fontSize: 18,
       textAlign: "right" as const,
       transition: "all 0.2s",
       display: "flex",
@@ -205,7 +205,7 @@ export default function PracticePage() {
       </div>
 
       {/* Question Card */}
-      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 20, padding: 28, marginBottom: 16 }}>
+      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 24, padding: 36, marginBottom: 16 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
           <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, background: `${difficultyColor[q.difficulty]}22`, color: difficultyColor[q.difficulty], border: `1px solid ${difficultyColor[q.difficulty]}44` }}>
             {q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"}
@@ -220,7 +220,7 @@ export default function PracticePage() {
           )}
         </div>
 
-        <p style={{ fontSize: 18, fontWeight: 600, lineHeight: 1.6, marginBottom: 24 }}>{q.question}</p>
+        <p style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.7, marginBottom: 30 }}>{q.question}</p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {answers.map(({ key, label, text }) => (
