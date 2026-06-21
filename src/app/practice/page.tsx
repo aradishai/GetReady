@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -21,7 +21,7 @@ interface Question {
 
 type Answer = "A" | "B" | "C" | "D"
 
-export default function PracticePage() {
+function PracticePageInner() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -277,5 +277,13 @@ export default function PracticePage() {
         </button>
       </div>
     </div>
+  )
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense fallback={<div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "var(--muted)" }}>טוען...</div>}>
+      <PracticePageInner />
+    </Suspense>
   )
 }

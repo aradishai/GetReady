@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef, useCallback } from "react"
+import { useEffect, useState, useRef, useCallback, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -43,7 +43,7 @@ const TIME_OPTIONS = [
   { value: 90, label: "90 שניות" },
 ]
 
-export default function TestPage() {
+function TestPageInner() {
   const { data: session, status: authStatus } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -523,5 +523,13 @@ export default function TestPage() {
         ))}
       </div>
     </div>
+  )
+}
+
+export default function TestPage() {
+  return (
+    <Suspense fallback={<div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "var(--muted)" }}>טוען...</div>}>
+      <TestPageInner />
+    </Suspense>
   )
 }
