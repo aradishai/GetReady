@@ -95,6 +95,34 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {/* ── Course Cards ── */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+          {[
+            { id: "course-psychodiag", img: "/card-course-psychodiag.png", name: "פסיכודיאגנוסטיקה"  },
+            { id: "course-social",     img: "/card-course-social.png",     name: "פסיכולוגיה חברתית" },
+            { id: "course-iyut",       img: "/card-course-iyut.png",       name: "אישיות"              },
+            { id: "course-assessment", img: "/card-course-assessment.png", name: "אבחון ומיון"         },
+          ].map(({ id, img, name }) => (
+            <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img}
+                alt={name}
+                style={{
+                  width: "100%",
+                  display: "block",
+                  borderRadius: 12,
+                  transition: "transform 0.15s ease",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.04)")}
+                onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* ── Main Card: המשך למידה ── */}
       <div
         style={{
@@ -175,22 +203,6 @@ export default function DashboardPage() {
         >
           ◀ המשך תרגול
         </Link>
-      </div>
-
-      {/* ── Actions ── */}
-      <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14, opacity: 0.75 }}>
-        מה תרצה לעשות?
-      </h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14, marginBottom: 40 }}>
-        {[
-          { href: "/practice",    icon: "/icon-tirgul.png",  label: "תרגול" },
-          { href: "/test-select", icon: "/icon-mivchan.png", label: "מבחן"  },
-        ].map(({ href, icon, label }) => (
-          <Link key={href} href={href} style={{ display: "block", textDecoration: "none", lineHeight: 0 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={icon} alt={label} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block" }} />
-          </Link>
-        ))}
       </div>
 
       {/* ── Recent Results ── */}
