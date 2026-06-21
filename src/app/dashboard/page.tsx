@@ -40,36 +40,38 @@ export default function DashboardPage() {
         שלום, {user.name}
       </h1>
 
-      {/* Course Cards — fixed-width centered container, 2x2 grid, all cards identical size */}
-      <div style={{ maxWidth: 340, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
-          {[
-            { id: "course-social",     img: "/icon-yellow.png",     name: "פסיכולוגיה חברתית" },
-            { id: "course-psychodiag", img: "/icon-psychodiag.jpg", name: "פסיכודיאגנוסטיקה"  },
-            { id: "course-assessment", img: "/icon-orange.png",     name: "אבחון ומיון"         },
-            { id: "course-iyut",       img: "/icon-iyut.png",       name: "אישיות"              },
-          ].map(({ id, img, name }) => (
-            <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  paddingBottom: "160.5%",
-                  overflow: "hidden",
-                  borderRadius: 14,
-                  cursor: "pointer",
-                  transition: "transform 0.15s ease",
-                  background: "transparent",
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)" }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img} alt={name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
-              </div>
-            </Link>
-          ))}
-        </div>
+      {/* Course Cards — 2x2 grid, fixed 220×320px per card, centered */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 220px)",
+        gap: 24,
+        justifyContent: "center",
+      }}>
+        {[
+          { id: "course-social",     img: "/icon-yellow.png",     name: "פסיכולוגיה חברתית" },
+          { id: "course-psychodiag", img: "/icon-psychodiag.jpg", name: "פסיכודיאגנוסטיקה"  },
+          { id: "course-assessment", img: "/icon-orange.png",     name: "אבחון ומיון"         },
+          { id: "course-iyut",       img: "/icon-iyut.png",       name: "אישיות"              },
+        ].map(({ id, img, name }) => (
+          <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
+            <div
+              style={{
+                width: 220,
+                height: 320,
+                overflow: "hidden",
+                borderRadius: 14,
+                cursor: "pointer",
+                transition: "transform 0.15s ease",
+                background: "transparent",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)" }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)" }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
+            </div>
+          </Link>
+        ))}
       </div>
 
     </div>
