@@ -56,6 +56,7 @@ export default function TestPage() {
   const [joinMode, setJoinMode]         = useState<"solo" | "join">("solo")
   const [joinCode, setJoinCode]         = useState("")
   const [joinError, setJoinError]       = useState("")
+  const [createError, setCreateError]   = useState("")
   const [creatingRoom, setCreatingRoom] = useState(false)
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -147,14 +148,19 @@ export default function TestPage() {
 
   async function createRoom() {
     setCreatingRoom(true)
-    const res = await fetch("/api/competition", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ courseId: courseId || null, difficulty }),
-    })
-    const data = await res.json()
-    if (data.code) router.push(`/competition/${data.code}`)
-    else setCreatingRoom(false)
+    setCreateError("")
+    try {
+      const res = await fetch("/api/competition", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId: courseId || null, difficulty }),
+      })
+      const data = await res.json()
+      if (data.code) router.push(`/competition/${data.code}`)
+      else { setCreateError(data.error || "שגיאה ביצירת חדר"); setCreatingRoom(false) }
+    } catch {
+      setCreateError("שגיאת רשת — נסה שוב"); setCreatingRoom(false)
+    }
   }
 
   async function joinRoom() {
@@ -277,6 +283,7 @@ export default function TestPage() {
               >
                 {creatingRoom ? "יוצר חדר..." : "צור חדר חדש"}
               </button>
+              {createError && <div style={{ color: "var(--danger)", fontSize: 13, textAlign: "center" }}>{createError}</div>}
               <div style={{ textAlign: "center", color: "var(--muted)", fontSize: 13 }}>או</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <input

@@ -3,7 +3,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 function generateCode(): string {
-  return Math.random().toString(36).substring(2, 6).toUpperCase()
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("")
 }
 
 export async function POST(req: NextRequest) {
