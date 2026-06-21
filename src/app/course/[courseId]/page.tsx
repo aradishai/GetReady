@@ -104,8 +104,8 @@ export default function CoursePage() {
         <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{coursePoints}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
         {SEP}
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{courseLevel}</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         {SEP}
         <span style={{ color: meta.color, fontWeight: 800, fontSize: 15 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
