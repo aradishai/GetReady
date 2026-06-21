@@ -261,17 +261,17 @@ export default function PracticePage() {
       )}
 
       {/* Navigation buttons */}
-      <div style={{ display: "flex", gap: 10 }}>
+      <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
         <button
           onClick={prevQuestion}
           disabled={current === 0}
-          style={{ padding: "6px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: current === 0 ? "rgba(255,255,255,0.2)" : "var(--muted)", cursor: current === 0 ? "default" : "pointer", fontSize: 13 }}
+          style={{ flex: 1, padding: "6px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: current === 0 ? "rgba(255,255,255,0.2)" : "var(--muted)", cursor: current === 0 ? "default" : "pointer", fontSize: 13 }}
         >
           הקודם
         </button>
         <button
           onClick={nextQuestion}
-          style={{ flex: 1, padding: "6px 14px", background: showResult ? "var(--primary)" : "var(--card)", border: showResult ? "none" : "1px solid var(--card-border)", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", color: showResult ? "#fff" : "var(--muted)" }}
+          style={{ flex: 1, padding: "6px 14px", background: showResult ? "var(--primary)" : "var(--card)", border: showResult ? "1px solid var(--primary)" : "1px solid var(--card-border)", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", color: showResult ? "#fff" : "var(--muted)" }}
         >
           {current < questions.length - 1 ? "שאלה הבאה" : "סיבוב חדש"}
         </button>
