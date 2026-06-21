@@ -56,6 +56,7 @@ export default function DashboardPage() {
                 borderRadius: 14,
                 cursor: "pointer",
                 transition: "transform 0.15s ease",
+                background: "transparent",
               }}
               onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)" }}
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)" }}
