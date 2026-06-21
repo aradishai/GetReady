@@ -34,7 +34,7 @@
 
 body {
   background:
-    radial-gradient(ellipse at 50% -5%, rgba(20,55,140,0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 40%, rgba(20,60,160,0.55) 0%, rgba(10,30,90,0.2) 50%, transparent 75%),
     radial-gradient(circle at center, #07102a 0%, #040a1a 40%, #020509 70%, #010306 100%);
   background-attachment: fixed;
   color: var(--foreground);
