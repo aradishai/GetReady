@@ -73,32 +73,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* ── Stats Row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 32 }}>
-        {[
-          { label: "התקדמות", value: `${avgScore}%`, color: progressColor },
-          { label: "רמה",        value: user.level,                         color: "var(--primary)" },
-          { label: "מבחנים",    value: user._count.testResults,             color: "var(--accent)" },
-          { label: "נקודות",    value: user.totalPoints.toLocaleString(),   color: "var(--warning)" },
-        ].map(({ label, value, color }) => (
-          <div
-            key={label}
-            style={{
-              background: "var(--card)",
-              border: "1px solid var(--card-border)",
-              borderRadius: 16,
-              padding: "14px 6px",
-              textAlign: "center",
-              boxShadow: `0 0 14px ${color}20`,
-            }}
-          >
-            <div style={{ fontSize: 17, fontWeight: 800, color }}>{value}</div>
-            <div style={{ fontSize: 11, color: "var(--foreground)", opacity: 0.65, marginTop: 3 }}>{label}</div>
-          </div>
-        ))}
-      </div>
 
-      </div>{/* end narrow section */}
+</div>{/* end narrow section */}
 
       {/* ── Course Cards — full width, single row ── */}
       <div style={{ padding: "0 18px", marginBottom: 32 }}>
