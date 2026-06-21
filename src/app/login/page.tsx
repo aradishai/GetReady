@@ -50,9 +50,8 @@ export default function LoginPage() {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <h1 style={{ fontSize: 28, margin: 0, background: "linear-gradient(135deg, #38bdf8, #7dd3fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            <span style={{ fontWeight: 300 }}>Get</span><span style={{ fontWeight: 900 }}>Ready</span>
-          </h1>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-getready.png" alt="GetReady" style={{ height: 64, width: "auto" }} />
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>התחבר לחשבון שלך</p>
         </div>
 
