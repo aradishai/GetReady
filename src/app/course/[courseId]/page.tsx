@@ -37,7 +37,7 @@ export default function CoursePage() {
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    if (status === "authenticated" && !session.user.isPaid) router.push("/payment")
+    // payment gate disabled
   }, [status, session, router])
 
   useEffect(() => {

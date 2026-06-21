@@ -74,7 +74,7 @@ export default function TestPage() {
 
   useEffect(() => {
     if (authStatus === "unauthenticated") router.push("/login")
-    if (authStatus === "authenticated" && !session.user.isPaid) router.push("/payment")
+    // payment gate disabled
   }, [authStatus, session, router])
 
   // Load competition questions on mount
