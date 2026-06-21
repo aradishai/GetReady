@@ -3,6 +3,7 @@ import { Varela_Round } from "next/font/google"
 import "./globals.css"
 import SessionProvider from "@/components/SessionProvider"
 import Navbar from "@/components/Navbar"
+import PageTransition from "@/components/PageTransition"
 
 const varelaRound = Varela_Round({
   weight: "400",
@@ -21,7 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <SessionProvider>
           <Navbar />
-          <main style={{ paddingBottom: 16 }}>{children}</main>
+          <main style={{ paddingBottom: 16 }}>
+            <PageTransition>{children}</PageTransition>
+          </main>
         </SessionProvider>
       </body>
     </html>
