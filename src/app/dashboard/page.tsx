@@ -45,14 +45,20 @@ export default function DashboardPage() {
             { id: "course-assessment", img: "/icon-orange.png", name: "אבחון ומיון"         },
           ].map(({ id, img, name }) => (
             <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={img}
-                alt={name}
-                style={{ width: "100%", display: "block", cursor: "pointer", transition: "transform 0.15s ease", borderRadius: 8 }}
-                onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.04)")}
-                onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-              />
+              <div
+                style={{
+                  aspectRatio: "311 / 499",
+                  overflow: "hidden",
+                  borderRadius: 20,
+                  cursor: "pointer",
+                  transition: "transform 0.15s ease",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.04)" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1)" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
+              </div>
             </Link>
           ))}
         </div>
