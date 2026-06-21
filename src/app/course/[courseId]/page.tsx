@@ -85,9 +85,6 @@ export default function CoursePage() {
         <img src={meta.img} alt={meta.name} style={{ width: 80, borderRadius: 14, flexShrink: 0 }} />
         <div>
           <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
-          <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 4 }}>
-            {results.length > 0 ? `${results.length} מבחנים הושלמו` : "טרם בוצעו מבחנים"}
-          </div>
         </div>
       </div>
 
