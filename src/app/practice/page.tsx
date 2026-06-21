@@ -95,6 +95,14 @@ export default function PracticePage() {
     }
   }
 
+  function prevQuestion() {
+    if (current > 0) {
+      setCurrent((c) => c - 1)
+      setSelected(null)
+      setShowResult(false)
+    }
+  }
+
   const q = questions[current]
   const answers: { key: Answer; label: string; text: string }[] = q
     ? [
@@ -252,15 +260,22 @@ export default function PracticePage() {
         </div>
       )}
 
-      {/* Next Button */}
-      {showResult && (
+      {/* Navigation buttons */}
+      <div style={{ display: "flex", gap: 10 }}>
+        <button
+          onClick={prevQuestion}
+          disabled={current === 0}
+          style={{ padding: "6px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: current === 0 ? "rgba(255,255,255,0.2)" : "var(--muted)", cursor: current === 0 ? "default" : "pointer", fontSize: 13 }}
+        >
+          הקודם
+        </button>
         <button
           onClick={nextQuestion}
-          style={{ width: "100%", padding: "14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+          style={{ flex: 1, padding: "6px 14px", background: showResult ? "var(--primary)" : "var(--card)", border: showResult ? "none" : "1px solid var(--card-border)", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", color: showResult ? "#fff" : "var(--muted)" }}
         >
           {current < questions.length - 1 ? "שאלה הבאה" : "סיבוב חדש"}
         </button>
-      )}
+      </div>
     </div>
   )
 }
