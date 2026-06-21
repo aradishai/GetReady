@@ -33,15 +33,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ padding: "32px 18px 140px" }}>
+    <div style={{ padding: "32px 18px 140px", display: "flex", flexDirection: "column", alignItems: "center" }}>
 
       {/* Greeting */}
-      <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 24px", lineHeight: 1.2 }}>
+      <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 24px", lineHeight: 1.2, alignSelf: "flex-start" }}>
         שלום, {user.name}
       </h1>
 
-      {/* Course Cards — 2x2, compact */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, maxWidth: 320 }}>
+      {/* Course Cards — 2x2, centered */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 150px)", gap: 12 }}>
         {[
           { id: "course-psychodiag", img: "/icon-psychodiag.jpg", name: "פסיכודיאגנוסטיקה"  },
           { id: "course-social",     img: "/icon-yellow.png", name: "פסיכולוגיה חברתית" },
