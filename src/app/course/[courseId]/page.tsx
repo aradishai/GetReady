@@ -76,8 +76,9 @@ export default function CoursePage() {
   }
 
   const avgScore     = results.length ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0
-  const coursePoints = results.reduce((a, r) => a + r.correctAnswers * 4, 0)
-  const courseLevel  = Math.floor(coursePoints / 50) + 1
+  const coursePoints   = results.reduce((a, r) => a + r.correctAnswers * 4, 0)
+  const levelThreshold = totalQ > 0 ? Math.max(1, Math.floor(totalQ / 10)) : 1
+  const courseLevel    = practiceRec.bestStreak > 0 ? Math.ceil(practiceRec.bestStreak / levelThreshold) : 1
   const lastResult   = results[0] ?? null
 
   const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
