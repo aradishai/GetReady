@@ -132,7 +132,7 @@ export default function CoursePage() {
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         {SEP}
         <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
+        <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע מבחנים</span>
         {practiceRec.bestStreak > 0 && <>
           {SEP}
           <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
