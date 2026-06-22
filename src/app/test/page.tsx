@@ -228,31 +228,31 @@ function TestPageInner() {
   /* ── SETUP SCREEN ── */
   if (phase === "setup") {
     const btnBase = (active: boolean): React.CSSProperties => ({
-      padding: "10px 20px",
+      padding: isMobile ? "7px 14px" : "10px 20px",
       borderRadius: 10,
       border: `2px solid ${active ? "var(--primary)" : "var(--card-border)"}`,
       background: active ? "rgba(56,189,248,0.1)" : "var(--card)",
       color: active ? "var(--primary)" : "var(--foreground)",
       cursor: "pointer",
-      fontSize: 14,
+      fontSize: isMobile ? 13 : 14,
       fontWeight: active ? 700 : 400,
     })
 
     return (
-      <div style={{ maxWidth: 500, margin: "0 auto", padding: "48px 24px" }}>
+      <div style={{ maxWidth: 500, margin: "0 auto", padding: isMobile ? "16px 14px" : "48px 24px" }}>
         <button
           onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
-          style={{ padding: "9px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 14, marginBottom: 32 }}
+          style={{ padding: isMobile ? "7px 14px" : "9px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 13, marginBottom: isMobile ? 16 : 32 }}
         >
           חזרה לקורס
         </button>
 
-        <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 32 }}>הגדרות מבחן</h1>
+        <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, marginBottom: isMobile ? 16 : 32 }}>הגדרות מבחן</h1>
 
         {/* Difficulty */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>רמת קושי</div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ marginBottom: isMobile ? 16 : 28 }}>
+          <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>רמת קושי</div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {DIFFICULTY_OPTIONS.map(opt => (
               <button key={opt.value} onClick={() => setDifficulty(opt.value)} style={btnBase(difficulty === opt.value)}>
                 {opt.label}
@@ -263,9 +263,9 @@ function TestPageInner() {
 
         {/* Time per question (solo only) */}
         {joinMode === "solo" && (
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>זמן לשאלה</div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <div style={{ marginBottom: isMobile ? 16 : 28 }}>
+            <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>זמן לשאלה</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {TIME_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setTimeLimitPerQ(opt.value)} style={btnBase(timeLimitPerQ === opt.value)}>
                   {opt.label}
@@ -276,9 +276,9 @@ function TestPageInner() {
         )}
 
         {/* Mode selector */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 14, color: "var(--muted)", marginBottom: 10 }}>מצב משחק</div>
-          <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ marginBottom: isMobile ? 16 : 28 }}>
+          <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>מצב משחק</div>
+          <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setJoinMode("solo")} style={btnBase(joinMode === "solo")}>יחיד</button>
             <button onClick={() => setJoinMode("join")} style={btnBase(joinMode === "join")}>תחרות עם חברים</button>
           </div>
@@ -286,12 +286,12 @@ function TestPageInner() {
 
         {/* Competition options */}
         {joinMode === "join" && (
-          <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: 20, marginBottom: 28 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: isMobile ? 14 : 20, marginBottom: isMobile ? 16 : 28 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <button
                 onClick={createRoom}
                 disabled={creatingRoom}
-                style={{ width: "100%", padding: "13px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
+                style={{ width: "100%", padding: isMobile ? "11px" : "13px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: isMobile ? 14 : 15, fontWeight: 700, cursor: "pointer" }}
               >
                 {creatingRoom ? "יוצר חדר..." : "צור חדר חדש"}
               </button>
@@ -304,13 +304,13 @@ function TestPageInner() {
                   placeholder="הכנס קוד (4 ספרות)"
                   maxLength={4}
                   style={{
-                    flex: 1, padding: "12px 14px", background: "var(--muted-bg)", border: `1px solid ${joinError ? "var(--danger)" : "var(--card-border)"}`,
+                    flex: 1, padding: isMobile ? "10px 12px" : "12px 14px", background: "var(--muted-bg)", border: `1px solid ${joinError ? "var(--danger)" : "var(--card-border)"}`,
                     borderRadius: 10, color: "var(--foreground)", fontSize: 16, fontFamily: "monospace", letterSpacing: 4, textAlign: "center",
                   }}
                 />
                 <button
                   onClick={joinRoom}
-                  style={{ padding: "12px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 14, fontWeight: 600 }}
+                  style={{ padding: isMobile ? "10px 14px" : "12px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
                 >
                   הצטרף
                 </button>
@@ -324,7 +324,7 @@ function TestPageInner() {
           <button
             onClick={startTest}
             disabled={loading}
-            style={{ width: "100%", padding: "16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: 17, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
+            style={{ width: "100%", padding: isMobile ? "13px" : "16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: isMobile ? 15 : 17, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
           >
             {loading ? "טוען שאלות..." : "התחל מבחן"}
           </button>
