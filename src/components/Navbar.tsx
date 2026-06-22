@@ -41,7 +41,7 @@ export default function Navbar() {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-getready.png" alt="Get Ready" style={{ height: 54, width: "auto" }} />
-            <span style={{ fontSize: 11, color: "#f5f0e8", textAlign: "center", letterSpacing: 0.3, lineHeight: 1, marginTop: 1 }}>
+            <span style={{ fontSize: 11, color: "#f5f0e8", textAlign: "center", letterSpacing: 0.3, lineHeight: 1, marginTop: -3 }}>
               ערד ישי | חותם בעולם
             </span>
           </div>
