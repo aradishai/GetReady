@@ -52,6 +52,7 @@ export default function LoginPage() {
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-getready.png" alt="GetReady" style={{ height: 90, width: "auto", display: "block", margin: "0 auto" }} />
+          <p style={{ color: "#f5f0e8", marginTop: 2, fontSize: 12, letterSpacing: 0.3 }}>ערד ישי | חותם בעולם</p>
           <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 15 }}>התחבר לחשבון שלך</p>
         </div>
 
