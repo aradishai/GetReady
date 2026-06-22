@@ -6,6 +6,7 @@ import { QUESTIONS_SOCIAL } from "@/data/q-social"
 import { QUESTIONS_IYUT } from "@/data/q-iyut"
 import { QUESTIONS_CHEVROT } from "@/data/q-chevrot"
 import { QUESTIONS_ASSESSMENT } from "@/data/q-assessment"
+import { QUESTIONS_ORGS } from "@/data/q-orgs"
 
 const SEED_SECRET = "getready-seed-2024"
 
@@ -54,6 +55,7 @@ async function runSeed(secret: string | null) {
       ["course-iyut", QUESTIONS_IYUT],
       ["course-chevrot", QUESTIONS_CHEVROT],
       ["course-assessment", QUESTIONS_ASSESSMENT],
+      ["course-orgs", QUESTIONS_ORGS],
     ]
 
     for (const [courseId, questions] of courseQuestions) {
