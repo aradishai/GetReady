@@ -239,7 +239,7 @@ function TestPageInner() {
     })
 
     return (
-      <div style={{ maxWidth: 500, margin: "0 auto", padding: isMobile ? "16px 14px" : "48px 24px" }}>
+      <div style={{ maxWidth: 500, margin: "0 auto", padding: isMobile ? "16px 14px" : "28px 24px" }}>
         <button
           onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
           style={{ padding: isMobile ? "7px 14px" : "9px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 13, marginBottom: isMobile ? 16 : 32 }}
@@ -247,11 +247,11 @@ function TestPageInner() {
           חזרה לקורס
         </button>
 
-        <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, marginBottom: isMobile ? 16 : 32 }}>הגדרות מבחן</h1>
+        <h1 style={{ fontSize: isMobile ? 20 : 20, fontWeight: 800, marginBottom: isMobile ? 16 : 20 }}>הגדרות מבחן</h1>
 
         {/* Difficulty */}
-        <div style={{ marginBottom: isMobile ? 16 : 28 }}>
-          <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>רמת קושי</div>
+        <div style={{ marginBottom: isMobile ? 16 : 16 }}>
+          <div style={{ fontSize: isMobile ? 12 : 13, color: "var(--muted)", marginBottom: 8 }}>רמת קושי</div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {DIFFICULTY_OPTIONS.map(opt => (
               <button key={opt.value} onClick={() => setDifficulty(opt.value)} style={btnBase(difficulty === opt.value)}>
@@ -263,8 +263,8 @@ function TestPageInner() {
 
         {/* Time per question (solo only) */}
         {joinMode === "solo" && (
-          <div style={{ marginBottom: isMobile ? 16 : 28 }}>
-            <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>זמן לשאלה</div>
+          <div style={{ marginBottom: isMobile ? 16 : 16 }}>
+            <div style={{ fontSize: isMobile ? 12 : 13, color: "var(--muted)", marginBottom: 8 }}>זמן לשאלה</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {TIME_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setTimeLimitPerQ(opt.value)} style={btnBase(timeLimitPerQ === opt.value)}>
@@ -276,8 +276,8 @@ function TestPageInner() {
         )}
 
         {/* Mode selector */}
-        <div style={{ marginBottom: isMobile ? 16 : 28 }}>
-          <div style={{ fontSize: isMobile ? 12 : 14, color: "var(--muted)", marginBottom: 8 }}>מצב משחק</div>
+        <div style={{ marginBottom: isMobile ? 16 : 16 }}>
+          <div style={{ fontSize: isMobile ? 12 : 13, color: "var(--muted)", marginBottom: 8 }}>מצב משחק</div>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setJoinMode("solo")} style={btnBase(joinMode === "solo")}>יחיד</button>
             <button onClick={() => setJoinMode("join")} style={btnBase(joinMode === "join")}>תחרות עם חברים</button>
@@ -286,12 +286,12 @@ function TestPageInner() {
 
         {/* Competition options */}
         {joinMode === "join" && (
-          <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: isMobile ? 14 : 20, marginBottom: isMobile ? 16 : 28 }}>
+          <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: isMobile ? 14 : 16, marginBottom: isMobile ? 16 : 16 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <button
                 onClick={createRoom}
                 disabled={creatingRoom}
-                style={{ width: "100%", padding: isMobile ? "11px" : "13px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: isMobile ? 14 : 15, fontWeight: 700, cursor: "pointer" }}
+                style={{ width: "100%", padding: isMobile ? "11px" : "11px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: isMobile ? 14 : 14, fontWeight: 700, cursor: "pointer" }}
               >
                 {creatingRoom ? "יוצר חדר..." : "צור חדר חדש"}
               </button>
@@ -304,13 +304,13 @@ function TestPageInner() {
                   placeholder="הכנס קוד (4 ספרות)"
                   maxLength={4}
                   style={{
-                    flex: 1, padding: isMobile ? "10px 12px" : "12px 14px", background: "var(--muted-bg)", border: `1px solid ${joinError ? "var(--danger)" : "var(--card-border)"}`,
+                    flex: 1, padding: isMobile ? "10px 12px" : "10px 12px", background: "var(--muted-bg)", border: `1px solid ${joinError ? "var(--danger)" : "var(--card-border)"}`,
                     borderRadius: 10, color: "var(--foreground)", fontSize: 16, fontFamily: "monospace", letterSpacing: 4, textAlign: "center",
                   }}
                 />
                 <button
                   onClick={joinRoom}
-                  style={{ padding: isMobile ? "10px 14px" : "12px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+                  style={{ padding: isMobile ? "10px 14px" : "10px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "var(--foreground)", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
                 >
                   הצטרף
                 </button>
@@ -324,7 +324,7 @@ function TestPageInner() {
           <button
             onClick={startTest}
             disabled={loading}
-            style={{ width: "100%", padding: isMobile ? "13px" : "16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: isMobile ? 15 : 17, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
+            style={{ width: "100%", padding: isMobile ? "13px" : "13px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 12, fontSize: isMobile ? 15 : 15, fontWeight: 700, cursor: loading ? "wait" : "pointer" }}
           >
             {loading ? "טוען שאלות..." : "התחל מבחן"}
           </button>
@@ -434,12 +434,12 @@ function TestPageInner() {
   const timerColor = timeLeft !== null && timeLeft <= 10 ? "var(--danger)" : timeLeft !== null && timeLeft <= 20 ? "var(--warning)" : "var(--success)"
 
   return (
-    <div style={{ maxWidth: 860, margin: "0 auto", padding: isMobile ? "10px 10px" : "32px 24px", color: "#fff" }}>
+    <div style={{ maxWidth: 860, margin: "0 auto", padding: isMobile ? "10px 10px" : "20px 24px", color: "#fff" }}>
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: isMobile ? 8 : 16 }}>
         <button
           onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
-          style={{ padding: isMobile ? "7px 14px" : "11px 24px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: isMobile ? 13 : 17 }}
+          style={{ padding: isMobile ? "7px 14px" : "8px 18px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, color: "#fff", cursor: "pointer", fontSize: isMobile ? 13 : 14 }}
         >
           חזור
         </button>
@@ -450,11 +450,11 @@ function TestPageInner() {
             </div>
           )}
           {timeLeft !== null && timeLimitPerQ > 0 && (
-            <div style={{ fontSize: isMobile ? 16 : 22, fontWeight: 800, color: timerColor, minWidth: 36, textAlign: "center" }}>
+            <div style={{ fontSize: isMobile ? 16 : 17, fontWeight: 800, color: timerColor, minWidth: 36, textAlign: "center" }}>
               {timeLeft}s
             </div>
           )}
-          <div style={{ fontSize: isMobile ? 13 : 18, color: "#fff", fontWeight: 600 }}>
+          <div style={{ fontSize: isMobile ? 13 : 14, color: "#fff", fontWeight: 600 }}>
             שאלה {current + 1} / {questions.length}
           </div>
         </div>
@@ -473,22 +473,22 @@ function TestPageInner() {
       </div>
 
       {/* Question */}
-      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: isMobile ? 14 : 24, padding: isMobile ? "12px 10px" : 36, marginBottom: isMobile ? 10 : 20 }}>
-        <p style={{ fontSize: isMobile ? 15 : 22, fontWeight: 600, lineHeight: 1.6, marginBottom: isMobile ? 10 : 30 }}>{q.question}</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 7 : 14 }}>
+      <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: isMobile ? 14 : 18, padding: isMobile ? "12px 10px" : "20px 24px", marginBottom: isMobile ? 10 : 14 }}>
+        <p style={{ fontSize: isMobile ? 15 : 17, fontWeight: 600, lineHeight: 1.6, marginBottom: isMobile ? 10 : 18 }}>{q.question}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 7 : 9 }}>
           {answersObj.map(({ key, label, text }) => (
             <button
               key={key}
               onClick={() => selectAnswer(key)}
               style={{
-                width: "100%", padding: isMobile ? "9px 10px" : "18px 22px", borderRadius: isMobile ? 10 : 14, textAlign: "right", cursor: "pointer",
+                width: "100%", padding: isMobile ? "9px 10px" : "12px 16px", borderRadius: isMobile ? 10 : 11, textAlign: "right", cursor: "pointer",
                 border: `2px solid ${answers[current] === key ? "var(--primary)" : "var(--card-border)"}`,
                 background: answers[current] === key ? "rgba(56,189,248,0.1)" : "var(--card)",
-                color: "#fff", fontSize: isMobile ? 13 : 18,
-                display: "flex", alignItems: "center", gap: isMobile ? 10 : 16, transition: "all 0.15s",
+                color: "#fff", fontSize: isMobile ? 13 : 15,
+                display: "flex", alignItems: "center", gap: isMobile ? 10 : 12, transition: "all 0.15s",
               }}
             >
-              <span style={{ width: isMobile ? 26 : 36, height: isMobile ? 26 : 36, borderRadius: "50%", background: answers[current] === key ? "var(--primary)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 12 : 16, fontWeight: 700, flexShrink: 0, color: "#fff" }}>
+              <span style={{ width: isMobile ? 26 : 28, height: isMobile ? 26 : 28, borderRadius: "50%", background: answers[current] === key ? "var(--primary)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 12 : 13, fontWeight: 700, flexShrink: 0, color: "#fff" }}>
                 {label}
               </span>
               {text}
@@ -502,29 +502,29 @@ function TestPageInner() {
         <button
           onClick={() => setCurrent(c => Math.max(0, c - 1))}
           disabled={current === 0}
-          style={{ padding: isMobile ? "10px 16px" : "16px 28px", borderRadius: 12, border: "1px solid var(--card-border)", background: "var(--card)", color: current === 0 ? "var(--muted)" : "var(--foreground)", cursor: current === 0 ? "not-allowed" : "pointer", fontSize: isMobile ? 14 : 17 }}
+          style={{ padding: isMobile ? "10px 16px" : "11px 20px", borderRadius: 12, border: "1px solid var(--card-border)", background: "var(--card)", color: current === 0 ? "var(--muted)" : "var(--foreground)", cursor: current === 0 ? "not-allowed" : "pointer", fontSize: isMobile ? 14 : 14 }}
         >
           קודם
         </button>
         {current < questions.length - 1 ? (
-          <button onClick={() => setCurrent(c => c + 1)} style={{ flex: 1, padding: isMobile ? "10px 16px" : "16px 28px", borderRadius: 12, border: "none", background: "var(--primary)", color: "#fff", cursor: "pointer", fontSize: isMobile ? 14 : 18, fontWeight: 600 }}>
+          <button onClick={() => setCurrent(c => c + 1)} style={{ flex: 1, padding: isMobile ? "10px 16px" : "11px 20px", borderRadius: 12, border: "none", background: "var(--primary)", color: "#fff", cursor: "pointer", fontSize: isMobile ? 14 : 15, fontWeight: 600 }}>
             הבא
           </button>
         ) : (
-          <button onClick={submitTest} style={{ flex: 1, padding: isMobile ? "10px 16px" : "16px 28px", borderRadius: 12, border: "none", background: "var(--success)", color: "#fff", cursor: "pointer", fontSize: isMobile ? 14 : 18, fontWeight: 700 }}>
+          <button onClick={submitTest} style={{ flex: 1, padding: isMobile ? "10px 16px" : "11px 20px", borderRadius: 12, border: "none", background: "var(--success)", color: "#fff", cursor: "pointer", fontSize: isMobile ? 14 : 15, fontWeight: 700 }}>
             סיים מבחן
           </button>
         )}
       </div>
 
       {/* Question grid */}
-      <div style={{ display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap", justifyContent: "center" }}>
+      <div style={{ display: "flex", gap: isMobile ? 4 : 4, flexWrap: "wrap", justifyContent: "center" }}>
         {questions.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             style={{
-              width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: 8, cursor: "pointer", fontSize: isMobile ? 11 : 13, fontWeight: 600,
+              width: isMobile ? 28 : 28, height: isMobile ? 28 : 28, borderRadius: 8, cursor: "pointer", fontSize: isMobile ? 11 : 11, fontWeight: 600,
               color: i === current ? "#fff" : answers[i] ? "var(--success)" : "var(--muted)",
               border: `2px solid ${i === current ? "var(--primary)" : answers[i] ? "var(--success)" : "var(--card-border)"}`,
               background: i === current ? "var(--primary)" : answers[i] ? "rgba(52,211,153,0.1)" : "var(--card)",

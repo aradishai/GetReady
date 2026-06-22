@@ -80,7 +80,7 @@ export default function CoursePage() {
   const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "32px 18px 140px" }}>
+    <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "20px 18px 80px" }}>
 
       {/* Back */}
       <button
@@ -94,18 +94,18 @@ export default function CoursePage() {
           fontSize: isMobile ? 13 : 14,
           fontWeight: 600,
           padding: isMobile ? "7px 14px" : "9px 18px",
-          marginBottom: isMobile ? 14 : 24,
+          marginBottom: isMobile ? 14 : 16,
         }}
       >
         חזרה לקורסים
       </button>
 
       {/* Course header */}
-      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 20, marginBottom: isMobile ? 16 : 32 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 14, marginBottom: isMobile ? 16 : 20 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={meta.img} alt={meta.name} style={{ width: isMobile ? 52 : 80, borderRadius: isMobile ? 10 : 14, flexShrink: 0 }} />
+        <img src={meta.img} alt={meta.name} style={{ width: isMobile ? 52 : 60, borderRadius: isMobile ? 10 : 12, flexShrink: 0 }} />
         <div>
-          <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
+          <h1 style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
         </div>
       </div>
 
@@ -115,19 +115,19 @@ export default function CoursePage() {
         alignItems: "center",
         justifyContent: "center",
         direction: "ltr",
-        fontSize: isMobile ? 14 : 20,
-        marginBottom: isMobile ? 14 : 22,
+        fontSize: isMobile ? 14 : 15,
+        marginBottom: isMobile ? 14 : 14,
         letterSpacing: 0.1,
         flexWrap: "wrap",
         gap: "4px 0",
       }}>
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{coursePoints}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{coursePoints}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{courseLevel}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{courseLevel}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 26 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
       </div>
 
@@ -136,8 +136,8 @@ export default function CoursePage() {
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
         border: `1.5px solid ${meta.color}55`,
         borderRadius: isMobile ? 14 : 20,
-        padding: isMobile ? "14px 14px" : "22px 22px",
-        marginBottom: isMobile ? 12 : 24,
+        padding: isMobile ? "14px 14px" : "16px 18px",
+        marginBottom: isMobile ? 12 : 14,
         boxShadow: `0 0 32px ${meta.color}18`,
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -185,7 +185,7 @@ export default function CoursePage() {
       )}
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", gap: isMobile ? 10 : 16, marginBottom: isMobile ? 16 : 36 }}>
+      <div style={{ display: "flex", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 16 : 20 }}>
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
