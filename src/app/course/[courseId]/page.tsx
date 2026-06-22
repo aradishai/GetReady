@@ -84,7 +84,7 @@ export default function CoursePage() {
   const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "20px 18px 80px" }}>
+    <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "10px 18px 16px" }}>
 
       {/* Back */}
       <button
@@ -98,16 +98,16 @@ export default function CoursePage() {
           fontSize: isMobile ? 13 : 14,
           fontWeight: 600,
           padding: isMobile ? "7px 14px" : "9px 18px",
-          marginBottom: isMobile ? 14 : 16,
+          marginBottom: isMobile ? 14 : 8,
         }}
       >
         חזרה לקורסים
       </button>
 
       {/* Course header */}
-      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 14, marginBottom: isMobile ? 16 : 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 12, marginBottom: isMobile ? 16 : 10 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={meta.img} alt={meta.name} style={{ width: isMobile ? 52 : 60, borderRadius: isMobile ? 10 : 12, flexShrink: 0 }} />
+        <img src={meta.img} alt={meta.name} style={{ width: isMobile ? 52 : 52, borderRadius: isMobile ? 10 : 10, flexShrink: 0 }} />
         <div>
           <h1 style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, margin: 0 }}>{meta.name}</h1>
         </div>
@@ -120,7 +120,7 @@ export default function CoursePage() {
         justifyContent: "center",
         direction: "ltr",
         fontSize: isMobile ? 14 : 15,
-        marginBottom: isMobile ? 14 : 14,
+        marginBottom: isMobile ? 14 : 8,
         letterSpacing: 0.1,
         flexWrap: "wrap",
         gap: "4px 0",
@@ -150,8 +150,8 @@ export default function CoursePage() {
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
         border: `1.5px solid ${meta.color}55`,
         borderRadius: isMobile ? 14 : 20,
-        padding: isMobile ? "14px 14px" : "16px 18px",
-        marginBottom: isMobile ? 12 : 14,
+        padding: isMobile ? "14px 14px" : "10px 16px",
+        marginBottom: isMobile ? 12 : 8,
         boxShadow: `0 0 32px ${meta.color}18`,
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -160,7 +160,7 @@ export default function CoursePage() {
           </span>
           <span style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: meta.color }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 10, overflow: "hidden" }}>
+        <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: 7, overflow: "hidden" }}>
           <div style={{
             height: "100%",
             width: `${avgScore}%`,
@@ -176,9 +176,9 @@ export default function CoursePage() {
         <div style={{
           background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
           border: "1.5px solid rgba(255,255,255,0.07)",
-          borderRadius: isMobile ? 14 : 20,
-          padding: isMobile ? "14px 14px" : "16px 18px",
-          marginBottom: isMobile ? 10 : 12,
+          borderRadius: isMobile ? 14 : 14,
+          padding: isMobile ? "14px 14px" : "10px 16px",
+          marginBottom: isMobile ? 10 : 8,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <span style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)" }}>תרגול — שאלות שנפתרו</span>
@@ -186,7 +186,7 @@ export default function CoursePage() {
               {practiceDone} / {totalQ}
             </span>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 8, overflow: "hidden" }}>
+          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: 7, overflow: "hidden" }}>
             <div style={{
               height: "100%",
               width: `${totalQ > 0 ? Math.round((practiceDone / totalQ) * 100) : 0}%`,
@@ -199,7 +199,7 @@ export default function CoursePage() {
       )}
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 16 : 20 }}>
+      <div style={{ display: "flex", gap: isMobile ? 10 : 10, marginBottom: 0 }}>
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
