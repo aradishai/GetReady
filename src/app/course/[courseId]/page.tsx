@@ -46,6 +46,7 @@ export default function CoursePage() {
   const [loading,       setLoading]       = useState(true)
   const [totalQ,        setTotalQ]        = useState(0)
   const [practiceDone,  setPracticeDone]  = useState(0)
+  const [practiceRec,   setPracticeRec]   = useState({ bestStreak: 0, bestSession: 0 })
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -62,6 +63,8 @@ export default function CoursePage() {
       .then(d => setTotalQ(d.count ?? 0))
     const done: string[] = JSON.parse(localStorage.getItem(`practice_done_${courseId}`) || "[]")
     setPracticeDone(done.length)
+    const pr = JSON.parse(localStorage.getItem(`practice_records_${courseId}`) || "{}")
+    setPracticeRec({ bestStreak: pr.bestStreak || 0, bestSession: pr.bestSession || 0 })
   }, [session, courseId])
 
   if (!meta) {
@@ -163,8 +166,8 @@ export default function CoursePage() {
           background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
           border: "1.5px solid rgba(255,255,255,0.07)",
           borderRadius: isMobile ? 14 : 20,
-          padding: isMobile ? "14px 14px" : "22px 22px",
-          marginBottom: isMobile ? 12 : 24,
+          padding: isMobile ? "14px 14px" : "16px 18px",
+          marginBottom: isMobile ? 10 : 12,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <span style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)" }}>תרגול — שאלות שנפתרו</span>
@@ -172,7 +175,7 @@ export default function CoursePage() {
               {practiceDone} / {totalQ}
             </span>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 10, overflow: "hidden" }}>
+          <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 8, height: isMobile ? 7 : 8, overflow: "hidden" }}>
             <div style={{
               height: "100%",
               width: `${totalQ > 0 ? Math.round((practiceDone / totalQ) * 100) : 0}%`,
@@ -180,6 +183,35 @@ export default function CoursePage() {
               borderRadius: 8,
               transition: "width 0.8s ease",
             }} />
+          </div>
+        </div>
+      )}
+
+      {/* Practice personal records */}
+      {(practiceRec.bestStreak > 0 || practiceRec.bestSession > 0) && (
+        <div style={{
+          background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
+          border: "1.5px solid rgba(234,179,8,0.18)",
+          borderRadius: isMobile ? 14 : 20,
+          padding: isMobile ? "12px 14px" : "14px 18px",
+          marginBottom: isMobile ? 12 : 16,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+          gap: 8,
+        }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: isMobile ? 10 : 11, color: "var(--muted)", marginBottom: 3 }}>שיא רצף תרגול</div>
+            <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: "var(--warning)" }}>
+              🔥 {practiceRec.bestStreak}
+            </div>
+          </div>
+          <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: isMobile ? 10 : 11, color: "var(--muted)", marginBottom: 3 }}>שיא שאלות בתרגול</div>
+            <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: "var(--warning)" }}>
+              💬 {practiceRec.bestSession}
+            </div>
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, Suspense } from "react"
+import { useEffect, useState, useCallback, useRef, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -20,6 +20,11 @@ interface Question {
 }
 
 type Answer = "A" | "B" | "C" | "D"
+
+interface PracticeRecords {
+  bestStreak: number
+  bestSession: number
+}
 
 function useMobile() {
   const [isMobile, setIsMobile] = useState(false)
@@ -45,19 +50,32 @@ function PracticePageInner() {
   const [showResult, setShowResult] = useState(false)
   const [score, setScore] = useState({ correct: 0, total: 0 })
   const [streak, setStreak] = useState(0)
+  const [sessionBestStreak, setSessionBestStreak] = useState(0)
+
+  const [records, setRecords] = useState<PracticeRecords>({ bestStreak: 0, bestSession: 0 })
+  const [newRecord, setNewRecord] = useState<"streak" | "session" | "both" | null>(null)
 
   const [topics, setTopics] = useState<string[]>([])
   const [filters, setFilters] = useState({ topic: "all", difficulty: "all", sourceType: "all" })
   const [showFilters, setShowFilters] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  // Only use user ID as trigger — prevents tab-focus session refresh from resetting practice
+  const userId = session?.user?.id
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    // payment gate disabled
-  }, [status, session, router])
+  }, [status, router])
 
   useEffect(() => {
     fetch(`/api/questions/topics?courseId=${courseId}`).then((r) => r.json()).then(setTopics)
+  }, [courseId])
+
+  // Load personal records from localStorage
+  useEffect(() => {
+    if (!courseId) return
+    const stored = JSON.parse(localStorage.getItem(`practice_records_${courseId}`) || "{}")
+    setRecords({ bestStreak: stored.bestStreak || 0, bestSession: stored.bestSession || 0 })
   }, [courseId])
 
   const loadQuestions = useCallback(async () => {
@@ -77,23 +95,61 @@ function PracticePageInner() {
     setLoading(false)
   }, [filters, courseId])
 
+  // Only fire on initial user login — NOT on tab-focus session refresh
   useEffect(() => {
-    if (session?.user) loadQuestions()
-  }, [session, loadQuestions])
+    if (userId) loadQuestions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
+
+  const newRecordTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function flashNewRecord(type: "streak" | "session" | "both") {
+    setNewRecord(type)
+    if (newRecordTimer.current) clearTimeout(newRecordTimer.current)
+    newRecordTimer.current = setTimeout(() => setNewRecord(null), 2500)
+  }
 
   function handleAnswer(ans: Answer) {
     if (selected) return
     setSelected(ans)
     setShowResult(true)
     const correct = ans === questions[current].correctAnswer
+
+    const newTotal = score.total + 1
     setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }))
-    setStreak((s) => (correct ? s + 1 : 0))
-    // Track answered question in localStorage
+
+    const newStreak = correct ? streak + 1 : 0
+    setStreak(newStreak)
+
+    const newSBest = Math.max(sessionBestStreak, newStreak)
+    if (newSBest > sessionBestStreak) setSessionBestStreak(newSBest)
+
+    // Track answered question
     if (courseId) {
-      const key = `practice_done_${courseId}`
-      const done: string[] = JSON.parse(localStorage.getItem(key) || "[]")
+      const doneKey = `practice_done_${courseId}`
+      const done: string[] = JSON.parse(localStorage.getItem(doneKey) || "[]")
       const qId = questions[current].id
-      if (!done.includes(qId)) localStorage.setItem(key, JSON.stringify([...done, qId]))
+      if (!done.includes(qId)) localStorage.setItem(doneKey, JSON.stringify([...done, qId]))
+    }
+
+    // Update personal records
+    if (courseId) {
+      const prKey = `practice_records_${courseId}`
+      const pr: PracticeRecords = JSON.parse(localStorage.getItem(prKey) || "{}")
+      const prevBestStreak = pr.bestStreak || 0
+      const prevBestSession = pr.bestSession || 0
+
+      let streakBroken = false
+      let sessionBroken = false
+
+      if (newSBest > prevBestStreak) { pr.bestStreak = newSBest; streakBroken = true }
+      if (newTotal > prevBestSession) { pr.bestSession = newTotal; sessionBroken = true }
+
+      if (streakBroken || sessionBroken) {
+        localStorage.setItem(prKey, JSON.stringify(pr))
+        setRecords({ bestStreak: pr.bestStreak || prevBestStreak, bestSession: pr.bestSession || prevBestSession })
+        flashNewRecord(streakBroken && sessionBroken ? "both" : streakBroken ? "streak" : "session")
+      }
     }
   }
 
@@ -161,20 +217,49 @@ function PracticePageInner() {
     )
   }
 
+  const isStreakRecord = sessionBestStreak > 0 && sessionBestStreak >= records.bestStreak
+  const isSessionRecord = score.total > 0 && score.total >= records.bestSession
+
   return (
     <div style={{ maxWidth: 860, margin: "0 auto", padding: isMobile ? "12px 10px" : "20px 24px" }}>
+
+      {/* New Record Banner */}
+      {newRecord && (
+        <div style={{
+          background: "linear-gradient(135deg, rgba(234,179,8,0.15), rgba(234,179,8,0.05))",
+          border: "1px solid rgba(234,179,8,0.4)",
+          borderRadius: 10,
+          padding: "8px 14px",
+          marginBottom: 10,
+          textAlign: "center",
+          fontSize: 14,
+          fontWeight: 700,
+          color: "var(--warning)",
+          animation: "fadeIn 0.3s ease",
+        }}>
+          🏆 שיא אישי חדש!{" "}
+          {newRecord === "streak" && "רצף תשובות נכונות"}
+          {newRecord === "session" && "שאלות בתרגול אחד"}
+          {newRecord === "both" && "גם רצף וגם שאלות"}
+        </div>
+      )}
+
       {/* Top Bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
         <button
           onClick={() => router.push(courseId ? `/course/${courseId}` : "/dashboard")}
           style={{ padding: "8px 16px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 14 }}
         >
           חזור
         </button>
-        <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <div style={{ fontSize: 14, color: "var(--muted)" }}>שאלה {current + 1} / {questions.length}</div>
-          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>{score.correct}/{score.total} נכון</div>
-          {streak >= 3 && <div style={{ fontSize: 14, color: "var(--warning)", fontWeight: 600 }}>רצף {streak}</div>}
+          <div style={{ fontSize: 14, color: "var(--success)", fontWeight: 600 }}>{score.correct}/{score.total} ✓</div>
+          {streak >= 2 && (
+            <div style={{ fontSize: 14, color: isStreakRecord ? "var(--warning)" : "var(--warning)", fontWeight: 700 }}>
+              {isStreakRecord ? "🏆" : "🔥"} {streak}
+            </div>
+          )}
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -192,9 +277,29 @@ function PracticePageInner() {
         </button>
       </div>
 
+      {/* Personal Records Bar */}
+      {(records.bestStreak > 0 || records.bestSession > 0) && (
+        <div style={{
+          display: "flex",
+          gap: 16,
+          justifyContent: "center",
+          marginBottom: 10,
+          fontSize: 12,
+          color: "rgba(255,255,255,0.35)",
+        }}>
+          <span style={isStreakRecord ? { color: "var(--warning)", fontWeight: 700 } : {}}>
+            שיא רצף: 🔥{records.bestStreak}
+          </span>
+          <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
+          <span style={isSessionRecord ? { color: "var(--warning)", fontWeight: 700 } : {}}>
+            שיא תרגול: 💬{records.bestSession}
+          </span>
+        </div>
+      )}
+
       {/* Filters */}
       {showFilters && (
-        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: 16, marginBottom: 20, display: "flex", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: 16, marginBottom: 16, display: "flex", flexWrap: "wrap", gap: 12 }}>
           {[
             { label: "נושא", key: "topic", options: [{ value: "all", label: "הכל" }, ...topics.map((t) => ({ value: t, label: t }))] },
             { label: "קושי", key: "difficulty", options: [{ value: "all", label: "הכל" }, { value: "Easy", label: "קל" }, { value: "Medium", label: "בינוני" }, { value: "Hard", label: "קשה" }] },
@@ -219,7 +324,7 @@ function PracticePageInner() {
       )}
 
       {/* Progress Bar */}
-      <div style={{ background: "var(--card-border)", borderRadius: 4, height: 4, marginBottom: 24, overflow: "hidden" }}>
+      <div style={{ background: "var(--card-border)", borderRadius: 4, height: 4, marginBottom: 16, overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${((current + 1) / questions.length) * 100}%`, background: "var(--primary)", transition: "width 0.3s" }} />
       </div>
 
@@ -246,7 +351,7 @@ function PracticePageInner() {
             <button key={key} onClick={() => handleAnswer(key)} style={getAnswerStyle(key)}>
               <span
                 style={{
-                  width: isMobile ? 22 : 22, height: isMobile ? 22 : 22, borderRadius: "50%",
+                  width: 22, height: 22, borderRadius: "50%",
                   background: selected ? key === q.correctAnswer ? "var(--success)" : key === selected ? "var(--danger)" : "var(--card-border)" : "var(--card-border)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: isMobile ? 11 : 13, fontWeight: 700, flexShrink: 0, color: "#fff",
