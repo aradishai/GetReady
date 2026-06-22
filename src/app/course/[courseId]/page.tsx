@@ -132,6 +132,16 @@ export default function CoursePage() {
         {SEP}
         <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
         <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע</span>
+        {practiceRec.bestStreak > 0 && <>
+          {SEP}
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף</span>
+        </>}
+        {practiceRec.bestSession > 0 && <>
+          {SEP}
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestSession}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא תרגול</span>
+        </>}
       </div>
 
       {/* Progress card */}
@@ -183,35 +193,6 @@ export default function CoursePage() {
               borderRadius: 8,
               transition: "width 0.8s ease",
             }} />
-          </div>
-        </div>
-      )}
-
-      {/* Practice personal records */}
-      {(practiceRec.bestStreak > 0 || practiceRec.bestSession > 0) && (
-        <div style={{
-          background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
-          border: "1.5px solid rgba(234,179,8,0.18)",
-          borderRadius: isMobile ? 14 : 20,
-          padding: isMobile ? "12px 14px" : "14px 18px",
-          marginBottom: isMobile ? 12 : 16,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-          gap: 8,
-        }}>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: isMobile ? 10 : 11, color: "var(--muted)", marginBottom: 3 }}>שיא רצף תרגול</div>
-            <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: "var(--warning)" }}>
-              🔥 {practiceRec.bestStreak}
-            </div>
-          </div>
-          <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.08)" }} />
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: isMobile ? 10 : 11, color: "var(--muted)", marginBottom: 3 }}>שיא שאלות בתרגול</div>
-            <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: "var(--warning)" }}>
-              💬 {practiceRec.bestSession}
-            </div>
           </div>
         </div>
       )}
