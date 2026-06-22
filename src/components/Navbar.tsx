@@ -38,10 +38,10 @@ export default function Navbar() {
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-getready.png" alt="Get Ready" style={{ height: 72, width: "auto" }} />
-            <span style={{ fontSize: 11, color: "#f5f0e8", textAlign: "center", letterSpacing: 0.3, marginTop: -6 }}>
+            <img src="/logo-getready.png" alt="Get Ready" style={{ height: 54, width: "auto" }} />
+            <span style={{ fontSize: 11, color: "#f5f0e8", textAlign: "center", letterSpacing: 0.3, lineHeight: 1, marginTop: 1 }}>
               ערד ישי | חותם בעולם
             </span>
           </div>
