@@ -69,7 +69,7 @@ export default function InstallModal({ onDismiss }: Props) {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-getready.png" alt="GetReady" style={{ height: 52, width: "auto", marginBottom: 12 }} />
+          <img src="/logo-getready.webp" alt="GetReady" style={{ height: 52, width: "auto", marginBottom: 12 }} />
           <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: "#fff" }}>
             הוסף את GetReady למסך הבית
           </h2>

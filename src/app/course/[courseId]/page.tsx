@@ -203,7 +203,7 @@ export default function CoursePage() {
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/תרגול 4.png"
+            src="/תרגול 4.webp"
             alt="תרגול"
             style={{ width: "100%", display: "block", borderRadius: isMobile ? 12 : 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
@@ -213,7 +213,7 @@ export default function CoursePage() {
         <Link href={`/test?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/מבחן 4.png"
+            src="/מבחן 4.webp"
             alt="מבחן"
             style={{ width: "100%", display: "block", borderRadius: isMobile ? 12 : 18, cursor: "pointer", transition: "transform 0.15s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}

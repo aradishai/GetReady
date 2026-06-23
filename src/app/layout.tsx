@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: "GetReady",
     images: [
       {
-        url: "https://getready-production.up.railway.app/logo-getready.png",
+        url: "https://getready-production.up.railway.app/logo-getready.webp",
         width: 512,
         height: 512,
         alt: "GetReady Logo",
