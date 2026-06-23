@@ -5,6 +5,38 @@ import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
+const SHARE_URL = "https://getready-production.up.railway.app"
+const SHARE_TEXT = `תקופת בחינות? GetReady תכין אותך לכל שאלה 💯
+
+יש לך מבחנים בדרך? GetReady היא הפלטפורמה שתעשה אותך מוכנה.
+
+תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים פסיכולוגיה, ארגונים, חברה ועוד.
+קצר, ברור, ומסביר הכל כדי שתגיעי ל-100.`
+
+async function handleShare() {
+  if (navigator.share) {
+    try {
+      const logoRes = await fetch("/logo-getready.png")
+      const logoBlob = await logoRes.blob()
+      const logoFile = new File([logoBlob], "getready.png", { type: "image/png" })
+      const shareData: ShareData = {
+        title: "GetReady תקופת בחינות",
+        text: SHARE_TEXT,
+        url: SHARE_URL,
+      }
+      if (navigator.canShare && navigator.canShare({ files: [logoFile] })) {
+        (shareData as ShareData & { files: File[] }).files = [logoFile]
+      }
+      await navigator.share(shareData)
+    } catch {
+      // user cancelled or error
+    }
+  } else {
+    await navigator.clipboard.writeText(`${SHARE_TEXT}\n\n${SHARE_URL}`)
+    alert("הטקסט הועתק ללוח!")
+  }
+}
+
 export default function Navbar() {
   const { data: session } = useSession()
   const pathname = usePathname()
@@ -82,6 +114,12 @@ export default function Navbar() {
               <div style={{ padding: "12px 16px", fontSize: 13, color: "rgba(255,255,255,0.4)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 {session.user.name}
               </div>
+              <button
+                onClick={() => { setMenuOpen(false); handleShare() }}
+                style={{ width: "100%", padding: "12px 16px", background: "none", border: "none", textAlign: "right", fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.75)", cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              >
+                שתפי עם חברה 🔗
+              </button>
               <button
                 onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/login" }) }}
                 style={{ width: "100%", padding: "12px 16px", background: "none", border: "none", textAlign: "right", fontSize: 14, fontWeight: 600, color: "var(--danger)", cursor: "pointer" }}
