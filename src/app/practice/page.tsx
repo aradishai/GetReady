@@ -21,6 +21,24 @@ interface Question {
 
 type Answer = "A" | "B" | "C" | "D"
 
+function shuffleAnswers(q: Question): Question {
+  const keys: Answer[] = ["A", "B", "C", "D"]
+  const texts = [q.answerA, q.answerB, q.answerC, q.answerD]
+  const correctText = texts[keys.indexOf(q.correctAnswer as Answer)]
+  for (let i = texts.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[texts[i], texts[j]] = [texts[j], texts[i]]
+  }
+  return {
+    ...q,
+    answerA: texts[0],
+    answerB: texts[1],
+    answerC: texts[2],
+    answerD: texts[3],
+    correctAnswer: keys[texts.indexOf(correctText)],
+  }
+}
+
 function useMobile() {
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
@@ -72,7 +90,7 @@ function PracticePageInner() {
       ...(filters.sourceType !== "all" && { sourceType: filters.sourceType }),
     })
     const data = await fetch(`/api/questions?${params}`).then((r) => r.json())
-    setQuestions(Array.isArray(data) ? data : [])
+    setQuestions(Array.isArray(data) ? data.map(shuffleAnswers) : [])
     setCurrent(0)
     setSelected(null)
     setShowResult(false)
