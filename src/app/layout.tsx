@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: "GetReady",
     images: [
       {
-        url: "https://getready-production.up.railway.app/og-image.webp",
+        url: "https://getready-production.up.railway.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "GetReady — A.Ishai Projects",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "GetReady — תקופת בחינות? תגיעי ל-100 💯",
     description: "תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים — פסיכולוגיה, ארגונים, חברה ועוד. קצר, ברור, ומסביר הכל.",
-    images: ["https://getready-production.up.railway.app/og-image.webp"],
+    images: ["https://getready-production.up.railway.app/og-image.jpg"],
   },
   other: {
     "mobile-web-app-capable": "yes",
