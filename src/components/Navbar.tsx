@@ -67,7 +67,7 @@ export default function Navbar() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-getready.webp" alt="Get Ready" style={{ height: 54, width: "auto" }} />
             <span style={{ fontSize: 11, color: "#f5f0e8", textAlign: "center", letterSpacing: 0.3, lineHeight: 1, marginTop: -3 }}>
-              ערד ישי | חותם בעולם
+              <strong>A</strong>.<strong>I</strong>shai Projects
             </span>
           </div>
 
