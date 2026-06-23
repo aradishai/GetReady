@@ -8,8 +8,6 @@ import { useState } from "react"
 const SHARE_URL = "https://getready-production.up.railway.app"
 const SHARE_TEXT = `תקופת בחינות? GetReady תכין אותך לכל שאלה 💯
 
-יש לך מבחנים בדרך? GetReady היא הפלטפורמה שתעשה אותך מוכנה.
-
 תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים פסיכולוגיה, ארגונים, חברה ועוד.
 קצר, ברור, ומסביר הכל כדי שתגיעי ל-100.`
 

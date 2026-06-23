@@ -37,6 +37,12 @@ export const metadata: Metadata = {
     locale: "he_IL",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "GetReady — תקופת בחינות? תגיעי ל-100 💯",
+    description: "תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים — פסיכולוגיה, ארגונים, חברה ועוד. קצר, ברור, ומסביר הכל.",
+    images: ["https://getready-production.up.railway.app/og-image.webp"],
+  },
   other: {
     "mobile-web-app-capable": "yes",
   },
