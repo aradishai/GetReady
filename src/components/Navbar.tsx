@@ -14,26 +14,19 @@ const SHARE_TEXT = `תקופת בחינות? GetReady תכין אותך לכל �
 קצר, ברור, ומסביר הכל כדי שתגיעי ל-100.`
 
 async function handleShare() {
-  if (navigator.share) {
-    try {
-      const logoRes = await fetch("/logo-getready.png")
-      const logoBlob = await logoRes.blob()
-      const logoFile = new File([logoBlob], "getready.png", { type: "image/png" })
-      const shareData: ShareData = {
+  try {
+    if (navigator.share) {
+      await navigator.share({
         title: "GetReady תקופת בחינות",
         text: SHARE_TEXT,
         url: SHARE_URL,
-      }
-      if (navigator.canShare && navigator.canShare({ files: [logoFile] })) {
-        (shareData as ShareData & { files: File[] }).files = [logoFile]
-      }
-      await navigator.share(shareData)
-    } catch {
-      // user cancelled or error
+      })
+    } else {
+      await navigator.clipboard.writeText(`${SHARE_TEXT}\n\n${SHARE_URL}`)
+      alert("הטקסט הועתק ללוח!")
     }
-  } else {
-    await navigator.clipboard.writeText(`${SHARE_TEXT}\n\n${SHARE_URL}`)
-    alert("הטקסט הועתק ללוח!")
+  } catch {
+    // user cancelled
   }
 }
 

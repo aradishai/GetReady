@@ -14,12 +14,28 @@ const varelaRound = Varela_Round({
 
 export const metadata: Metadata = {
   title: "GetReady",
-  description: "למד, תתחרה, תנצח",
+  description: "תקופת בחינות? GetReady תכין אותך לכל שאלה. תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים כדי שתגיעי ל-100.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "GetReady",
+  },
+  openGraph: {
+    title: "GetReady — תקופת בחינות? תגיעי ל-100 💯",
+    description: "תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים — פסיכולוגיה, ארגונים, חברה ועוד. קצר, ברור, ומסביר הכל.",
+    url: "https://getready-production.up.railway.app",
+    siteName: "GetReady",
+    images: [
+      {
+        url: "https://getready-production.up.railway.app/logo-getready.png",
+        width: 512,
+        height: 512,
+        alt: "GetReady Logo",
+      },
+    ],
+    locale: "he_IL",
+    type: "website",
   },
   other: {
     "mobile-web-app-capable": "yes",
