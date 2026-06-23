@@ -28,10 +28,10 @@ export const metadata: Metadata = {
     siteName: "GetReady",
     images: [
       {
-        url: "https://getready-production.up.railway.app/logo-getready.webp",
-        width: 512,
-        height: 512,
-        alt: "GetReady Logo",
+        url: "https://getready-production.up.railway.app/og-image.webp",
+        width: 1200,
+        height: 630,
+        alt: "GetReady — A.Ishai Projects",
       },
     ],
     locale: "he_IL",
