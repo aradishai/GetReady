@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
-const SHARE_URL = "https://getready-production.up.railway.app"
+const SHARE_URL = "https://getready-production.up.railway.app/share"
 const SHARE_TEXT = `תקופת בחינות? GetReady תכין אותך לכל שאלה 💯
 
 תרגול חכם, מבחנים אמיתיים ושאלות מכל הנושאים פסיכולוגיה, ארגונים, חברה ועוד.
