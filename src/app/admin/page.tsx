@@ -32,6 +32,12 @@ interface PaymentRequest {
 interface Question {
   id: string
   question: string
+  answerA: string
+  answerB: string
+  answerC: string
+  answerD: string
+  correctAnswer: string
+  explanation: string
   topic: string
   difficulty: string
   sourceType: string
@@ -60,6 +66,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [questionCourseFilter, setQuestionCourseFilter] = useState("all")
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editData, setEditData] = useState<Partial<Question>>({})
   const [newQ, setNewQ] = useState({
     courseId: "", question: "", answerA: "", answerB: "", answerC: "", answerD: "",
     correctAnswer: "A", explanation: "", topic: "", difficulty: "Medium",
@@ -115,6 +123,20 @@ export default function AdminPage() {
     if (!confirm(`למחוק את כל השאלות של "${courseName}"?`)) return
     await fetch(`/api/admin/questions?courseId=${courseId}`, { method: "DELETE" })
     setQuestions(prev => prev.filter(q => q.course.name !== courseName))
+  }
+
+  async function saveQuestion() {
+    if (!editingId) return
+    const res = await fetch("/api/admin/questions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: editingId, ...editData }),
+    })
+    if (res.ok) {
+      setQuestions(prev => prev.map(q => q.id === editingId ? { ...q, ...editData } : q))
+      setEditingId(null)
+      setEditData({})
+    }
   }
 
   async function addQuestion() {
@@ -344,23 +366,109 @@ export default function AdminPage() {
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {filteredQuestions.map((q) => (
-              <div key={q.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                <div style={{ flex: 1, overflow: "hidden" }}>
-                  <div style={{ fontWeight: 500, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{q.question}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 2 }}>
-                    {q.course.name} • {q.topic} •{" "}
-                    <span style={{ color: q.difficulty === "Easy" ? "var(--success)" : q.difficulty === "Medium" ? "var(--warning)" : "var(--danger)" }}>
-                      {q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"}
-                    </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {filteredQuestions.map((q, idx) => {
+              const isEditing = editingId === q.id
+              const data = isEditing ? { ...q, ...editData } : q
+              const diffColor = q.difficulty === "Easy" ? "var(--success)" : q.difficulty === "Medium" ? "var(--warning)" : "var(--danger)"
+              const diffLabel = q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"
+              const answerKeys = ["A", "B", "C", "D"] as const
+              const answerLabels = { A: "א", B: "ב", C: "ג", D: "ד" }
+              const answerFields = { A: "answerA", B: "answerB", C: "answerC", D: "answerD" } as const
+
+              return (
+                <div key={q.id} style={{ background: "var(--card)", border: `1px solid ${isEditing ? "var(--primary)" : "var(--card-border)"}`, borderRadius: 14, padding: "16px 18px" }}>
+                  {/* Header row */}
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--primary)", minWidth: 28 }}>#{idx + 1}</span>
+                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}44` }}>{diffLabel}</span>
+                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
+                      <span style={{ fontSize: 11, color: "var(--muted)" }}>{q.course.name}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                      {isEditing ? (
+                        <>
+                          <button onClick={saveQuestion} style={{ padding: "5px 14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700 }}>שמור</button>
+                          <button onClick={() => { setEditingId(null); setEditData({}) }} style={{ padding: "5px 12px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>ביטול</button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => { setEditingId(q.id); setEditData({}) }} style={{ padding: "5px 12px", background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>עריכה</button>
+                          <button onClick={() => deleteQuestion(q.id)} style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>מחק</button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Question text */}
+                  {isEditing ? (
+                    <textarea
+                      value={String(data.question ?? "")}
+                      onChange={e => setEditData(d => ({ ...d, question: e.target.value }))}
+                      rows={2}
+                      style={{ ...inputStyle, marginBottom: 10, fontSize: 15, fontWeight: 600, resize: "vertical" }}
+                    />
+                  ) : (
+                    <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, margin: "0 0 12px" }}>{q.question}</p>
+                  )}
+
+                  {/* Answers */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 10 }}>
+                    {answerKeys.map(key => {
+                      const field = answerFields[key]
+                      const isCorrect = data.correctAnswer === key
+                      return (
+                        <div key={key} style={{ display: "flex", alignItems: isEditing ? "flex-start" : "center", gap: 8 }}>
+                          {isEditing ? (
+                            <>
+                              <button
+                                onClick={() => setEditData(d => ({ ...d, correctAnswer: key }))}
+                                style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: isCorrect ? "var(--success)" : "var(--card-border)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0, marginTop: 6 }}
+                              >
+                                {answerLabels[key]}
+                              </button>
+                              <textarea
+                                value={String(data[field] ?? "")}
+                                onChange={e => setEditData(d => ({ ...d, [field]: e.target.value }))}
+                                rows={1}
+                                style={{ ...inputStyle, flex: 1, resize: "vertical", fontSize: 13, border: isCorrect ? "1px solid var(--success)" : "1px solid var(--card-border)" }}
+                              />
+                            </>
+                          ) : (
+                            <div style={{
+                              display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, width: "100%",
+                              background: isCorrect ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.03)",
+                              border: `1px solid ${isCorrect ? "var(--success)" : "var(--card-border)"}`,
+                            }}>
+                              <span style={{ width: 22, height: 22, borderRadius: "50%", background: isCorrect ? "var(--success)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+                                {answerLabels[key]}
+                              </span>
+                              <span style={{ fontSize: 13 }}>{q[field]}</span>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Explanation */}
+                  <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px", borderRight: "3px solid var(--primary)" }}>
+                    <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 600, marginBottom: 3 }}>הסבר</div>
+                    {isEditing ? (
+                      <textarea
+                        value={String(data.explanation ?? "")}
+                        onChange={e => setEditData(d => ({ ...d, explanation: e.target.value }))}
+                        rows={2}
+                        style={{ ...inputStyle, resize: "vertical", fontSize: 13 }}
+                      />
+                    ) : (
+                      <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{q.explanation}</div>
+                    )}
                   </div>
                 </div>
-                <button onClick={() => deleteQuestion(q.id)} style={{ padding: "6px 12px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
-                  מחק
-                </button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}
