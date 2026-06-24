@@ -65,7 +65,7 @@ export default function AdminPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddQuestion, setShowAddQuestion] = useState(false)
-  const [questionCourseFilter, setQuestionCourseFilter] = useState("all")
+  const [openCourseIds, setOpenCourseIds] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<Question>>({})
   const [newQ, setNewQ] = useState({
@@ -154,12 +154,14 @@ export default function AdminPage() {
   }
 
   const pendingPayments = payments.filter((p) => p.status === "pending")
-  const filteredQuestions = questionCourseFilter === "all"
-    ? questions
-    : questions.filter(q => {
-        const c = courses.find(c => c.id === questionCourseFilter)
-        return c ? q.course.name === c.name : true
-      })
+  const COURSE_COLORS: Record<string, string> = {
+    "course-psychodiag": "#22c55e",
+    "course-social": "#f97316",
+    "course-iyut": "#a855f7",
+    "course-assessment": "#eab308",
+    "course-chevrot": "#ef4444",
+    "course-orgs": "#38bdf8",
+  }
   const tabs: { key: Tab; label: string; badge?: number }[] = [
     { key: "payments", label: "בקשות תשלום", badge: pendingPayments.length },
     { key: "users", label: "משתמשים" },
@@ -289,36 +291,13 @@ export default function AdminPage() {
       {tab === "questions" && (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({filteredQuestions.length})</h3>
-              <select
-                value={questionCourseFilter}
-                onChange={e => setQuestionCourseFilter(e.target.value)}
-                style={selectStyle}
-              >
-                <option value="all">כל הקורסים</option>
-                {courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              {questionCourseFilter !== "all" && (
-                <button
-                  onClick={() => {
-                    const c = courses.find(c => c.id === questionCourseFilter)
-                    if (c) deleteAllInCourse(c.id, c.name)
-                  }}
-                  style={{ padding: "8px 14px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
-                >
-                  מחק הכל
-                </button>
-              )}
-              <button
-                onClick={() => setShowAddQuestion(!showAddQuestion)}
-                style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
-              >
-                + הוסף שאלה
-              </button>
-            </div>
+            <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({questions.length})</h3>
+            <button
+              onClick={() => setShowAddQuestion(!showAddQuestion)}
+              style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+            >
+              + הוסף שאלה
+            </button>
           </div>
 
           {showAddQuestion && courses.length > 0 && (
@@ -366,106 +345,159 @@ export default function AdminPage() {
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {filteredQuestions.map((q, idx) => {
-              const isEditing = editingId === q.id
-              const data = isEditing ? { ...q, ...editData } : q
-              const diffColor = q.difficulty === "Easy" ? "var(--success)" : q.difficulty === "Medium" ? "var(--warning)" : "var(--danger)"
-              const diffLabel = q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"
-              const answerKeys = ["A", "B", "C", "D"] as const
-              const answerLabels = { A: "א", B: "ב", C: "ג", D: "ד" }
-              const answerFields = { A: "answerA", B: "answerB", C: "answerC", D: "answerD" } as const
+          {/* Course accordions */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {courses.map(course => {
+              const courseQs = questions.filter(q => q.course.name === course.name)
+              const isOpen = openCourseIds.has(course.id)
+              const color = COURSE_COLORS[course.id] ?? "var(--primary)"
 
               return (
-                <div key={q.id} style={{ background: "var(--card)", border: `1px solid ${isEditing ? "var(--primary)" : "var(--card-border)"}`, borderRadius: 14, padding: "16px 18px" }}>
-                  {/* Header row */}
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--primary)", minWidth: 28 }}>#{idx + 1}</span>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}44` }}>{diffLabel}</span>
-                      <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
-                      <span style={{ fontSize: 11, color: "var(--muted)" }}>{q.course.name}</span>
+                <div key={course.id} style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${isOpen ? color + "55" : "var(--card-border)"}` }}>
+                  {/* Accordion header */}
+                  <button
+                    onClick={() => {
+                      setOpenCourseIds(prev => {
+                        const next = new Set(prev)
+                        if (next.has(course.id)) next.delete(course.id)
+                        else next.add(course.id)
+                        return next
+                      })
+                    }}
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "14px 18px", background: isOpen ? `${color}14` : "var(--card)",
+                      border: "none", cursor: "pointer", gap: 12, transition: "background 0.15s",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: "50%", background: color, flexShrink: 0, display: "inline-block" }} />
+                      <span style={{ fontSize: 16, fontWeight: 700, color: "var(--foreground)" }}>{course.name}</span>
+                      <span style={{ fontSize: 12, padding: "2px 9px", borderRadius: 10, background: `${color}22`, color, border: `1px solid ${color}44`, fontWeight: 600 }}>
+                        {courseQs.length} שאלות
+                      </span>
                     </div>
-                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                      {isEditing ? (
-                        <>
-                          <button onClick={saveQuestion} style={{ padding: "5px 14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700 }}>שמור</button>
-                          <button onClick={() => { setEditingId(null); setEditData({}) }} style={{ padding: "5px 12px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>ביטול</button>
-                        </>
-                      ) : (
-                        <>
-                          <button onClick={() => { setEditingId(q.id); setEditData({}) }} style={{ padding: "5px 12px", background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>עריכה</button>
-                          <button onClick={() => deleteQuestion(q.id)} style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>מחק</button>
-                        </>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {isOpen && (
+                        <button
+                          onClick={e => { e.stopPropagation(); deleteAllInCourse(course.id, course.name) }}
+                          style={{ padding: "4px 12px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                        >
+                          מחק הכל
+                        </button>
                       )}
+                      <span style={{ fontSize: 18, color: isOpen ? color : "var(--muted)", lineHeight: 1 }}>{isOpen ? "▲" : "▼"}</span>
                     </div>
-                  </div>
+                  </button>
 
-                  {/* Question text */}
-                  {isEditing ? (
-                    <textarea
-                      value={String(data.question ?? "")}
-                      onChange={e => setEditData(d => ({ ...d, question: e.target.value }))}
-                      rows={2}
-                      style={{ ...inputStyle, marginBottom: 10, fontSize: 15, fontWeight: 600, resize: "vertical" }}
-                    />
-                  ) : (
-                    <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, margin: "0 0 12px" }}>{q.question}</p>
-                  )}
+                  {/* Questions list */}
+                  {isOpen && (
+                    <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 12, background: "rgba(0,0,0,0.15)" }}>
+                      {courseQs.length === 0 ? (
+                        <p style={{ color: "var(--muted)", fontSize: 13, margin: 0 }}>אין שאלות בקורס זה עדיין.</p>
+                      ) : courseQs.map((q, idx) => {
+                        const isEditing = editingId === q.id
+                        const data = isEditing ? { ...q, ...editData } : q
+                        const diffColor = q.difficulty === "Easy" ? "var(--success)" : q.difficulty === "Medium" ? "var(--warning)" : "var(--danger)"
+                        const diffLabel = q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"
+                        const answerKeys = ["A", "B", "C", "D"] as const
+                        const answerLabels = { A: "א", B: "ב", C: "ג", D: "ד" }
+                        const answerFields = { A: "answerA", B: "answerB", C: "answerC", D: "answerD" } as const
 
-                  {/* Answers */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 10 }}>
-                    {answerKeys.map(key => {
-                      const field = answerFields[key]
-                      const isCorrect = data.correctAnswer === key
-                      return (
-                        <div key={key} style={{ display: "flex", alignItems: isEditing ? "flex-start" : "center", gap: 8 }}>
-                          {isEditing ? (
-                            <>
-                              <button
-                                onClick={() => setEditData(d => ({ ...d, correctAnswer: key }))}
-                                style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: isCorrect ? "var(--success)" : "var(--card-border)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0, marginTop: 6 }}
-                              >
-                                {answerLabels[key]}
-                              </button>
-                              <textarea
-                                value={String(data[field] ?? "")}
-                                onChange={e => setEditData(d => ({ ...d, [field]: e.target.value }))}
-                                rows={1}
-                                style={{ ...inputStyle, flex: 1, resize: "vertical", fontSize: 13, border: isCorrect ? "1px solid var(--success)" : "1px solid var(--card-border)" }}
-                              />
-                            </>
-                          ) : (
-                            <div style={{
-                              display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, width: "100%",
-                              background: isCorrect ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.03)",
-                              border: `1px solid ${isCorrect ? "var(--success)" : "var(--card-border)"}`,
-                            }}>
-                              <span style={{ width: 22, height: 22, borderRadius: "50%", background: isCorrect ? "var(--success)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
-                                {answerLabels[key]}
-                              </span>
-                              <span style={{ fontSize: 13 }}>{q[field]}</span>
+                        return (
+                          <div key={q.id} style={{ background: "var(--card)", border: `1px solid ${isEditing ? "var(--primary)" : "var(--card-border)"}`, borderRadius: 14, padding: "16px 18px" }}>
+                            {/* Header row */}
+                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 13, fontWeight: 800, color, minWidth: 28 }}>#{idx + 1}</span>
+                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}44` }}>{diffLabel}</span>
+                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
+                              </div>
+                              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                                {isEditing ? (
+                                  <>
+                                    <button onClick={saveQuestion} style={{ padding: "5px 14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700 }}>שמור</button>
+                                    <button onClick={() => { setEditingId(null); setEditData({}) }} style={{ padding: "5px 12px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>ביטול</button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <button onClick={() => { setEditingId(q.id); setEditData({}) }} style={{ padding: "5px 12px", background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>עריכה</button>
+                                    <button onClick={() => deleteQuestion(q.id)} style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>מחק</button>
+                                  </>
+                                )}
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
 
-                  {/* Explanation */}
-                  <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px", borderRight: "3px solid var(--primary)" }}>
-                    <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 600, marginBottom: 3 }}>הסבר</div>
-                    {isEditing ? (
-                      <textarea
-                        value={String(data.explanation ?? "")}
-                        onChange={e => setEditData(d => ({ ...d, explanation: e.target.value }))}
-                        rows={2}
-                        style={{ ...inputStyle, resize: "vertical", fontSize: 13 }}
-                      />
-                    ) : (
-                      <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{q.explanation}</div>
-                    )}
-                  </div>
+                            {/* Question text */}
+                            {isEditing ? (
+                              <textarea
+                                value={String(data.question ?? "")}
+                                onChange={e => setEditData(d => ({ ...d, question: e.target.value }))}
+                                rows={2}
+                                style={{ ...inputStyle, marginBottom: 10, fontSize: 15, fontWeight: 600, resize: "vertical" }}
+                              />
+                            ) : (
+                              <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, margin: "0 0 12px" }}>{q.question}</p>
+                            )}
+
+                            {/* Answers */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 10 }}>
+                              {answerKeys.map(key => {
+                                const field = answerFields[key]
+                                const isCorrect = data.correctAnswer === key
+                                return (
+                                  <div key={key} style={{ display: "flex", alignItems: isEditing ? "flex-start" : "center", gap: 8 }}>
+                                    {isEditing ? (
+                                      <>
+                                        <button
+                                          onClick={() => setEditData(d => ({ ...d, correctAnswer: key }))}
+                                          style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: isCorrect ? "var(--success)" : "var(--card-border)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0, marginTop: 6 }}
+                                        >
+                                          {answerLabels[key]}
+                                        </button>
+                                        <textarea
+                                          value={String(data[field] ?? "")}
+                                          onChange={e => setEditData(d => ({ ...d, [field]: e.target.value }))}
+                                          rows={1}
+                                          style={{ ...inputStyle, flex: 1, resize: "vertical", fontSize: 13, border: isCorrect ? "1px solid var(--success)" : "1px solid var(--card-border)" }}
+                                        />
+                                      </>
+                                    ) : (
+                                      <div style={{
+                                        display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, width: "100%",
+                                        background: isCorrect ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.03)",
+                                        border: `1px solid ${isCorrect ? "var(--success)" : "var(--card-border)"}`,
+                                      }}>
+                                        <span style={{ width: 22, height: 22, borderRadius: "50%", background: isCorrect ? "var(--success)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+                                          {answerLabels[key]}
+                                        </span>
+                                        <span style={{ fontSize: 13 }}>{q[field]}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })}
+                            </div>
+
+                            {/* Explanation */}
+                            <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px", borderRight: "3px solid var(--primary)" }}>
+                              <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 600, marginBottom: 3 }}>הסבר</div>
+                              {isEditing ? (
+                                <textarea
+                                  value={String(data.explanation ?? "")}
+                                  onChange={e => setEditData(d => ({ ...d, explanation: e.target.value }))}
+                                  rows={2}
+                                  style={{ ...inputStyle, resize: "vertical", fontSize: 13 }}
+                                />
+                              ) : (
+                                <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{q.explanation}</div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )
             })}
