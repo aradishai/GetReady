@@ -377,17 +377,7 @@ export default function AdminPage() {
                         {courseQs.length} שאלות
                       </span>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {isOpen && (
-                        <button
-                          onClick={e => { e.stopPropagation(); deleteAllInCourse(course.id, course.name) }}
-                          style={{ padding: "4px 12px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                        >
-                          מחק הכל
-                        </button>
-                      )}
-                      <span style={{ fontSize: 18, color: isOpen ? color : "var(--muted)", lineHeight: 1 }}>{isOpen ? "▲" : "▼"}</span>
-                    </div>
+                    <span style={{ fontSize: 18, color: isOpen ? color : "var(--muted)", lineHeight: 1 }}>{isOpen ? "▲" : "▼"}</span>
                   </button>
 
                   {/* Questions list */}
