@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
+import { auth } from "@/lib/auth"
 
 export const metadata: Metadata = {
   title: "GetReady — תקופת בחינות? תגיעי ל-100 💯",
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SharePage() {
-  redirect("/login")
+export default async function SharePage() {
+  const session = await auth()
+  redirect(session ? "/dashboard" : "/register")
 }
