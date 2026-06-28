@@ -94,9 +94,6 @@ export default function DashboardPage() {
                   borderRadius: 14,
                 }}>
                   <span style={{ fontSize: 28 }}>🔒</span>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 600, textAlign: "center", padding: "0 6px" }}>
-                    {id === "course-social" ? "נעול" : "חבילה שלמה"}
-                  </span>
                 </div>
               )}
             </div>
