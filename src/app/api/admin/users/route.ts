@@ -15,6 +15,7 @@ export async function GET() {
         name: true,
         email: true,
         isPaid: true,
+        isSocialLocked: true,
         isAdmin: true,
         xp: true,
         level: true,
@@ -38,12 +39,13 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "אין הרשאה" }, { status: 403 })
     }
 
-    const { userId, isPaid, isAdmin } = await req.json()
+    const { userId, isPaid, isSocialLocked, isAdmin } = await req.json()
 
     const updated = await prisma.user.update({
       where: { id: userId },
       data: {
         ...(isPaid !== undefined ? { isPaid } : {}),
+        ...(isSocialLocked !== undefined ? { isSocialLocked } : {}),
         ...(isAdmin !== undefined ? { isAdmin } : {}),
       },
     })

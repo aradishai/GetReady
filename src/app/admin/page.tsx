@@ -11,6 +11,7 @@ interface User {
   name: string
   email: string
   isPaid: boolean
+  isSocialLocked: boolean
   isAdmin: boolean
   level: number
   totalPoints: number
@@ -111,6 +112,15 @@ export default function AdminPage() {
       body: JSON.stringify({ userId, isPaid }),
     })
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isPaid } : u)))
+  }
+
+  async function toggleSocialLocked(userId: string, isSocialLocked: boolean) {
+    await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, isSocialLocked }),
+    })
+    setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isSocialLocked } : u)))
   }
 
   async function deleteQuestion(id: string) {
@@ -270,17 +280,37 @@ export default function AdminPage() {
           <h3 style={{ fontWeight: 700, marginBottom: 14 }}>כל המשתמשים ({users.length})</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {users.map((u) => (
-              <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600 }}>{u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 12 }}>{u.email} • רמה {u.level} • {u._count.testResults} מבחנים</div>
+              <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 18px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600 }}>{u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}</div>
+                    <div style={{ color: "var(--muted)", fontSize: 12 }}>{u.email} • רמה {u.level} • {u._count.testResults} מבחנים</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" }}>
+                    {/* Social psychology toggle */}
+                    <button
+                      onClick={() => toggleSocialLocked(u.id, !u.isSocialLocked)}
+                      style={{
+                        padding: "5px 12px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                        background: u.isSocialLocked ? "rgba(239,68,68,0.12)" : "rgba(16,185,129,0.12)",
+                        color: u.isSocialLocked ? "var(--danger)" : "var(--success)",
+                      }}
+                    >
+                      חברתית {u.isSocialLocked ? "🔒" : "✓"}
+                    </button>
+                    {/* Full package toggle */}
+                    <button
+                      onClick={() => togglePaid(u.id, !u.isPaid)}
+                      style={{
+                        padding: "5px 12px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                        background: u.isPaid ? "rgba(56,189,248,0.12)" : "rgba(255,255,255,0.06)",
+                        color: u.isPaid ? "var(--primary)" : "var(--muted)",
+                      }}
+                    >
+                      חבילה שלמה {u.isPaid ? "✓" : "🔒"}
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => togglePaid(u.id, !u.isPaid)}
-                  style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: u.isPaid ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.1)", color: u.isPaid ? "var(--success)" : "var(--danger)", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                >
-                  {u.isPaid ? "פעיל" : "ממתין"}
-                </button>
               </div>
             ))}
           </div>

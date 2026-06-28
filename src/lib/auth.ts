@@ -36,6 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           isAdmin: user.isAdmin,
           isPaid: user.isPaid,
+          isSocialLocked: user.isSocialLocked,
         }
       },
     }),
@@ -46,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id
         token.isAdmin = (user as { isAdmin?: boolean }).isAdmin
         token.isPaid = (user as { isPaid?: boolean }).isPaid
+        token.isSocialLocked = (user as { isSocialLocked?: boolean }).isSocialLocked
       }
       return token
     },
@@ -54,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string
         session.user.isAdmin = token.isAdmin as boolean
         session.user.isPaid = token.isPaid as boolean
+        session.user.isSocialLocked = token.isSocialLocked as boolean
       }
       return session
     },
