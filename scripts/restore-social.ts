@@ -1,6 +1,8 @@
 ﻿import { PrismaClient } from "../src/generated/prisma/client"
+import { PrismaPg } from "@prisma/adapter-pg"
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 // 74 edited questions in ADMIN DISPLAY ORDER (#1 = newest in DB = last in q-social.ts)
 // When updating: DB question at createdAt-ASC index j gets updated with QUESTIONS[73-j]
