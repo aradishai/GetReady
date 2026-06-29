@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const questions = await prisma.question.findMany({
       where: courseId ? { courseId } : {},
       include: { course: { select: { name: true } } },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
     })
 
     return NextResponse.json(questions)
