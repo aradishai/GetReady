@@ -138,14 +138,7 @@ export default function CoursePage() {
           {SEP}
           <span style={{ whiteSpace: "nowrap" }}>
             <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
-            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף</span>
-          </span>
-        </>}
-        {practiceRec.bestSession > 0 && <>
-          {SEP}
-          <span style={{ whiteSpace: "nowrap" }}>
-            <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestSession}</span>
-            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא תרגול</span>
+            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף תרגול</span>
           </span>
         </>}
       </div>
