@@ -125,23 +125,33 @@ export default function CoursePage() {
         flexWrap: "wrap",
         gap: "4px 0",
       }}>
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{coursePoints}</span>
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
+        <span style={{ whiteSpace: "nowrap" }}>
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{coursePoints}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
+        </span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{courseLevel}</span>
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
+        <span style={{ whiteSpace: "nowrap" }}>
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{courseLevel}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
+        </span>
         {SEP}
-        <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
-        <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע מבחנים</span>
+        <span style={{ whiteSpace: "nowrap" }}>
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע מבחנים</span>
+        </span>
         {practiceRec.bestStreak > 0 && <>
           {SEP}
-          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף</span>
+          <span style={{ whiteSpace: "nowrap" }}>
+            <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
+            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף</span>
+          </span>
         </>}
         {practiceRec.bestSession > 0 && <>
           {SEP}
-          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestSession}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא תרגול</span>
+          <span style={{ whiteSpace: "nowrap" }}>
+            <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestSession}</span>
+            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא תרגול</span>
+          </span>
         </>}
       </div>
 
