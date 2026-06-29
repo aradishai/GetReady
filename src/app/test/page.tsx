@@ -207,7 +207,7 @@ function TestPageInner() {
 
   async function submitTest() {
     setPhase("submitting")
-    const correct = questions.filter((q, i) => (answers[i] || "A") === q.correctAnswer).length
+    const correct = questions.filter((q, i) => answers[i] !== undefined && answers[i] === q.correctAnswer).length
     const total = questions.length
     const score = Math.round((correct / total) * 100)
     const timeSpent = Math.round((Date.now() - startTime.current) / 1000)
@@ -230,8 +230,8 @@ function TestPageInner() {
       // Normal mode: save result
       const answersPayload = questions.map((q, i) => ({
         questionId: q.id,
-        userAnswer: answers[i] || "A",
-        isCorrect: (answers[i] || "A") === q.correctAnswer,
+        userAnswer: answers[i] ?? "",
+        isCorrect: answers[i] !== undefined && answers[i] === q.correctAnswer,
       }))
       const res = await fetch("/api/results", {
         method: "POST",
