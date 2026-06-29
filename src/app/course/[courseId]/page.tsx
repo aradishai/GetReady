@@ -126,11 +126,6 @@ export default function CoursePage() {
         gap: "4px 0",
       }}>
         <span style={{ whiteSpace: "nowrap" }}>
-          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{coursePoints}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 5 }}>נקודות</span>
-        </span>
-        {SEP}
-        <span style={{ whiteSpace: "nowrap" }}>
           <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{courseLevel}</span>
           <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
         </span>
