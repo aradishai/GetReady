@@ -59,13 +59,19 @@ async function runSeed(secret: string | null) {
     ]
 
     for (const [courseId, questions] of courseQuestions) {
-      await prisma.question.deleteMany({ where: { courseId } })
+      let added = 0
       for (const q of questions) {
-        await prisma.question.create({
-          data: { courseId, ...q, sourceType: "Generated", isActive: true },
+        const exists = await prisma.question.findFirst({
+          where: { courseId, question: q.question },
         })
+        if (!exists) {
+          await prisma.question.create({
+            data: { courseId, ...q, sourceType: "Generated", isActive: true },
+          })
+          added++
+        }
       }
-      results[courseId] = questions.length
+      results[courseId] = added
     }
 
     return NextResponse.json({ success: true, results })
