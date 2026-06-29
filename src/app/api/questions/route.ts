@@ -8,12 +8,18 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "לא מחובר" }, { status: 401 })
     }
-    if (!session.user.isPaid && !session.user.isAdmin) {
-      return NextResponse.json({ error: "גישה אסורה" }, { status: 403 })
-    }
-
     const { searchParams } = new URL(req.url)
-    const courseId = searchParams.get("courseId")
+    const requestedCourseId = searchParams.get("courseId")
+
+    if (!session.user.isAdmin) {
+      const isSocial = requestedCourseId === "course-social"
+      if (isSocial && session.user.isSocialLocked) {
+        return NextResponse.json({ error: "גישה אסורה" }, { status: 403 })
+      }
+      if (!isSocial && !session.user.isPaid) {
+        return NextResponse.json({ error: "גישה אסורה" }, { status: 403 })
+      }
+    }
     const topic = searchParams.get("topic")
     const difficulty = searchParams.get("difficulty")
     const sourceType = searchParams.get("sourceType")
@@ -32,7 +38,7 @@ export async function GET(req: NextRequest) {
     }
 
     const where: Record<string, unknown> = { isActive: true }
-    if (courseId) where.courseId = courseId
+    if (requestedCourseId) where.courseId = requestedCourseId
     if (topic && topic !== "all") where.topic = topic
     if (difficulty && difficulty !== "all") where.difficulty = difficulty
     if (sourceType && sourceType !== "all") where.sourceType = sourceType
