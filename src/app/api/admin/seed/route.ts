@@ -81,6 +81,33 @@ async function runSeed(secret: string | null) {
   }
 }
 
+const NEW_QUESTIONS_TO_DEMOTE = [
+  "איזו מהאפשרויות הבאות מתארת בצורה הטובה ביותר את מטרת ההצגה העצמית?",
+  "מועמד בריאיון עבודה מדגיש שוב ושוב את הישגיו, ניסיונו והצלחותיו כדי להרשים את המראיין. באיזו אסטרטגיית הצגה עצמית הוא משתמש?",
+  "עובדת שולחת את רוב המיילים שלה בשעות הערב המאוחרות כדי שהמנהל יראה שהיא עובדת עד שעות מאוחרות. באיזו אסטרטגיית הצגה עצמית היא משתמשת?",
+  "מהו ניטור עצמי (Self-Monitoring)?",
+  "איזו מהאפשרויות הבאות מתארת את המושג 'יצירת סביבה' כמקור לידע עצמי?",
+  "מה מאפיין את תפיסת העצמי בתרבות המערבית לעומת התרבות המזרחית?",
+  "לפי הסיכום, במה נוטים נשים וגברים להדגיש את תפיסת העצמי שלהם?",
+  "איזו מהטענות הבאות נכונה לגבי הערכה עצמית?",
+]
+
+async function fixOrder(secret: string | null) {
+  if (secret !== SEED_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+  const oldDate = new Date("2020-01-01T00:00:00.000Z")
+  let updated = 0
+  for (const questionText of NEW_QUESTIONS_TO_DEMOTE) {
+    const result = await prisma.question.updateMany({
+      where: { courseId: "course-social", question: questionText },
+      data: { createdAt: oldDate },
+    })
+    updated += result.count
+  }
+  return NextResponse.json({ success: true, updated })
+}
+
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-seed-secret") || req.nextUrl.searchParams.get("secret")
   return runSeed(secret)
@@ -88,5 +115,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get("secret")
+  const action = req.nextUrl.searchParams.get("action")
+  if (action === "fix-order") return fixOrder(secret)
   return runSeed(secret)
 }
