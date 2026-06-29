@@ -95,6 +95,18 @@ function TestPageInner() {
   const [loading, setLoading]     = useState(competitionCode ? true : false)
   const [timeLeft, setTimeLeft]   = useState<number | null>(null)
   const startTime = useRef(Date.now())
+  const [hasSavedTest, setHasSavedTest] = useState(false)
+
+  const savedKey = !competitionCode && courseId ? `test_state_${courseId}` : null
+
+  // Check for saved test on mount
+  useEffect(() => {
+    if (!savedKey) return
+    try {
+      const raw = localStorage.getItem(savedKey)
+      if (raw) setHasSavedTest(true)
+    } catch { /* ignore */ }
+  }, [savedKey])
 
   // Competition state
   const [compParticipants, setCompParticipants] = useState<CompParticipant[]>([])
@@ -144,6 +156,38 @@ function TestPageInner() {
     const interval = setInterval(pollComp, 2500)
     return () => clearInterval(interval)
   }, [competitionCode, phase, pollComp])
+
+  // Save test state to localStorage during test
+  useEffect(() => {
+    if (phase !== "test" || !savedKey || questions.length === 0) return
+    try {
+      localStorage.setItem(savedKey, JSON.stringify({
+        questions, answers, current, difficulty, timeLimitPerQ,
+        elapsedMs: Date.now() - startTime.current,
+      }))
+    } catch { /* ignore */ }
+  }, [answers, current, phase, questions, savedKey, difficulty, timeLimitPerQ])
+
+  function resumeTest() {
+    if (!savedKey) return
+    try {
+      const saved = JSON.parse(localStorage.getItem(savedKey) || "null")
+      if (!saved) return
+      setQuestions(saved.questions)
+      setAnswers(saved.answers)
+      setCurrent(saved.current)
+      setDifficulty(saved.difficulty)
+      setTimeLimitPerQ(saved.timeLimitPerQ)
+      startTime.current = Date.now() - (saved.elapsedMs ?? 0)
+      setHasSavedTest(false)
+      setPhase("test")
+    } catch { /* ignore */ }
+  }
+
+  function discardSavedTest() {
+    if (savedKey) localStorage.removeItem(savedKey)
+    setHasSavedTest(false)
+  }
 
   // Timer
   useEffect(() => {
@@ -206,6 +250,7 @@ function TestPageInner() {
   }
 
   async function submitTest() {
+    if (savedKey) localStorage.removeItem(savedKey)
     setPhase("submitting")
     const correct = questions.filter((q, i) => answers[i] !== undefined && answers[i] === q.correctAnswer).length
     const total = questions.length
@@ -266,6 +311,26 @@ function TestPageInner() {
         </button>
 
         <h1 style={{ fontSize: isMobile ? 20 : 20, fontWeight: 800, marginBottom: isMobile ? 16 : 20 }}>הגדרות מבחן</h1>
+
+        {hasSavedTest && (
+          <div style={{ background: "rgba(56,189,248,0.08)", border: "1.5px solid rgba(56,189,248,0.3)", borderRadius: 14, padding: "14px 16px", marginBottom: isMobile ? 16 : 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--primary)", marginBottom: 10 }}>יש לך מבחן שלא הושלם</div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={resumeTest}
+                style={{ flex: 1, padding: "10px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+              >
+                המשך מבחן
+              </button>
+              <button
+                onClick={discardSavedTest}
+                style={{ padding: "10px 14px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 10, fontSize: 13, cursor: "pointer" }}
+              >
+                התחל מחדש
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Difficulty */}
         <div style={{ marginBottom: isMobile ? 16 : 16 }}>
