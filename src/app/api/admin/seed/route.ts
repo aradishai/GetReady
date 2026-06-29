@@ -96,16 +96,17 @@ async function fixOrder(secret: string | null) {
   if (secret !== SEED_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
-  const oldDate = new Date("2020-01-01T00:00:00.000Z")
-  let updated = 0
-  for (const questionText of NEW_QUESTIONS_TO_DEMOTE) {
-    const result = await prisma.question.updateMany({
-      where: { courseId: "course-social", question: questionText },
-      data: { createdAt: oldDate },
-    })
-    updated += result.count
+  try {
+    const result = await prisma.$executeRaw`
+      UPDATE "Question"
+      SET "createdAt" = '2020-01-01 00:00:00'::timestamp
+      WHERE "courseId" = 'course-social'
+      AND "question" = ANY(${NEW_QUESTIONS_TO_DEMOTE}::text[])
+    `
+    return NextResponse.json({ success: true, updated: result })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
   }
-  return NextResponse.json({ success: true, updated })
 }
 
 export async function POST(req: NextRequest) {
