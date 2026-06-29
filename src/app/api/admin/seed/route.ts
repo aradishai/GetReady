@@ -97,13 +97,37 @@ async function fixOrder(secret: string | null) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
   try {
-    const result = await prisma.$executeRaw`
-      UPDATE "Question"
-      SET "createdAt" = '2020-01-01 00:00:00'::timestamp
-      WHERE "courseId" = 'course-social'
-      AND "question" = ANY(${NEW_QUESTIONS_TO_DEMOTE}::text[])
-    `
-    return NextResponse.json({ success: true, updated: result })
+    const oldDate = new Date("2020-01-01T00:00:00.000Z")
+    let updated = 0
+
+    for (const questionText of NEW_QUESTIONS_TO_DEMOTE) {
+      const q = await prisma.question.findFirst({
+        where: { courseId: "course-social", question: questionText },
+      })
+      if (!q) continue
+
+      await prisma.question.delete({ where: { id: q.id } })
+      await prisma.question.create({
+        data: {
+          courseId: q.courseId,
+          question: q.question,
+          answerA: q.answerA,
+          answerB: q.answerB,
+          answerC: q.answerC,
+          answerD: q.answerD,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          topic: q.topic,
+          difficulty: q.difficulty,
+          sourceType: q.sourceType,
+          isActive: q.isActive,
+          createdAt: oldDate,
+        },
+      })
+      updated++
+    }
+
+    return NextResponse.json({ success: true, updated })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
