@@ -81,7 +81,7 @@ export default function CoursePage() {
   const courseLevel    = practiceRec.bestStreak > 0 ? Math.ceil(practiceRec.bestStreak / levelThreshold) : 1
   const lastResult   = results[0] ?? null
 
-  const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: "0 10px", fontWeight: 300 }}>|</span>
+  const SEP = <span style={{ color: "rgba(255,255,255,0.12)", margin: isMobile ? "0 6px" : "0 10px", fontWeight: 300 }}>|</span>
 
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: isMobile ? "12px 12px 60px" : "10px 18px 16px" }}>
@@ -119,26 +119,26 @@ export default function CoursePage() {
         alignItems: "center",
         justifyContent: "center",
         direction: "ltr",
-        fontSize: isMobile ? 14 : 15,
+        fontSize: isMobile ? 12 : 15,
         marginBottom: isMobile ? 14 : 8,
         letterSpacing: 0.1,
-        flexWrap: "wrap",
-        gap: "4px 0",
+        flexWrap: "nowrap",
+        overflowX: "hidden",
       }}>
         <span style={{ whiteSpace: "nowrap" }}>
-          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{courseLevel}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 5 }}>רמה</span>
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 17 : 22 }}>{courseLevel}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 4 }}>רמה</span>
         </span>
         {SEP}
         <span style={{ whiteSpace: "nowrap" }}>
-          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 5 }}>ממוצע מבחנים</span>
+          <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 17 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
+          <span style={{ color: "var(--muted)", marginLeft: 4 }}>ממוצע מבחנים</span>
         </span>
         {practiceRec.bestStreak > 0 && <>
           {SEP}
           <span style={{ whiteSpace: "nowrap" }}>
-            <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 20 : 22 }}>{practiceRec.bestStreak}</span>
-            <span style={{ color: "var(--muted)", marginLeft: 5 }}>שיא רצף תרגול</span>
+            <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 17 : 22 }}>{practiceRec.bestStreak}</span>
+            <span style={{ color: "var(--muted)", marginLeft: 4 }}>שיא רצף תרגול</span>
           </span>
         </>}
       </div>
