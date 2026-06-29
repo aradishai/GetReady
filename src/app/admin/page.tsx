@@ -44,6 +44,7 @@ interface Question {
   sourceType: string
   examYear: string | null
   isActive: boolean
+  position: number
   course: { name: string }
 }
 
@@ -513,6 +514,19 @@ export default function AdminPage() {
                                 <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{q.explanation}</div>
                               )}
                             </div>
+
+                            {/* Position */}
+                            {isEditing && (
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 12, color: "var(--muted)" }}>מיקום (0 = אוטומטי):</span>
+                                <input
+                                  type="number"
+                                  value={data.position ?? 0}
+                                  onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))}
+                                  style={{ ...inputStyle, width: 80, fontSize: 13 }}
+                                />
+                              </div>
+                            )}
                           </div>
                         )
                       })}

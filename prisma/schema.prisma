@@ -71,6 +71,7 @@ model Question {
   sourceType    String   @default("Generated")
   examYear      String?
   isActive      Boolean  @default(true)
+  position      Int      @default(0)
   createdAt     DateTime @default(now())
 
   course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
