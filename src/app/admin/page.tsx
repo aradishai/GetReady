@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-type Tab = "users" | "payments" | "questions" | "courses"
+type Tab = "users" | "questions" | "courses"
 
 interface User {
   id: string
@@ -17,17 +17,6 @@ interface User {
   totalPoints: number
   createdAt: string
   _count: { testResults: number; paymentRequests: number; sessions: number }
-}
-
-interface PaymentRequest {
-  id: string
-  fullName: string
-  email: string
-  lastFourDigits: string
-  note: string | null
-  status: string
-  createdAt: string
-  user: { id: string; name: string; email: string; isPaid: boolean }
 }
 
 interface Question {
@@ -60,9 +49,8 @@ interface Course {
 export default function AdminPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [tab, setTab] = useState<Tab>("payments")
+  const [tab, setTab] = useState<Tab>("users")
   const [users, setUsers] = useState<User[]>([])
-  const [payments, setPayments] = useState<PaymentRequest[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
@@ -85,26 +73,12 @@ export default function AdminPage() {
     if (!session?.user?.isAdmin) return
     Promise.all([
       fetch("/api/admin/users").then((r) => r.json()),
-      fetch("/api/admin/payment-requests").then((r) => r.json()),
       fetch("/api/admin/questions").then((r) => r.json()),
       fetch("/api/admin/courses").then((r) => r.json()),
-    ]).then(([u, p, q, c]) => {
-      setUsers(u); setPayments(p); setQuestions(q); setCourses(c); setLoading(false)
+    ]).then(([u, q, c]) => {
+      setUsers(u); setQuestions(q); setCourses(c); setLoading(false)
     })
   }, [session])
-
-  async function approvePayment(requestId: string, action: "approve" | "reject") {
-    await fetch("/api/admin/payment-requests", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ requestId, action }),
-    })
-    setPayments((prev) => prev.map((p) => (p.id === requestId ? { ...p, status: action === "approve" ? "approved" : "rejected" } : p)))
-    if (action === "approve") {
-      const req = payments.find((p) => p.id === requestId)
-      if (req) setUsers((prev) => prev.map((u) => (u.id === req.user.id ? { ...u, isPaid: true } : u)))
-    }
-  }
 
   async function togglePaid(userId: string, isPaid: boolean) {
     await fetch("/api/admin/users", {
@@ -170,7 +144,6 @@ export default function AdminPage() {
     }
   }
 
-  const pendingPayments = payments.filter((p) => p.status === "pending")
   const COURSE_COLORS: Record<string, string> = {
     "course-psychodiag": "#22c55e",
     "course-social": "#f97316",
@@ -179,8 +152,7 @@ export default function AdminPage() {
     "course-chevrot": "#ef4444",
     "course-orgs": "#38bdf8",
   }
-  const tabs: { key: Tab; label: string; badge?: number }[] = [
-    { key: "payments", label: "בקשות תשלום", badge: pendingPayments.length },
+  const tabs: { key: Tab; label: string }[] = [
     { key: "users", label: "משתמשים" },
     { key: "questions", label: "שאלות" },
     { key: "courses", label: "קורסים" },
@@ -216,12 +188,11 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--card-border)" }}>
-        {tabs.map(({ key, label, badge }) => (
+        {tabs.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             style={{
-              display: "flex", alignItems: "center", gap: 6,
               padding: "10px 16px", borderRadius: "8px 8px 0 0", border: "none",
               background: tab === key ? "var(--card)" : "transparent",
               color: tab === key ? "var(--foreground)" : "var(--muted)",
@@ -230,54 +201,9 @@ export default function AdminPage() {
             }}
           >
             {label}
-            {badge !== undefined && badge > 0 && (
-              <span style={{ background: "var(--danger)", color: "#fff", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>
-                {badge}
-              </span>
-            )}
           </button>
         ))}
       </div>
-
-      {/* Payments Tab */}
-      {tab === "payments" && (
-        <div>
-          <h3 style={{ fontWeight: 700, marginBottom: 14 }}>
-            בקשות תשלום {pendingPayments.length > 0 && <span style={{ color: "var(--warning)" }}>({pendingPayments.length} ממתינות)</span>}
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {payments.map((p) => (
-              <div key={p.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "14px 18px" }}>
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{p.fullName}</div>
-                    <div style={{ color: "var(--muted)", fontSize: 13 }}>{p.email} • 4 ספרות: {p.lastFourDigits}</div>
-                    {p.note && <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 2 }}>הערה: {p.note}</div>}
-                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>{new Date(p.createdAt).toLocaleDateString("he-IL")}</div>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                    {p.status === "pending" ? (
-                      <>
-                        <button onClick={() => approvePayment(p.id, "approve")} style={{ padding: "7px 16px", background: "var(--success)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-                          אשר
-                        </button>
-                        <button onClick={() => approvePayment(p.id, "reject")} style={{ padding: "7px 14px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
-                          דחה
-                        </button>
-                      </>
-                    ) : (
-                      <span style={{ fontSize: 13, fontWeight: 600, color: p.status === "approved" ? "var(--success)" : "var(--danger)" }}>
-                        {p.status === "approved" ? "אושר" : "נדחה"}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-            {payments.length === 0 && <p style={{ color: "var(--muted)" }}>אין בקשות תשלום</p>}
-          </div>
-        </div>
-      )}
 
       {/* Users Tab */}
       {tab === "users" && (
