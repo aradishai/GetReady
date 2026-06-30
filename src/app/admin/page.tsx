@@ -202,11 +202,9 @@ export default function AdminPage() {
       <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>אדמין פאנל</h1>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12, marginBottom: 24 }}>
         {[
           { label: "משתמשים", value: users.length, color: "var(--primary)" },
-          { label: "משלמים", value: users.filter((u) => u.isPaid).length, color: "var(--success)" },
-          { label: "בקשות פתוחות", value: pendingPayments.length, color: "var(--warning)" },
           { label: "שאלות", value: questions.length, color: "var(--accent)" },
         ].map(({ label, value, color }) => (
           <div key={label} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 14, padding: 16, textAlign: "center" }}>
