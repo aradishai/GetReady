@@ -115,6 +115,12 @@ export default function AdminPage() {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isPaid } : u)))
   }
 
+  async function deleteUser(userId: string, userName: string) {
+    if (!confirm(`למחוק את המשתמש "${userName}"? פעולה זו אינה הפיכה.`)) return
+    await fetch(`/api/admin/users?userId=${userId}`, { method: "DELETE" })
+    setUsers((prev) => prev.filter((u) => u.id !== userId))
+  }
+
   async function toggleSocialLocked(userId: string, isSocialLocked: boolean) {
     await fetch("/api/admin/users", {
       method: "PATCH",
@@ -317,6 +323,18 @@ export default function AdminPage() {
                     >
                       חבילה שלמה {u.isPaid ? "✓" : "🔒"}
                     </button>
+                    {/* Delete user */}
+                    {!u.isAdmin && (
+                      <button
+                        onClick={() => deleteUser(u.id, u.name)}
+                        style={{
+                          padding: "5px 10px", borderRadius: 8, border: "1px solid var(--danger)", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                          background: "rgba(239,68,68,0.08)", color: "var(--danger)",
+                        }}
+                      >
+                        מחק
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

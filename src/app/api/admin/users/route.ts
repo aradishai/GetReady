@@ -39,6 +39,24 @@ export async function GET() {
   }
 }
 
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth()
+    if (!session?.user?.isAdmin) {
+      return NextResponse.json({ error: "אין הרשאה" }, { status: 403 })
+    }
+
+    const { searchParams } = new URL(req.url)
+    const userId = searchParams.get("userId")
+    if (!userId) return NextResponse.json({ error: "חסר userId" }, { status: 400 })
+
+    await prisma.user.delete({ where: { id: userId } })
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: "שגיאה במחיקה" }, { status: 500 })
+  }
+}
+
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth()
