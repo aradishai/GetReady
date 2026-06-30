@@ -211,55 +211,58 @@ export default function AdminPage() {
           <h3 style={{ fontWeight: 700, marginBottom: 14 }}>כל המשתמשים ({users.length})</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {users.map((u) => (
-              <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 18px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600 }}>
-                      {u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}
-                      {u._count.sessions > 1 && (
-                        <span style={{ marginRight: 8, fontSize: 11, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.12)", padding: "2px 7px", borderRadius: 6 }}>
-                          {u._count.sessions} מכשירים
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ color: "var(--muted)", fontSize: 12 }}>{u.email} • רמה {u.level} • {u._count.testResults} מבחנים</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" }}>
-                    {/* Social psychology toggle */}
-                    <button
-                      onClick={() => toggleSocialLocked(u.id, !u.isSocialLocked)}
-                      style={{
-                        padding: "5px 12px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
-                        background: u.isSocialLocked ? "rgba(239,68,68,0.12)" : "rgba(16,185,129,0.12)",
-                        color: u.isSocialLocked ? "var(--danger)" : "var(--success)",
-                      }}
-                    >
-                      חברתית {u.isSocialLocked ? "🔒" : "✓"}
-                    </button>
-                    {/* Full package toggle */}
-                    <button
-                      onClick={() => togglePaid(u.id, !u.isPaid)}
-                      style={{
-                        padding: "5px 12px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
-                        background: u.isPaid ? "rgba(56,189,248,0.12)" : "rgba(255,255,255,0.06)",
-                        color: u.isPaid ? "var(--primary)" : "var(--muted)",
-                      }}
-                    >
-                      חבילה שלמה {u.isPaid ? "✓" : "🔒"}
-                    </button>
-                    {/* Delete user */}
-                    {!u.isAdmin && (
-                      <button
-                        onClick={() => deleteUser(u.id, u.name)}
-                        style={{
-                          padding: "5px 10px", borderRadius: 8, border: "1px solid var(--danger)", cursor: "pointer", fontSize: 11, fontWeight: 600,
-                          background: "rgba(239,68,68,0.08)", color: "var(--danger)",
-                        }}
-                      >
-                        מחק
-                      </button>
+              <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
+                {/* Info row */}
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    {u.name}
+                    {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}
+                    {u._count.sessions > 1 && (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.12)", padding: "2px 7px", borderRadius: 6 }}>
+                        {u._count.sessions} מכשירים
+                      </span>
                     )}
                   </div>
+                  <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {u.email}
+                  </div>
+                  <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 1 }}>
+                    רמה {u.level} • {u._count.testResults} מבחנים
+                  </div>
+                </div>
+                {/* Actions row */}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => toggleSocialLocked(u.id, !u.isSocialLocked)}
+                    style={{
+                      flex: 1, minWidth: 90, padding: "6px 8px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                      background: u.isSocialLocked ? "rgba(239,68,68,0.12)" : "rgba(16,185,129,0.12)",
+                      color: u.isSocialLocked ? "var(--danger)" : "var(--success)",
+                    }}
+                  >
+                    חברתית {u.isSocialLocked ? "🔒" : "✓"}
+                  </button>
+                  <button
+                    onClick={() => togglePaid(u.id, !u.isPaid)}
+                    style={{
+                      flex: 1, minWidth: 100, padding: "6px 8px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                      background: u.isPaid ? "rgba(56,189,248,0.12)" : "rgba(255,255,255,0.06)",
+                      color: u.isPaid ? "var(--primary)" : "var(--muted)",
+                    }}
+                  >
+                    חבילה שלמה {u.isPaid ? "✓" : "🔒"}
+                  </button>
+                  {!u.isAdmin && (
+                    <button
+                      onClick={() => deleteUser(u.id, u.name)}
+                      style={{
+                        padding: "6px 12px", borderRadius: 8, border: "1px solid var(--danger)", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                        background: "rgba(239,68,68,0.08)", color: "var(--danger)",
+                      }}
+                    >
+                      מחק
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
