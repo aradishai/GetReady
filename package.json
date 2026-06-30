@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "prisma generate && prisma db push && npx tsx scripts/restore-social.ts && next start",
+    "start": "prisma generate && prisma db push && npx tsx scripts/restore-social.ts && npx tsx scripts/seed-social-82.ts && next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts"
   },
