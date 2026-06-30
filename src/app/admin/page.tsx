@@ -16,7 +16,7 @@ interface User {
   level: number
   totalPoints: number
   createdAt: string
-  _count: { testResults: number; paymentRequests: number }
+  _count: { testResults: number; paymentRequests: number; sessions: number }
 }
 
 interface PaymentRequest {
@@ -284,7 +284,14 @@ export default function AdminPage() {
               <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 18px" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600 }}>{u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}</div>
+                    <div style={{ fontWeight: 600 }}>
+                      {u.name} {u.isAdmin && <span style={{ fontSize: 11, color: "#f59e0b" }}>★ אדמין</span>}
+                      {u._count.sessions > 1 && (
+                        <span style={{ marginRight: 8, fontSize: 11, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.12)", padding: "2px 7px", borderRadius: 6 }}>
+                          {u._count.sessions} מכשירים
+                        </span>
+                      )}
+                    </div>
                     <div style={{ color: "var(--muted)", fontSize: 12 }}>{u.email} • רמה {u.level} • {u._count.testResults} מבחנים</div>
                   </div>
                   <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" }}>

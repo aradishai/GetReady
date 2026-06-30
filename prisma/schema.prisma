@@ -28,6 +28,7 @@ model User {
   testResults     TestResult[]
   achievements    UserAchievement[]
   paymentRequests PaymentRequest[]
+  sessions        UserSession[]
 }
 
 model Course {
@@ -143,6 +144,19 @@ model CompetitionParticipant {
   competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
 
   @@unique([competitionId, userId])
+}
+
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String
+  userAgent    String
+  ip           String?
+  lastActiveAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, userAgent])
 }
 
 model PaymentRequest {

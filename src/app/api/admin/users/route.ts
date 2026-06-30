@@ -9,6 +9,7 @@ export async function GET() {
       return NextResponse.json({ error: "אין הרשאה" }, { status: 403 })
     }
 
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -21,7 +22,13 @@ export async function GET() {
         level: true,
         totalPoints: true,
         createdAt: true,
-        _count: { select: { testResults: true, paymentRequests: true } },
+        _count: {
+          select: {
+            testResults: true,
+            paymentRequests: true,
+            sessions: { where: { lastActiveAt: { gt: since } } },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     })

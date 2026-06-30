@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const SHARE_URL = "https://getready-production.up.railway.app/share"
 const SHARE_TEXT = `תקופת בחינות? GetReady תכין אותך לכל שאלה 💯
@@ -32,6 +32,12 @@ export default function Navbar() {
   const { data: session } = useSession()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch("/api/user/session", { method: "POST" }).catch(() => {})
+    }
+  }, [session?.user?.id])
 
   if (!session) return null
 
