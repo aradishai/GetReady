@@ -136,7 +136,7 @@ export default function ResultsPage() {
                 {(["A", "B", "C", "D"] as const).map((key) => {
                   const text = a.question[`answer${key}` as keyof typeof a.question] as string
                   const isCorrect = key === a.question.correctAnswer
-                  const isUserAnswer = key === a.userAnswer
+                  const isUserAnswer = text === a.userAnswer
                   return (
                     <div
                       key={key}
