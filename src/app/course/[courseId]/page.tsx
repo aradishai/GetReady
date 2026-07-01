@@ -75,7 +75,8 @@ export default function CoursePage() {
     )
   }
 
-  const avgScore     = results.length ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0
+  const last3        = results.slice(0, 3)
+  const avgScore     = last3.length ? Math.round(last3.reduce((a, r) => a + r.score, 0) / last3.length) : 0
   const coursePoints   = results.reduce((a, r) => a + r.correctAnswers * 4, 0)
   const levelThreshold = totalQ > 0 ? Math.max(1, Math.floor(totalQ / 10)) : 1
   const courseLevel    = practiceRec.bestStreak > 0 ? Math.ceil(practiceRec.bestStreak / levelThreshold) : 1
@@ -132,7 +133,7 @@ export default function CoursePage() {
         {SEP}
         <span style={{ whiteSpace: "nowrap" }}>
           <span style={{ color: meta.color, fontWeight: 800, fontSize: isMobile ? 17 : 22 }}>{results.length > 0 ? `${avgScore}%` : "—"}</span>
-          <span style={{ color: "var(--muted)", marginLeft: 4 }}>ממוצע מבחנים</span>
+          <span style={{ color: "var(--muted)", marginLeft: 4 }}>ממוצע 3 אחרונים</span>
         </span>
         {practiceRec.bestStreak > 0 && <>
           {SEP}
