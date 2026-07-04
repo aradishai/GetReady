@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-type Tab = "users" | "questions" | "courses"
+type Tab = "users" | "questions" | "courses" | "practice"
 
 interface User {
   id: string
@@ -51,6 +51,7 @@ export default function AdminPage() {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>("users")
   const [users, setUsers] = useState<User[]>([])
+  const [practiceStats, setPracticeStats] = useState<Record<string, { courseId: string; courseName: string; total: number; correct: number }[]>>({})
   const [questions, setQuestions] = useState<Question[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
@@ -75,8 +76,9 @@ export default function AdminPage() {
       fetch("/api/admin/users").then((r) => r.json()),
       fetch("/api/admin/questions").then((r) => r.json()),
       fetch("/api/admin/courses").then((r) => r.json()),
-    ]).then(([u, q, c]) => {
-      setUsers(u); setQuestions(q); setCourses(c); setLoading(false)
+      fetch("/api/admin/practice-stats").then((r) => r.json()),
+    ]).then(([u, q, c, ps]) => {
+      setUsers(u); setQuestions(q); setCourses(c); setPracticeStats(ps); setLoading(false)
     })
   }, [session])
 
@@ -154,6 +156,7 @@ export default function AdminPage() {
   }
   const tabs: { key: Tab; label: string }[] = [
     { key: "users", label: "משתמשים" },
+    { key: "practice", label: "תרגול" },
     { key: "questions", label: "שאלות" },
     { key: "courses", label: "קורסים" },
   ]
@@ -267,6 +270,37 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Practice Tab */}
+      {tab === "practice" && (
+        <div>
+          <h3 style={{ fontWeight: 700, marginBottom: 14 }}>תרגול לפי משתמש וקורס</h3>
+          {Object.keys(practiceStats).length === 0 ? (
+            <p style={{ color: "var(--muted)" }}>אין נתוני תרגול עדיין</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {users.filter(u => practiceStats[u.id]).map(u => (
+                <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{u.name}</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {(practiceStats[u.id] || []).sort((a, b) => b.total - a.total).map(s => {
+                      const pct = Math.round((s.correct / s.total) * 100)
+                      const color = pct >= 75 ? "var(--success)" : pct >= 50 ? "var(--warning)" : "var(--danger)"
+                      return (
+                        <div key={s.courseId} style={{ padding: "5px 10px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid var(--card-border)", fontSize: 12 }}>
+                          <span style={{ color: "var(--muted)" }}>{s.courseName}: </span>
+                          <span style={{ fontWeight: 700, color }}>{s.correct}/{s.total}</span>
+                          <span style={{ color: "var(--muted)", marginRight: 4 }}>({pct}%)</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

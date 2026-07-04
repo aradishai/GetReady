@@ -24,11 +24,12 @@ model User {
   lastStudyDate DateTime?
   createdAt     DateTime  @default(now())
 
-  enrollments     UserCourse[]
-  testResults     TestResult[]
-  achievements    UserAchievement[]
-  paymentRequests PaymentRequest[]
-  sessions        UserSession[]
+  enrollments      UserCourse[]
+  testResults      TestResult[]
+  achievements     UserAchievement[]
+  paymentRequests  PaymentRequest[]
+  sessions         UserSession[]
+  practiceAnswers  PracticeAnswer[]
 }
 
 model Course {
@@ -75,8 +76,9 @@ model Question {
   position      Int      @default(0)
   createdAt     DateTime @default(now())
 
-  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  testAnswers TestAnswer[]
+  course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  testAnswers      TestAnswer[]
+  practiceAnswers  PracticeAnswer[]
 }
 
 model TestResult {
@@ -171,4 +173,18 @@ model PaymentRequest {
   createdAt      DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PracticeAnswer {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  courseId   String
+  isCorrect  Boolean
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, courseId])
 }

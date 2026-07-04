@@ -119,11 +119,20 @@ function PracticePageInner() {
     sessionBestStreakRef.current = newSBest
 
     // Track answered question
+    const qId = questions[current].id
     if (courseId) {
       const doneKey = `practice_done_${courseId}`
       const done: string[] = JSON.parse(localStorage.getItem(doneKey) || "[]")
-      const qId = questions[current].id
       if (!done.includes(qId)) localStorage.setItem(doneKey, JSON.stringify([...done, qId]))
+    }
+
+    // Save to server
+    if (userId && courseId) {
+      fetch("/api/practice/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: qId, courseId, isCorrect: correct }),
+      }).catch(() => {})
     }
 
     // Update personal records silently
