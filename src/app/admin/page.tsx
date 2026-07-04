@@ -52,6 +52,7 @@ export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("users")
   const [users, setUsers] = useState<User[]>([])
   const [practiceStats, setPracticeStats] = useState<Record<string, { courseId: string; courseName: string; total: number; correct: number }[]>>({})
+  const [streakTop, setStreakTop] = useState<{ userId: string; name: string; streak: number; total: number }[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,8 +78,11 @@ export default function AdminPage() {
       fetch("/api/admin/questions").then((r) => r.json()),
       fetch("/api/admin/courses").then((r) => r.json()),
       fetch("/api/admin/practice-stats").then((r) => r.json()),
-    ]).then(([u, q, c, ps]) => {
-      setUsers(u); setQuestions(q); setCourses(c); setPracticeStats(ps); setLoading(false)
+      fetch("/api/admin/streak-leaderboard").then((r) => r.json()),
+    ]).then(([u, q, c, ps, sl]) => {
+      setUsers(u); setQuestions(q); setCourses(c); setPracticeStats(ps)
+      setStreakTop(Array.isArray(sl) ? sl : [])
+      setLoading(false)
     })
   }, [session])
 
@@ -175,6 +179,39 @@ export default function AdminPage() {
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
       <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>אדמין פאנל</h1>
+
+      {/* Streak Podium - social psychology */}
+      {streakTop.length > 0 && (
+        <div style={{ background: "var(--card)", border: "1px solid rgba(249,115,22,0.3)", borderRadius: 16, padding: "16px 18px", marginBottom: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#f97316", marginBottom: 14 }}>
+            🏆 רצף תרגול — פסיכולוגיה חברתית
+          </div>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-end", justifyContent: "center" }}>
+            {[1, 0, 2].map((pos) => {
+              const u = streakTop[pos]
+              if (!u) return <div key={pos} style={{ flex: 1 }} />
+              const medals = ["🥇", "🥈", "🥉"]
+              const heights = [90, 72, 60]
+              const colors = ["#f59e0b", "#94a3b8", "#cd7f32"]
+              return (
+                <div key={u.userId} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)", textAlign: "center", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{u.name}</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: colors[pos] }}>{u.streak}</div>
+                  <div style={{ fontSize: 10, color: "var(--muted)" }}>תשובות ברצף</div>
+                  <div style={{
+                    width: "100%", height: heights[pos], borderRadius: "8px 8px 0 0",
+                    background: `${colors[pos]}22`, border: `1px solid ${colors[pos]}55`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 22,
+                  }}>
+                    {medals[pos]}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12, marginBottom: 24 }}>
