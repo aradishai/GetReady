@@ -47,6 +47,7 @@ export default function CoursePage() {
   const [totalQ,        setTotalQ]        = useState(0)
   const [practiceDone,  setPracticeDone]  = useState(0)
   const [practiceRec,   setPracticeRec]   = useState({ bestStreak: 0, bestSession: 0 })
+  const [topicStats,    setTopicStats]    = useState<{ topic: string; total: number; correct: number; pct: number }[]>([])
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -65,6 +66,9 @@ export default function CoursePage() {
     setPracticeDone(done.length)
     const pr = JSON.parse(localStorage.getItem(`practice_records_${courseId}`) || "{}")
     setPracticeRec({ bestStreak: pr.bestStreak || 0, bestSession: pr.bestSession || 0 })
+    fetch(`/api/practice/topic-stats?courseId=${courseId}`)
+      .then(r => r.json())
+      .then(d => setTopicStats(Array.isArray(d) ? d : []))
   }, [session, courseId])
 
   if (!meta) {
@@ -193,6 +197,33 @@ export default function CoursePage() {
               borderRadius: 8,
               transition: "width 0.8s ease",
             }} />
+          </div>
+        </div>
+      )}
+
+      {/* Weak topics */}
+      {topicStats.length > 0 && (
+        <div style={{
+          background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
+          border: "1.5px solid rgba(255,255,255,0.07)",
+          borderRadius: isMobile ? 14 : 14,
+          padding: isMobile ? "12px 14px" : "10px 16px",
+          marginBottom: isMobile ? 10 : 8,
+        }}>
+          <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>נושאים לחיזוק</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            {topicStats.slice(0, 5).map(s => {
+              const color = s.pct >= 70 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
+              return (
+                <div key={s.topic} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ flex: 1, fontSize: isMobile ? 12 : 13, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.topic}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{s.pct}%</div>
+                  <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, overflow: "hidden", flexShrink: 0 }}>
+                    <div style={{ height: "100%", width: `${s.pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
