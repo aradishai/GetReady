@@ -210,7 +210,7 @@ export default function CoursePage() {
           padding: isMobile ? "12px 14px" : "10px 16px",
           marginBottom: isMobile ? 10 : 8,
         }}>
-          <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>נושאים לחיזוק</div>
+          <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>ביצועים לפי נושא</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {topicStats.slice(0, 5).map(s => {
               const color = s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
