@@ -213,7 +213,7 @@ export default function CoursePage() {
           <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>נושאים לחיזוק</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {topicStats.slice(0, 5).map(s => {
-              const color = s.pct >= 70 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
+              const color = s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
               return (
                 <div key={s.topic} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ flex: 1, fontSize: isMobile ? 12 : 13, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.topic}</div>
