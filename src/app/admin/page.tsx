@@ -418,7 +418,15 @@ export default function AdminPage() {
                               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                                 <span style={{ fontSize: 13, fontWeight: 800, color, minWidth: 28 }}>#{idx + 1}</span>
                                 <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}44` }}>{diffLabel}</span>
-                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
+                                {isEditing ? (
+                                  <input
+                                    value={String(data.topic ?? "")}
+                                    onChange={e => setEditData(d => ({ ...d, topic: e.target.value }))}
+                                    style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.5)", outline: "none", width: 140 }}
+                                  />
+                                ) : (
+                                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
+                                )}
                               </div>
                               <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
                                 {isEditing ? (
@@ -501,26 +509,16 @@ export default function AdminPage() {
                               )}
                             </div>
 
-                            {/* Topic + Position */}
+                            {/* Position */}
                             {isEditing && (
-                              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, minWidth: 160 }}>
-                                  <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>תת נושא:</span>
-                                  <input
-                                    value={String(data.topic ?? "")}
-                                    onChange={e => setEditData(d => ({ ...d, topic: e.target.value }))}
-                                    style={{ ...inputStyle, fontSize: 13 }}
-                                  />
-                                </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                  <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>מיקום:</span>
-                                  <input
-                                    type="number"
-                                    value={data.position ?? 0}
-                                    onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))}
-                                    style={{ ...inputStyle, width: 80, fontSize: 13 }}
-                                  />
-                                </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 12, color: "var(--muted)" }}>מיקום (0 = אוטומטי):</span>
+                                <input
+                                  type="number"
+                                  value={data.position ?? 0}
+                                  onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))}
+                                  style={{ ...inputStyle, width: 80, fontSize: 13 }}
+                                />
                               </div>
                             )}
                           </div>
