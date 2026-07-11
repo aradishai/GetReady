@@ -501,16 +501,26 @@ export default function AdminPage() {
                               )}
                             </div>
 
-                            {/* Position */}
+                            {/* Topic + Position */}
                             {isEditing && (
-                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{ fontSize: 12, color: "var(--muted)" }}>מיקום (0 = אוטומטי):</span>
-                                <input
-                                  type="number"
-                                  value={data.position ?? 0}
-                                  onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))}
-                                  style={{ ...inputStyle, width: 80, fontSize: 13 }}
-                                />
+                              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, minWidth: 160 }}>
+                                  <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>תת נושא:</span>
+                                  <input
+                                    value={String(data.topic ?? "")}
+                                    onChange={e => setEditData(d => ({ ...d, topic: e.target.value }))}
+                                    style={{ ...inputStyle, fontSize: 13 }}
+                                  />
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                  <span style={{ fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>מיקום:</span>
+                                  <input
+                                    type="number"
+                                    value={data.position ?? 0}
+                                    onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))}
+                                    style={{ ...inputStyle, width: 80, fontSize: 13 }}
+                                  />
+                                </div>
                               </div>
                             )}
                           </div>
