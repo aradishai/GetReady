@@ -481,14 +481,11 @@ const QUESTIONS = [
 ]
 
 async function main() {
-  const existing = await prisma.question.findFirst({
-    where: {
-      courseId: "course-assessment",
-      question: QUESTIONS[0].question,
-    },
+  const existing = await prisma.question.count({
+    where: { courseId: "course-assessment", topic: "קורות חיים" },
   })
 
-  if (existing) {
+  if (existing > 0) {
     console.log("Assessment CV questions already seeded, skipping")
     return
   }
