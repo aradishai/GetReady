@@ -298,7 +298,7 @@ export default function AdminPage() {
                 <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
                   <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{u.name}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {(practiceStats[u.id] || []).sort((a, b) => b.total - a.total).map(s => {
+                    {(practiceStats[u.id] || []).filter(s => s.courseId !== "course-social").sort((a, b) => b.total - a.total).map(s => {
                       const pct = Math.round((s.correct / s.total) * 100)
                       const color = pct >= 75 ? "var(--success)" : pct >= 50 ? "var(--warning)" : "var(--danger)"
                       return (
