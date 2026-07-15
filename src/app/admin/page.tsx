@@ -55,6 +55,7 @@ export default function AdminPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
+  const [userSearch, setUserSearch] = useState("")
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [openCourseIds, setOpenCourseIds] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -211,9 +212,21 @@ export default function AdminPage() {
       {/* Users Tab */}
       {tab === "users" && (
         <div>
-          <h3 style={{ fontWeight: 700, marginBottom: 14 }}>כל המשתמשים ({users.length})</h3>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, gap: 12, flexWrap: "wrap" }}>
+            <h3 style={{ fontWeight: 700, margin: 0 }}>כל המשתמשים ({users.length})</h3>
+            <input
+              type="text"
+              placeholder="חיפוש לפי שם או אימייל..."
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
+              style={{ ...inputStyle, width: 240, flex: "0 0 auto" }}
+            />
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {users.map((u) => (
+            {users.filter((u) => {
+              const q = userSearch.trim().toLowerCase()
+              return !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+            }).map((u) => (
               <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
                 {/* Info row */}
                 <div style={{ marginBottom: 10 }}>
