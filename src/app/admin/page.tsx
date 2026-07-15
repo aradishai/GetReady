@@ -226,7 +226,7 @@ export default function AdminPage() {
             {users.filter((u) => {
               const q = userSearch.trim().toLowerCase()
               return !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
-            }).map((u) => (
+            }).sort((a, b) => Number(b.isPaid) - Number(a.isPaid)).map((u) => (
               <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
                 {/* Info row */}
                 <div style={{ marginBottom: 10 }}>
