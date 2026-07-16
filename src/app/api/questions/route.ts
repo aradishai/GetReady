@@ -41,9 +41,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(ordered)
     }
 
+    const topicsParam = searchParams.get("topics")
     const where: Record<string, unknown> = { isActive: true }
     if (requestedCourseId) where.courseId = requestedCourseId
-    if (topic && topic !== "all") where.topic = topic
+    if (topicsParam) {
+      const topicList = topicsParam.split(",").filter(Boolean)
+      if (topicList.length > 0) where.topic = { in: topicList }
+    } else if (topic && topic !== "all") {
+      where.topic = topic
+    }
     if (difficulty && difficulty !== "all") where.difficulty = difficulty
     if (sourceType && sourceType !== "all") where.sourceType = sourceType
 

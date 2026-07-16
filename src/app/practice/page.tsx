@@ -66,7 +66,8 @@ function PracticePageInner() {
   const sessionBestStreakRef = useRef(0)
 
   const [topics, setTopics] = useState<string[]>([])
-  const [filters, setFilters] = useState({ topic: "all", difficulty: "all", sourceType: "all" })
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+  const [filters, setFilters] = useState({ difficulty: "all", sourceType: "all" })
   const [showFilters, setShowFilters] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -82,20 +83,18 @@ function PracticePageInner() {
 
   const loadQuestions = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams({
-      limit: "1000",
-      ...(courseId && { courseId }),
-      ...(filters.topic !== "all" && { topic: filters.topic }),
-      ...(filters.difficulty !== "all" && { difficulty: filters.difficulty }),
-      ...(filters.sourceType !== "all" && { sourceType: filters.sourceType }),
-    })
+    const params = new URLSearchParams({ limit: "1000" })
+    if (courseId) params.set("courseId", courseId)
+    if (selectedTopics.length > 0) params.set("topics", selectedTopics.join(","))
+    if (filters.difficulty !== "all") params.set("difficulty", filters.difficulty)
+    if (filters.sourceType !== "all") params.set("sourceType", filters.sourceType)
     const data = await fetch(`/api/questions?${params}`).then((r) => r.json())
     setQuestions(Array.isArray(data) ? data.map(shuffleAnswers) : [])
     setCurrent(0)
     setSelected(null)
     setShowResult(false)
     setLoading(false)
-  }, [filters, courseId])
+  }, [filters, courseId, selectedTopics])
 
   // Only fire on initial user login — NOT on tab-focus session refresh
   useEffect(() => {
@@ -245,23 +244,58 @@ function PracticePageInner() {
 
       {/* Filters */}
       {showFilters && (
-        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: 16, marginBottom: 16, display: "flex", flexWrap: "wrap", gap: 12 }}>
-          {[
-            { label: "נושא", key: "topic", options: [{ value: "all", label: "הכל" }, ...topics.map((t) => ({ value: t, label: t }))] },
-            { label: "קושי", key: "difficulty", options: [{ value: "all", label: "הכל" }, { value: "Easy", label: "קל" }, { value: "Medium", label: "בינוני" }, { value: "Hard", label: "קשה" }] },
-          ].map(({ label, key, options }) => (
-            <div key={key}>
-              <label style={{ display: "block", fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>{label}</label>
+        <div style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: 16, marginBottom: 16, display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* Topic chips */}
+          <div>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 8 }}>
+              נושא {selectedTopics.length > 0 && <span style={{ color: "var(--primary)" }}>({selectedTopics.length} נבחרו)</span>}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <button
+                onClick={() => setSelectedTopics([])}
+                style={{
+                  padding: "5px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid",
+                  borderColor: selectedTopics.length === 0 ? "var(--primary)" : "var(--card-border)",
+                  background: selectedTopics.length === 0 ? "rgba(56,189,248,0.15)" : "transparent",
+                  color: selectedTopics.length === 0 ? "var(--primary)" : "var(--muted)",
+                }}
+              >
+                הכל
+              </button>
+              {topics.map((t) => {
+                const active = selectedTopics.includes(t)
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setSelectedTopics((prev) => active ? prev.filter((x) => x !== t) : [...prev, t])}
+                    style={{
+                      padding: "5px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid",
+                      borderColor: active ? "var(--primary)" : "var(--card-border)",
+                      background: active ? "rgba(56,189,248,0.15)" : "transparent",
+                      color: active ? "var(--primary)" : "var(--muted)",
+                    }}
+                  >
+                    {t}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Difficulty */}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+            <div>
+              <label style={{ display: "block", fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>קושי</label>
               <select
-                value={filters[key as keyof typeof filters]}
-                onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
+                value={filters.difficulty}
+                onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}
                 style={{ background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", padding: "6px 10px", fontSize: 13, cursor: "pointer" }}
               >
-                {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                {[{ value: "all", label: "הכל" }, { value: "Easy", label: "קל" }, { value: "Medium", label: "בינוני" }, { value: "Hard", label: "קשה" }].map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
               </select>
             </div>
-          ))}
-          <div style={{ display: "flex", alignItems: "flex-end" }}>
             <button onClick={loadQuestions} style={{ padding: "6px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
               החל
             </button>
