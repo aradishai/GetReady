@@ -71,8 +71,24 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    // Shuffle and limit
-    const shuffled = questions.sort(() => Math.random() - 0.5).slice(0, limit)
+    // Guarantee at least one question per topic, then fill remaining slots randomly
+    const byTopic: Record<string, typeof questions> = {}
+    for (const q of questions) {
+      if (!byTopic[q.topic]) byTopic[q.topic] = []
+      byTopic[q.topic].push(q)
+    }
+
+    const guaranteed: typeof questions = []
+    const pool: typeof questions = []
+    for (const topicQs of Object.values(byTopic)) {
+      const rand = topicQs.sort(() => Math.random() - 0.5)
+      guaranteed.push(rand[0])
+      pool.push(...rand.slice(1))
+    }
+
+    const slots = Math.max(0, limit - guaranteed.length)
+    const extra = pool.sort(() => Math.random() - 0.5).slice(0, slots)
+    const shuffled = [...guaranteed, ...extra].sort(() => Math.random() - 0.5).slice(0, limit)
 
     return NextResponse.json(shuffled)
   } catch {
