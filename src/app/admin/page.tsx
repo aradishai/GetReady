@@ -98,6 +98,22 @@ export default function AdminPage() {
     setUsers((prev) => prev.filter((u) => u.id !== userId))
   }
 
+  async function resetPassword(userId: string, userName: string) {
+    const newPassword = window.prompt(`סיסמה חדשה למשתמש "${userName}" (לפחות 6 תווים):`)
+    if (!newPassword) return
+    const res = await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, newPassword }),
+    })
+    if (res.ok) {
+      alert(`הסיסמה אופסה בהצלחה למשתמש ${userName}`)
+    } else {
+      const data = await res.json()
+      alert(data.error || "שגיאה באיפוס סיסמה")
+    }
+  }
+
   async function toggleSocialLocked(userId: string, isSocialLocked: boolean) {
     await fetch("/api/admin/users", {
       method: "PATCH",
@@ -267,6 +283,15 @@ export default function AdminPage() {
                     }}
                   >
                     חבילה שלמה {u.isPaid ? "✓" : "🔒"}
+                  </button>
+                  <button
+                    onClick={() => resetPassword(u.id, u.name)}
+                    style={{
+                      padding: "6px 10px", borderRadius: 8, border: "1px solid rgba(245,158,11,0.4)", cursor: "pointer", fontSize: 11, fontWeight: 600,
+                      background: "rgba(245,158,11,0.08)", color: "#f59e0b",
+                    }}
+                  >
+                    איפוס סיסמה
                   </button>
                   {!u.isAdmin && (
                     <button

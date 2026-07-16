@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import bcrypt from "bcryptjs"
 
 export async function GET() {
   try {
@@ -64,15 +65,20 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "אין הרשאה" }, { status: 403 })
     }
 
-    const { userId, isPaid, isSocialLocked, isAdmin } = await req.json()
+    const { userId, isPaid, isSocialLocked, isAdmin, newPassword } = await req.json()
+
+    const data: Record<string, unknown> = {}
+    if (isPaid !== undefined) data.isPaid = isPaid
+    if (isSocialLocked !== undefined) data.isSocialLocked = isSocialLocked
+    if (isAdmin !== undefined) data.isAdmin = isAdmin
+    if (newPassword) {
+      if (newPassword.length < 6) return NextResponse.json({ error: "הסיסמה קצרה מדי" }, { status: 400 })
+      data.password = await bcrypt.hash(newPassword, 10)
+    }
 
     const updated = await prisma.user.update({
       where: { id: userId },
-      data: {
-        ...(isPaid !== undefined ? { isPaid } : {}),
-        ...(isSocialLocked !== undefined ? { isSocialLocked } : {}),
-        ...(isAdmin !== undefined ? { isAdmin } : {}),
-      },
+      data,
     })
 
     return NextResponse.json({ success: true, user: updated })
