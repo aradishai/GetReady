@@ -294,7 +294,11 @@ export default function AdminPage() {
             <p style={{ color: "var(--muted)" }}>אין נתוני תרגול עדיין</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {users.filter(u => practiceStats[u.id]).map(u => (
+              {users.filter(u => practiceStats[u.id]).sort((a, b) => {
+                const aHas = (practiceStats[a.id] || []).some(s => s.courseId === "course-assessment") ? 1 : 0
+                const bHas = (practiceStats[b.id] || []).some(s => s.courseId === "course-assessment") ? 1 : 0
+                return bHas - aHas
+              }).map(u => (
                 <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
                   <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{u.name}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
