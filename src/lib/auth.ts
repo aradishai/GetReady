@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60, updateAge: 60 * 60 },
   pages: {
     signIn: "/login",
   },
@@ -48,6 +48,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.isAdmin = (user as { isAdmin?: boolean }).isAdmin
         token.isPaid = (user as { isPaid?: boolean }).isPaid
         token.isSocialLocked = (user as { isSocialLocked?: boolean }).isSocialLocked
+      } else if (token.id) {
+        const fresh = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { isPaid: true, isAdmin: true, isSocialLocked: true },
+        })
+        if (fresh) {
+          token.isPaid = fresh.isPaid
+          token.isAdmin = fresh.isAdmin
+          token.isSocialLocked = fresh.isSocialLocked
+        }
       }
       return token
     },
