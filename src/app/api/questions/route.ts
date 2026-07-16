@@ -12,11 +12,15 @@ export async function GET(req: NextRequest) {
     const requestedCourseId = searchParams.get("courseId")
 
     if (!session.user.isAdmin) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { isPaid: true, isSocialLocked: true },
+      })
       const isSocial = requestedCourseId === "course-social"
-      if (isSocial && session.user.isSocialLocked) {
+      if (isSocial && dbUser?.isSocialLocked) {
         return NextResponse.json({ error: "גישה אסורה" }, { status: 403 })
       }
-      if (!isSocial && !session.user.isPaid) {
+      if (!isSocial && !dbUser?.isPaid) {
         return NextResponse.json({ error: "גישה אסורה" }, { status: 403 })
       }
     }
