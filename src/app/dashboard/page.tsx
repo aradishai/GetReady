@@ -13,11 +13,53 @@ interface UserData {
 
 const ALL_COURSES = [
   { id: "course-social",     img: "/icon-social.jpeg",     name: "פסיכולוגיה חברתית" },
-  { id: "course-psychodiag", img: "/icon-psychodiag.jpg",  name: "פסיכודיאגנוסטיקה"  },
-  { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון"         },
-  { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות"              },
-  { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים"             },
-] as { id: string; img: string; name: string; adminOnly?: boolean }[]
+  { id: "course-psychodiag", img: "/icon-psychodiag.jpg",  name: "פסיכודיאגנוסטיקה",  examDate: new Date("2026-08-07T09:00:00") },
+  { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון",         examDate: new Date("2026-07-19T09:00:00") },
+  { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות",              examDate: new Date("2026-07-24T09:00:00") },
+  { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים",             examDate: new Date("2026-07-29T09:00:00") },
+] as { id: string; img: string; name: string; adminOnly?: boolean; examDate?: Date }[]
+
+function useNow() {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(t)
+  }, [])
+  return now
+}
+
+function Countdown({ examDate }: { examDate: Date }) {
+  const now = useNow()
+  const diff = examDate.getTime() - now.getTime()
+
+  if (diff <= 0) {
+    return <span style={{ fontSize: 11, color: "var(--muted)" }}>המבחן עבר</span>
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+  const d = examDate.getDate()
+  const m = examDate.getMonth() + 1
+  const dateStr = `${d}/${m}`
+
+  return (
+    <div style={{ textAlign: "center" }}>
+      <div style={{ fontSize: 10, color: "var(--muted)", marginBottom: 2 }}>מבחן {dateStr} | 09:00</div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
+        {days > 0 && (
+          <span style={{ fontSize: 11, fontWeight: 700, color: days <= 3 ? "var(--danger)" : days <= 7 ? "var(--warning)" : "var(--success)" }}>
+            {days}י׳
+          </span>
+        )}
+        <span style={{ fontSize: 11, fontWeight: 700, color: days <= 3 ? "var(--danger)" : days <= 7 ? "var(--warning)" : "var(--success)" }}>
+          {String(hours).padStart(2, "0")}:{String(mins).padStart(2, "0")}
+        </span>
+      </div>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -65,7 +107,7 @@ export default function DashboardPage() {
         maxWidth: 520,
         margin: "0 auto",
       }}>
-        {courses.map(({ id, img, name }) => {
+        {courses.map(({ id, img, name, examDate }) => {
           const locked = isLocked(id)
           const card = (
             <div
@@ -98,11 +140,18 @@ export default function DashboardPage() {
             </div>
           )
 
+          const wrapper = (
+            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+              {card}
+              {examDate && <Countdown examDate={examDate} />}
+            </div>
+          )
+
           return locked ? (
-            <div key={id}>{card}</div>
+            <div key={id}>{wrapper}</div>
           ) : (
             <Link key={id} href={`/course/${id}`} style={{ textDecoration: "none", display: "block" }}>
-              {card}
+              {wrapper}
             </Link>
           )
         })}
