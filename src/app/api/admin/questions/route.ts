@@ -47,7 +47,18 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "אין הרשאה" }, { status: 403 })
     }
 
-    const { id, ...data } = await req.json()
+    const body = await req.json()
+
+    // Bulk position update: { courseId, topic, position }
+    if (body.courseId && body.topic !== undefined && body.position !== undefined && !body.id) {
+      const { count } = await prisma.question.updateMany({
+        where: { courseId: body.courseId, topic: body.topic },
+        data: { position: body.position },
+      })
+      return NextResponse.json({ success: true, count })
+    }
+
+    const { id, ...data } = body
     const question = await prisma.question.update({ where: { id }, data })
     return NextResponse.json({ success: true, question })
   } catch {

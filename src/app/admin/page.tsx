@@ -60,6 +60,10 @@ export default function AdminPage() {
   const [openCourseIds, setOpenCourseIds] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<Question>>({})
+  const [topicFilter, setTopicFilter] = useState("")
+  const [questionsView, setQuestionsView] = useState<"browse" | "positions">("browse")
+  // topic positions: { [courseId_topic]: position }
+  const [topicPositions, setTopicPositions] = useState<Record<string, number>>({})
   const [newQ, setNewQ] = useState({
     courseId: "", question: "", answerA: "", answerB: "", answerC: "", answerD: "",
     correctAnswer: "A", explanation: "", topic: "", difficulty: "Medium",
@@ -121,6 +125,17 @@ export default function AdminPage() {
       body: JSON.stringify({ userId, isSocialLocked }),
     })
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isSocialLocked } : u)))
+  }
+
+  async function saveTopicPosition(courseId: string, topic: string) {
+    const key = `${courseId}__${topic}`
+    const position = topicPositions[key] ?? 0
+    await fetch("/api/admin/questions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ courseId, topic, position }),
+    })
+    setQuestions(prev => prev.map(q => q.course.name === courses.find(c => c.id === courseId)?.name && q.topic === topic ? { ...q, position } : q))
   }
 
   async function deleteQuestion(id: string) {
@@ -349,14 +364,22 @@ export default function AdminPage() {
       {/* Questions Tab */}
       {tab === "questions" && (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
             <h3 style={{ fontWeight: 700, margin: 0 }}>שאלות ({questions.length})</h3>
-            <button
-              onClick={() => setShowAddQuestion(!showAddQuestion)}
-              style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
-            >
-              + הוסף שאלה
-            </button>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setQuestionsView(questionsView === "browse" ? "positions" : "browse")}
+                style={{ padding: "8px 14px", background: questionsView === "positions" ? "rgba(245,158,11,0.15)" : "var(--card)", color: questionsView === "positions" ? "#f59e0b" : "var(--muted)", border: `1px solid ${questionsView === "positions" ? "rgba(245,158,11,0.4)" : "var(--card-border)"}`, borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              >
+                ניהול מיקומים
+              </button>
+              <button
+                onClick={() => setShowAddQuestion(!showAddQuestion)}
+                style={{ padding: "8px 16px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              >
+                + הוסף שאלה
+              </button>
+            </div>
           </div>
 
           {showAddQuestion && courses.length > 0 && (
@@ -404,8 +427,161 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* Positions panel */}
+          {questionsView === "positions" && (
+            <div style={{ background: "var(--card)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 14, padding: 16, marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "#f59e0b" }}>מיקום לפי נושא — חל על כל השאלות בנושא</div>
+              {courses.map(course => {
+                const courseQs = questions.filter(q => q.course.name === course.name)
+                const topicsInCourse = Array.from(new Set(courseQs.map(q => q.topic))).sort()
+                const color = COURSE_COLORS[course.id] ?? "var(--primary)"
+                return (
+                  <div key={course.id} style={{ marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color, marginBottom: 8 }}>{course.name}</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {topicsInCourse.map(topic => {
+                        const key = `${course.id}__${topic}`
+                        const currentPos = topicPositions[key] ?? (courseQs.find(q => q.topic === topic)?.position ?? 0)
+                        return (
+                          <div key={topic} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <div style={{ flex: 1, fontSize: 13, color: "var(--foreground)" }}>{topic}</div>
+                            <input
+                              type="number"
+                              value={topicPositions[key] ?? currentPos}
+                              onChange={e => setTopicPositions(p => ({ ...p, [key]: Number(e.target.value) }))}
+                              style={{ ...inputStyle, width: 70, fontSize: 13, textAlign: "center" }}
+                            />
+                            <button
+                              onClick={() => saveTopicPosition(course.id, topic)}
+                              style={{ padding: "5px 12px", background: "rgba(245,158,11,0.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                            >
+                              שמור
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Topic filter chips */}
+          {questionsView === "browse" && (() => {
+            const allTopics = Array.from(new Set(questions.map(q => q.topic))).sort()
+            return allTopics.length > 0 ? (
+              <div style={{ marginBottom: 12, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                <button
+                  onClick={() => setTopicFilter("")}
+                  style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: !topicFilter ? "var(--primary)" : "var(--card-border)", background: !topicFilter ? "rgba(56,189,248,0.15)" : "transparent", color: !topicFilter ? "var(--primary)" : "var(--muted)" }}
+                >
+                  הכל
+                </button>
+                {allTopics.map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setTopicFilter(t === topicFilter ? "" : t)}
+                    style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: topicFilter === t ? "var(--primary)" : "var(--card-border)", background: topicFilter === t ? "rgba(56,189,248,0.15)" : "transparent", color: topicFilter === t ? "var(--primary)" : "var(--muted)" }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            ) : null
+          })()}
+
+          {/* Flat view when topic filter active */}
+          {questionsView === "browse" && topicFilter && (() => {
+            const filtered = questions.filter(q => q.topic === topicFilter)
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 4 }}>{filtered.length} שאלות בנושא "{topicFilter}"</div>
+                {filtered.map((q, idx) => {
+                  const isEditing = editingId === q.id
+                  const data = isEditing ? { ...q, ...editData } : q
+                  const color = COURSE_COLORS[courses.find(c => c.name === q.course.name)?.id ?? ""] ?? "var(--primary)"
+                  const diffColor = q.difficulty === "Easy" ? "var(--success)" : q.difficulty === "Medium" ? "var(--warning)" : "var(--danger)"
+                  const diffLabel = q.difficulty === "Easy" ? "קל" : q.difficulty === "Medium" ? "בינוני" : "קשה"
+                  const answerKeys = ["A", "B", "C", "D"] as const
+                  const answerLabels = { A: "א", B: "ב", C: "ג", D: "ד" }
+                  const answerFields = { A: "answerA", B: "answerB", C: "answerC", D: "answerD" } as const
+                  return (
+                    <div key={q.id} style={{ background: "var(--card)", border: `1px solid ${isEditing ? "var(--primary)" : "var(--card-border)"}`, borderRadius: 14, padding: "16px 18px" }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color, minWidth: 28 }}>#{idx + 1}</span>
+                          <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: `${diffColor}22`, color: diffColor, border: `1px solid ${diffColor}44` }}>{diffLabel}</span>
+                          <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: `${color}22`, color, border: `1px solid ${color}44` }}>{q.course.name}</span>
+                          {isEditing ? (
+                            <input value={String(data.topic ?? "")} onChange={e => setEditData(d => ({ ...d, topic: e.target.value }))} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.5)", outline: "none", width: 140 }} />
+                          ) : (
+                            <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 12, background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)" }}>{q.topic}</span>
+                          )}
+                        </div>
+                        <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                          {isEditing ? (
+                            <>
+                              <button onClick={saveQuestion} style={{ padding: "5px 14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700 }}>שמור</button>
+                              <button onClick={() => { setEditingId(null); setEditData({}) }} style={{ padding: "5px 12px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>ביטול</button>
+                            </>
+                          ) : (
+                            <>
+                              <button onClick={() => { setEditingId(q.id); setEditData({}) }} style={{ padding: "5px 12px", background: "rgba(56,189,248,0.1)", color: "var(--primary)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}>עריכה</button>
+                              <button onClick={() => deleteQuestion(q.id)} style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "none", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>מחק</button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {isEditing ? (
+                        <textarea value={String(data.question ?? "")} onChange={e => setEditData(d => ({ ...d, question: e.target.value }))} rows={2} style={{ ...inputStyle, marginBottom: 10, fontSize: 15, fontWeight: 600, resize: "vertical" }} />
+                      ) : (
+                        <p style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.6, margin: "0 0 12px" }}>{q.question}</p>
+                      )}
+                      <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 10 }}>
+                        {answerKeys.map(key => {
+                          const field = answerFields[key]
+                          const isCorrect = data.correctAnswer === key
+                          return (
+                            <div key={key} style={{ display: "flex", alignItems: isEditing ? "flex-start" : "center", gap: 8 }}>
+                              {isEditing ? (
+                                <>
+                                  <button onClick={() => setEditData(d => ({ ...d, correctAnswer: key }))} style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: isCorrect ? "var(--success)" : "var(--card-border)", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0, marginTop: 6 }}>{answerLabels[key]}</button>
+                                  <textarea value={String(data[field] ?? "")} onChange={e => setEditData(d => ({ ...d, [field]: e.target.value }))} rows={1} style={{ ...inputStyle, flex: 1, resize: "vertical", fontSize: 13, border: isCorrect ? "1px solid var(--success)" : "1px solid var(--card-border)" }} />
+                                </>
+                              ) : (
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, width: "100%", background: isCorrect ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${isCorrect ? "var(--success)" : "var(--card-border)"}` }}>
+                                  <span style={{ width: 22, height: 22, borderRadius: "50%", background: isCorrect ? "var(--success)" : "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0 }}>{answerLabels[key]}</span>
+                                  <span style={{ fontSize: 13 }}>{q[field]}</span>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px", borderRight: "3px solid var(--primary)" }}>
+                        <div style={{ fontSize: 11, color: "var(--primary)", fontWeight: 600, marginBottom: 3 }}>הסבר</div>
+                        {isEditing ? (
+                          <textarea value={String(data.explanation ?? "")} onChange={e => setEditData(d => ({ ...d, explanation: e.target.value }))} rows={2} style={{ ...inputStyle, resize: "vertical", fontSize: 13 }} />
+                        ) : (
+                          <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>{q.explanation}</div>
+                        )}
+                      </div>
+                      {isEditing && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+                          <span style={{ fontSize: 12, color: "var(--muted)" }}>מיקום:</span>
+                          <input type="number" value={data.position ?? 0} onChange={e => setEditData(d => ({ ...d, position: Number(e.target.value) }))} style={{ ...inputStyle, width: 80, fontSize: 13 }} />
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
+
           {/* Course accordions */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {questionsView === "browse" && !topicFilter && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {courses.map(course => {
               const courseQs = questions.filter(q => q.course.name === course.name)
               const isOpen = openCourseIds.has(course.id)
@@ -571,7 +747,7 @@ export default function AdminPage() {
                 </div>
               )
             })}
-          </div>
+          </div>}
         </div>
       )}
 
