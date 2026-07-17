@@ -33,7 +33,7 @@ function Countdown({ examDate }: { examDate: Date }) {
   const diff = examDate.getTime() - now.getTime()
 
   if (diff <= 0) {
-    return <span style={{ fontSize: 11, color: "var(--muted)" }}>המבחן עבר</span>
+    return <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div>
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           const wrapper = (
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               {card}
-              {examDate && <Countdown examDate={examDate} />}
+              {examDate ? <Countdown examDate={examDate} /> : <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div>}
             </div>
           )
 
