@@ -219,8 +219,9 @@ export default function CoursePage() {
           <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>ביצועים לפי נושא — לחץ לתרגול ממוקד</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {topicStats.map(s => {
-              const practiced = s.pct !== null
-              const color = !practiced ? "var(--muted)" : s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
+              const pct = s.pct
+              const practiced = pct !== null
+              const color = pct === null ? "var(--muted)" : pct >= 90 ? "var(--success)" : pct >= 45 ? "var(--warning)" : "var(--danger)"
               return (
                 <button
                   key={s.topic}
@@ -233,11 +234,11 @@ export default function CoursePage() {
                   }}
                 >
                   <div style={{ flex: 1, fontSize: isMobile ? 12 : 13, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.topic}</div>
-                  {practiced ? (
+                  {pct !== null ? (
                     <>
-                      <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{s.pct}%</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{pct}%</div>
                       <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, overflow: "hidden", flexShrink: 0 }}>
-                        <div style={{ height: "100%", width: `${s.pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
+                        <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
                       </div>
                     </>
                   ) : (
