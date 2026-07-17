@@ -55,6 +55,7 @@ function PracticePageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const courseId = searchParams.get("courseId") || ""
+  const topicsParam = searchParams.get("topics") || ""
   const isMobile = useMobile()
 
   const [questions, setQuestions] = useState<Question[]>([])
@@ -66,7 +67,9 @@ function PracticePageInner() {
   const sessionBestStreakRef = useRef(0)
 
   const [topics, setTopics] = useState<string[]>([])
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+  const [selectedTopics, setSelectedTopics] = useState<string[]>(() =>
+    topicsParam ? topicsParam.split(",").filter(Boolean) : []
+  )
   const [filters, setFilters] = useState({ difficulty: "all", sourceType: "all" })
   const [showFilters, setShowFilters] = useState(false)
   const [loading, setLoading] = useState(true)

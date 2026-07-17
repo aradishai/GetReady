@@ -201,7 +201,7 @@ export default function CoursePage() {
         </div>
       )}
 
-      {/* Weak topics */}
+      {/* Topic stats */}
       {topicStats.length > 0 && (
         <div style={{
           background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
@@ -210,18 +210,27 @@ export default function CoursePage() {
           padding: isMobile ? "12px 14px" : "10px 16px",
           marginBottom: isMobile ? 10 : 8,
         }}>
-          <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>ביצועים לפי נושא</div>
+          <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>ביצועים לפי נושא — לחץ לתרגול ממוקד</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            {topicStats.slice(0, 5).map(s => {
+            {topicStats.map(s => {
               const color = s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
               return (
-                <div key={s.topic} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <button
+                  key={s.topic}
+                  onClick={() => router.push(`/practice?courseId=${courseId}&topics=${encodeURIComponent(s.topic)}`)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    background: "transparent", border: "none", cursor: "pointer",
+                    padding: "4px 0", width: "100%", textAlign: "right",
+                  }}
+                >
                   <div style={{ flex: 1, fontSize: isMobile ? 12 : 13, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.topic}</div>
+                  <div style={{ fontSize: 11, color: "var(--muted)", minWidth: 28, textAlign: "left" }}>{s.total}</div>
                   <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{s.pct}%</div>
                   <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, overflow: "hidden", flexShrink: 0 }}>
                     <div style={{ height: "100%", width: `${s.pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
                   </div>
-                </div>
+                </button>
               )
             })}
           </div>
