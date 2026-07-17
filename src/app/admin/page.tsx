@@ -431,7 +431,7 @@ export default function AdminPage() {
           {questionsView === "positions" && (
             <div style={{ background: "var(--card)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 14, padding: 16, marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "#f59e0b" }}>מיקום לפי נושא — חל על כל השאלות בנושא</div>
-              {courses.map(course => {
+              {courses.filter(c => c.isActive).map(course => {
                 const courseQs = questions.filter(q => q.course.name === course.name)
                 const topicsInCourse = Array.from(new Set(courseQs.map(q => q.topic))).sort()
                 const color = COURSE_COLORS[course.id] ?? "var(--primary)"
