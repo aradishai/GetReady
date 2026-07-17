@@ -47,7 +47,7 @@ export default function CoursePage() {
   const [totalQ,        setTotalQ]        = useState(0)
   const [practiceDone,  setPracticeDone]  = useState(0)
   const [practiceRec,   setPracticeRec]   = useState({ bestStreak: 0, bestSession: 0 })
-  const [topicStats,    setTopicStats]    = useState<{ topic: string; total: number; correct: number; pct: number }[]>([])
+  const [topicStats,    setTopicStats]    = useState<{ topic: string; total: number; correct: number; pct: number | null }[]>([])
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -213,7 +213,8 @@ export default function CoursePage() {
           <div style={{ fontSize: isMobile ? 11 : 13, color: "var(--muted)", marginBottom: 10 }}>ביצועים לפי נושא — לחץ לתרגול ממוקד</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {topicStats.map(s => {
-              const color = s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
+              const practiced = s.pct !== null
+              const color = !practiced ? "var(--muted)" : s.pct >= 90 ? "var(--success)" : s.pct >= 45 ? "var(--warning)" : "var(--danger)"
               return (
                 <button
                   key={s.topic}
@@ -222,14 +223,23 @@ export default function CoursePage() {
                     display: "flex", alignItems: "center", gap: 10,
                     background: "transparent", border: "none", cursor: "pointer",
                     padding: "4px 0", width: "100%", textAlign: "right",
+                    opacity: practiced ? 1 : 0.5,
                   }}
                 >
                   <div style={{ flex: 1, fontSize: isMobile ? 12 : 13, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.topic}</div>
-                  <div style={{ fontSize: 11, color: "var(--muted)", minWidth: 28, textAlign: "left" }}>{s.total}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{s.pct}%</div>
-                  <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, overflow: "hidden", flexShrink: 0 }}>
-                    <div style={{ height: "100%", width: `${s.pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
-                  </div>
+                  {practiced ? (
+                    <>
+                      <div style={{ fontSize: 11, fontWeight: 700, color, minWidth: 34, textAlign: "left" }}>{s.pct}%</div>
+                      <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, overflow: "hidden", flexShrink: 0 }}>
+                        <div style={{ height: "100%", width: `${s.pct}%`, background: color, borderRadius: 4, transition: "width 0.6s ease" }} />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: 11, color: "var(--muted)", minWidth: 34, textAlign: "left" }}>—</div>
+                      <div style={{ width: 80, background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 5, flexShrink: 0 }} />
+                    </>
+                  )}
                 </button>
               )
             })}

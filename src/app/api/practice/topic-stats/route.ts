@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const courseId = new URL(req.url).searchParams.get("courseId")
   if (!courseId) return NextResponse.json({ error: "חסר courseId" }, { status: 400 })
 
-  const [answers, record] = await Promise.all([
+  const [answers, record, allTopicsRaw] = await Promise.all([
     prisma.practiceAnswer.findMany({
       where: { userId: session.user.id, courseId },
       select: { isCorrect: true, questionId: true, question: { select: { topic: true } } },
@@ -17,7 +17,14 @@ export async function GET(req: NextRequest) {
     prisma.userCourseRecord.findUnique({
       where: { userId_courseId: { userId: session.user.id, courseId } },
     }),
+    prisma.question.findMany({
+      where: { courseId, isActive: true },
+      select: { topic: true },
+      distinct: ["topic"],
+    }),
   ])
+
+  const allTopics = allTopicsRaw.map((q) => q.topic)
 
   const practiceDone = new Set(answers.map((a) => a.questionId)).size
 
@@ -29,15 +36,18 @@ export async function GET(req: NextRequest) {
     if (a.isCorrect) byTopic[t].correct++
   }
 
-  const topics = Object.entries(byTopic)
-    .filter(([, s]) => s.total >= 3)
-    .map(([topic, s]) => ({
-      topic,
-      total: s.total,
-      correct: s.correct,
-      pct: Math.round((s.correct / s.total) * 100),
-    }))
-    .sort((a, b) => a.pct - b.pct)
+  // All course topics — practiced ones get stats, unpracticed show as null
+  const topics = allTopics.map((topic) => {
+    const s = byTopic[topic]
+    if (!s || s.total === 0) return { topic, total: 0, correct: 0, pct: null }
+    return { topic, total: s.total, correct: s.correct, pct: Math.round((s.correct / s.total) * 100) }
+  }).sort((a, b) => {
+    // Unpracticed last, then sort by pct ascending (weakest first)
+    if (a.pct === null && b.pct === null) return a.topic.localeCompare(b.topic)
+    if (a.pct === null) return 1
+    if (b.pct === null) return -1
+    return a.pct - b.pct
+  })
 
   return NextResponse.json({
     topics,
