@@ -49,7 +49,7 @@ function Countdown({ examDate }: { examDate: Date }) {
       <div style={{ fontSize: 10, color: "#c8b99a", marginBottom: 2 }}>{dateStr} | 09:00</div>
       <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
         {days > 0 && (
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#f0ddb4" }}>{days}י׳</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#f0ddb4" }}>{days} days</span>
         )}
         <span style={{ fontSize: 11, fontWeight: 700, color: "#f0ddb4" }}>
           {String(hours).padStart(2, "0")}:{String(mins).padStart(2, "0")}
