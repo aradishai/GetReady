@@ -62,12 +62,18 @@ export default function CoursePage() {
     fetch(`/api/questions?courseId=${courseId}&countOnly=true`)
       .then(r => r.json())
       .then(d => setTotalQ(d.count ?? 0))
+    const localPr = JSON.parse(localStorage.getItem(`practice_records_${courseId}`) || "{}")
+    if (localPr.bestStreak) setPracticeRec({ bestStreak: localPr.bestStreak, bestSession: localPr.bestSession || 0 })
+
     fetch(`/api/practice/topic-stats?courseId=${courseId}`)
       .then(r => r.json())
       .then(d => {
         setTopicStats(Array.isArray(d.topics) ? d.topics : [])
         setPracticeDone(d.practiceDone ?? 0)
-        setPracticeRec({ bestStreak: d.bestStreak ?? 0, bestSession: d.bestSession ?? 0 })
+        setPracticeRec({
+          bestStreak: Math.max(d.bestStreak ?? 0, localPr.bestStreak ?? 0),
+          bestSession: Math.max(d.bestSession ?? 0, localPr.bestSession ?? 0),
+        })
       })
   }, [session, courseId])
 
