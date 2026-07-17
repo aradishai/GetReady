@@ -14,7 +14,6 @@ interface UserData {
 const ALL_COURSES = [
   { id: "course-social",     img: "/icon-social.jpeg",     name: "פסיכולוגיה חברתית" },
   { id: "course-psychodiag", img: "/icon-psychodiag.jpg",  name: "פסיכודיאגנוסטיקה"  },
-  { id: "course-chevrot",    img: "/icon-chevrot.jpg",     name: "חברות בישראל",        adminOnly: true },
   { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון"         },
   { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות"              },
   { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים"             },
