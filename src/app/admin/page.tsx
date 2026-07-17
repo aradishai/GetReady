@@ -60,6 +60,7 @@ export default function AdminPage() {
   const [openCourseIds, setOpenCourseIds] = useState<Set<string>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<Question>>({})
+  const [filterCourseId, setFilterCourseId] = useState("")
   const [topicFilter, setTopicFilter] = useState("")
   const [questionsView, setQuestionsView] = useState<"browse" | "positions">("browse")
   // topic positions: { [courseId_topic]: position }
@@ -467,36 +468,64 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Topic filter chips */}
-          {questionsView === "browse" && (() => {
-            const allTopics = Array.from(new Set(questions.map(q => q.topic))).sort()
-            return allTopics.length > 0 ? (
-              <div style={{ marginBottom: 12, display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {/* Course chips → Topic chips (two-level filter) */}
+          {questionsView === "browse" && (
+            <div style={{ marginBottom: 12 }}>
+              {/* Row 1: courses */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: filterCourseId ? 8 : 0 }}>
                 <button
-                  onClick={() => setTopicFilter("")}
-                  style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: !topicFilter ? "var(--primary)" : "var(--card-border)", background: !topicFilter ? "rgba(56,189,248,0.15)" : "transparent", color: !topicFilter ? "var(--primary)" : "var(--muted)" }}
+                  onClick={() => { setFilterCourseId(""); setTopicFilter("") }}
+                  style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: !filterCourseId ? "var(--primary)" : "var(--card-border)", background: !filterCourseId ? "rgba(56,189,248,0.15)" : "transparent", color: !filterCourseId ? "var(--primary)" : "var(--muted)" }}
                 >
-                  הכל
+                  כל הקורסים
                 </button>
-                {allTopics.map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setTopicFilter(t === topicFilter ? "" : t)}
-                    style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: topicFilter === t ? "var(--primary)" : "var(--card-border)", background: topicFilter === t ? "rgba(56,189,248,0.15)" : "transparent", color: topicFilter === t ? "var(--primary)" : "var(--muted)" }}
-                  >
-                    {t}
-                  </button>
-                ))}
+                {courses.filter(c => c.isActive).map(c => {
+                  const color = COURSE_COLORS[c.id] ?? "var(--primary)"
+                  const active = filterCourseId === c.id
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => { setFilterCourseId(active ? "" : c.id); setTopicFilter("") }}
+                      style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: `1px solid ${active ? color : "var(--card-border)"}`, background: active ? `${color}22` : "transparent", color: active ? color : "var(--muted)" }}
+                    >
+                      {c.name}
+                    </button>
+                  )
+                })}
               </div>
-            ) : null
-          })()}
+              {/* Row 2: topics for selected course */}
+              {filterCourseId && (() => {
+                const courseTopics = Array.from(new Set(questions.filter(q => q.course.name === courses.find(c => c.id === filterCourseId)?.name).map(q => q.topic))).sort()
+                return (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5, paddingRight: 12, borderRight: "2px solid var(--card-border)" }}>
+                    <button
+                      onClick={() => setTopicFilter("")}
+                      style={{ padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: !topicFilter ? "var(--primary)" : "var(--card-border)", background: !topicFilter ? "rgba(56,189,248,0.15)" : "transparent", color: !topicFilter ? "var(--primary)" : "var(--muted)" }}
+                    >
+                      כל הנושאים
+                    </button>
+                    {courseTopics.map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setTopicFilter(t === topicFilter ? "" : t)}
+                        style={{ padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600, cursor: "pointer", border: "1px solid", borderColor: topicFilter === t ? "var(--primary)" : "var(--card-border)", background: topicFilter === t ? "rgba(56,189,248,0.15)" : "transparent", color: topicFilter === t ? "var(--primary)" : "var(--muted)" }}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )
+              })()}
+            </div>
+          )}
 
-          {/* Flat view when topic filter active */}
-          {questionsView === "browse" && topicFilter && (() => {
-            const filtered = questions.filter(q => q.topic === topicFilter)
+          {/* Flat view when course or topic filter active */}
+          {questionsView === "browse" && filterCourseId && (() => {
+            const courseName = courses.find(c => c.id === filterCourseId)?.name ?? ""
+            const filtered = questions.filter(q => q.course.name === courseName && (!topicFilter || q.topic === topicFilter))
             return (
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
-                <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 4 }}>{filtered.length} שאלות בנושא "{topicFilter}"</div>
+                <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 4 }}>{filtered.length} שאלות{topicFilter ? ` בנושא "${topicFilter}"` : ` בקורס "${courseName}"`}</div>
                 {filtered.map((q, idx) => {
                   const isEditing = editingId === q.id
                   const data = isEditing ? { ...q, ...editData } : q
@@ -581,7 +610,7 @@ export default function AdminPage() {
           })()}
 
           {/* Course accordions */}
-          {questionsView === "browse" && !topicFilter && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {questionsView === "browse" && !filterCourseId && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {courses.map(course => {
               const courseQs = questions.filter(q => q.course.name === course.name)
               const isOpen = openCourseIds.has(course.id)
