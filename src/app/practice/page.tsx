@@ -120,30 +120,15 @@ function PracticePageInner() {
     const newSBest = Math.max(sessionBestStreakRef.current, newStreak)
     sessionBestStreakRef.current = newSBest
 
-    // Track answered question
     const qId = questions[current].id
-    if (courseId) {
-      const doneKey = `practice_done_${courseId}`
-      const done: string[] = JSON.parse(localStorage.getItem(doneKey) || "[]")
-      if (!done.includes(qId)) localStorage.setItem(doneKey, JSON.stringify([...done, qId]))
-    }
 
-    // Save to server
+    // Save to server (answer + records synced across devices)
     if (userId && courseId) {
       fetch("/api/practice/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionId: qId, courseId, isCorrect: correct }),
+        body: JSON.stringify({ questionId: qId, courseId, isCorrect: correct, bestStreak: newSBest, bestSession: newTotal }),
       }).catch(() => {})
-    }
-
-    // Update personal records silently
-    if (courseId) {
-      const prKey = `practice_records_${courseId}`
-      const pr = JSON.parse(localStorage.getItem(prKey) || "{}")
-      if (newSBest > (pr.bestStreak || 0)) pr.bestStreak = newSBest
-      if (newTotal > (pr.bestSession || 0)) pr.bestSession = newTotal
-      localStorage.setItem(prKey, JSON.stringify(pr))
     }
   }
 

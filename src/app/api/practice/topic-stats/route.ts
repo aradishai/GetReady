@@ -9,10 +9,17 @@ export async function GET(req: NextRequest) {
   const courseId = new URL(req.url).searchParams.get("courseId")
   if (!courseId) return NextResponse.json({ error: "חסר courseId" }, { status: 400 })
 
-  const answers = await prisma.practiceAnswer.findMany({
-    where: { userId: session.user.id, courseId },
-    select: { isCorrect: true, question: { select: { topic: true } } },
-  })
+  const [answers, record] = await Promise.all([
+    prisma.practiceAnswer.findMany({
+      where: { userId: session.user.id, courseId },
+      select: { isCorrect: true, questionId: true, question: { select: { topic: true } } },
+    }),
+    prisma.userCourseRecord.findUnique({
+      where: { userId_courseId: { userId: session.user.id, courseId } },
+    }),
+  ])
+
+  const practiceDone = new Set(answers.map((a) => a.questionId)).size
 
   const byTopic: Record<string, { total: number; correct: number }> = {}
   for (const a of answers) {
@@ -22,7 +29,7 @@ export async function GET(req: NextRequest) {
     if (a.isCorrect) byTopic[t].correct++
   }
 
-  const stats = Object.entries(byTopic)
+  const topics = Object.entries(byTopic)
     .filter(([, s]) => s.total >= 3)
     .map(([topic, s]) => ({
       topic,
@@ -32,5 +39,10 @@ export async function GET(req: NextRequest) {
     }))
     .sort((a, b) => a.pct - b.pct)
 
-  return NextResponse.json(stats)
+  return NextResponse.json({
+    topics,
+    practiceDone,
+    bestStreak: record?.bestStreak ?? 0,
+    bestSession: record?.bestSession ?? 0,
+  })
 }
