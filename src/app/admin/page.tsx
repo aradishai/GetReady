@@ -129,13 +129,19 @@ export default function AdminPage() {
   }
 
   async function saveTopicPosition(courseId: string, topic: string, position: number) {
-    await fetch("/api/admin/questions", {
-      method: "PATCH",
+    const res = await fetch("/api/admin/questions/position", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ courseId, topic, position }),
     })
+    const data = await res.json()
+    if (!res.ok) {
+      alert(data.error || "שגיאה בשמירה")
+      return
+    }
     const courseName = courses.find(c => c.id === courseId)?.name ?? ""
     setQuestions(prev => prev.map(q => q.course.name === courseName && q.topic === topic ? { ...q, position } : q))
+    alert(`עודכן! ${data.count} שאלות קיבלו מיקום ${position}`)
   }
 
   async function deleteQuestion(id: string) {
