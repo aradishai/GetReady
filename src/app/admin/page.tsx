@@ -128,15 +128,14 @@ export default function AdminPage() {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isSocialLocked } : u)))
   }
 
-  async function saveTopicPosition(courseId: string, topic: string) {
-    const key = `${courseId}__${topic}`
-    const position = topicPositions[key] ?? 0
+  async function saveTopicPosition(courseId: string, topic: string, position: number) {
     await fetch("/api/admin/questions", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ courseId, topic, position }),
     })
-    setQuestions(prev => prev.map(q => q.course.name === courses.find(c => c.id === courseId)?.name && q.topic === topic ? { ...q, position } : q))
+    const courseName = courses.find(c => c.id === courseId)?.name ?? ""
+    setQuestions(prev => prev.map(q => q.course.name === courseName && q.topic === topic ? { ...q, position } : q))
   }
 
   async function deleteQuestion(id: string) {
@@ -453,7 +452,7 @@ export default function AdminPage() {
                               style={{ ...inputStyle, width: 70, fontSize: 13, textAlign: "center" }}
                             />
                             <button
-                              onClick={() => saveTopicPosition(course.id, topic)}
+                              onClick={() => saveTopicPosition(course.id, topic, topicPositions[key] ?? currentPos)}
                               style={{ padding: "5px 12px", background: "rgba(245,158,11,0.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}
                             >
                               שמור
