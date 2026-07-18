@@ -431,6 +431,11 @@ export default function AssessmentPage() {
             → הקודם
           </button>
         )}
+        {!selected && (
+          <button onClick={next} style={{ flex: 1, padding: "11px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 10, fontSize: 13, cursor: "pointer" }}>
+            דלג
+          </button>
+        )}
         {selected && (
           <button onClick={next} style={{ flex: 2, padding: "11px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
             {currentIndex + 1 >= questions.length ? "למשחק הזיכרון ←" : "← הבא"}
