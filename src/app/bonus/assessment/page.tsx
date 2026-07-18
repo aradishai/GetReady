@@ -62,9 +62,9 @@ export default function AssessmentPage() {
     }
   }, [status, session, loadQuestions])
 
-  async function seedAndLoad() {
+  async function seedAndLoad(reset = false) {
     setSeeding(true)
-    await fetch("/api/admin/seed-bonus", { method: "POST" })
+    await fetch(`/api/admin/seed-bonus${reset ? "?reset=true" : ""}`, { method: "POST" })
     await loadQuestions()
     setSeeding(false)
   }
@@ -162,6 +162,9 @@ export default function AssessmentPage() {
           חזור
         </button>
         <span style={{ color: "var(--muted)", fontSize: 13 }}>שאלה {currentIndex + 1} / {questions.length}</span>
+        <button onClick={() => seedAndLoad(true)} disabled={seeding} style={{ marginRight: "auto", padding: "5px 10px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 11 }}>
+          {seeding ? "..." : "⟳ אפס"}
+        </button>
         <div style={{ flex: 1, height: 4, borderRadius: 4, background: "var(--card-border)", overflow: "hidden" }}>
           <div style={{ height: "100%", background: "#7c3aed", width: `${((currentIndex) / questions.length) * 100}%`, transition: "width 0.3s" }} />
         </div>
