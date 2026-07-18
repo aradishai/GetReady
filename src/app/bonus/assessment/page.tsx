@@ -51,12 +51,11 @@ export default function AssessmentPage() {
 
   const loadQuestions = useCallback(async () => {
     setLoading(true)
-    const res = await fetch("/api/admin/questions?courseId=bonus")
+    const res = await fetch("/api/questions?courseId=bonus&ordered=true")
     const data = await res.json()
     if (Array.isArray(data) && data.length > 0) {
-      const sorted = data.sort((a: Question, b: Question) => a.position - b.position)
-      setQuestions(sorted)
-      setAnsweredCorrectly(new Array(sorted.length).fill(null))
+      setQuestions(data)
+      setAnsweredCorrectly(new Array(data.length).fill(null))
     }
     setLoading(false)
   }, [])
@@ -67,15 +66,13 @@ export default function AssessmentPage() {
 
     const init = async () => {
       setLoading(true)
-      const res = await fetch("/api/admin/questions?courseId=bonus")
+      const res = await fetch("/api/questions?courseId=bonus&ordered=true")
       const data = await res.json()
       if (Array.isArray(data) && data.length > 0) {
-        const sorted = data.sort((a: Question, b: Question) => a.position - b.position)
-        setQuestions(sorted)
-        setAnsweredCorrectly(new Array(sorted.length).fill(null))
+        setQuestions(data)
+        setAnsweredCorrectly(new Array(data.length).fill(null))
         setLoading(false)
       } else if (isAdmin) {
-        // auto-seed silently for admin
         await fetch("/api/admin/seed-bonus", { method: "POST" })
         await loadQuestions()
       } else {

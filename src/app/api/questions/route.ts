@@ -59,6 +59,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ count })
     }
 
+    const ordered = searchParams.get("ordered") === "true"
+
     const questions = await prisma.question.findMany({
       where,
       select: {
@@ -74,8 +76,14 @@ export async function GET(req: NextRequest) {
         difficulty: true,
         sourceType: true,
         examYear: true,
+        position: true,
       },
+      ...(ordered ? { orderBy: { position: "asc" } } : {}),
     })
+
+    if (ordered) {
+      return NextResponse.json(questions)
+    }
 
     // Guarantee at least one question per topic, then fill remaining slots randomly
     const byTopic: Record<string, typeof questions> = {}
