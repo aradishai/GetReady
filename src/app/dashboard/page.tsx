@@ -130,7 +130,7 @@ export default function DashboardPage() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
               ) : (
-                <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #1a1f2e, #2a2f42)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #0f0c1a, #1a0a2e 40%, #2d1854 70%, #1a0f35)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, boxShadow: "inset 0 0 40px rgba(139,92,246,0.15)" }}>
                   <span style={{ fontSize: 32 }}>⭐</span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#f0ddb4", textAlign: "center", padding: "0 8px" }}>{name}</span>
                 </div>
@@ -152,7 +152,7 @@ export default function DashboardPage() {
           const wrapper = (
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               {card}
-              {id === nextExamId && examDate ? <Countdown examDate={examDate} /> : !examDate || examDate.getTime() <= Date.now() ? <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div> : null}
+              {id === nextExamId && examDate ? <Countdown examDate={examDate} /> : id !== "bonus" && (!examDate || examDate.getTime() <= Date.now()) ? <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div> : null}
             </div>
           )
 
