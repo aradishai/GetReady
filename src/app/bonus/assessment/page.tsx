@@ -19,6 +19,7 @@ interface Question {
 
 const TOPIC_IMAGES: Record<string, string> = {
   "ילד עם הכינור": "/bonus-yeled-kinor.png",
+  "משפחה בכפר": "/bonus-mishpacha-kfar.jpg",
 }
 
 const ANSWER_LABELS: Record<string, string> = {
