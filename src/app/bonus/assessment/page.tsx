@@ -128,7 +128,7 @@ function MemoryGame({ onComplete }: { onComplete: (wrong: number) => void }) {
               key={card.uid}
               onClick={() => flip(card.uid)}
               style={{
-                height: 68,
+                height: 80,
                 borderRadius: 9,
                 cursor: card.matched || isUp ? "default" : "pointer",
                 display: "flex",
@@ -152,7 +152,7 @@ function MemoryGame({ onComplete }: { onComplete: (wrong: number) => void }) {
                     {card.content}
                   </span>
                 ) : (
-                  <span style={{ fontSize: 9, lineHeight: 1.35, color: card.matched ? "#86efac" : "#e9e3ff" }}>
+                  <span style={{ fontSize: 11, lineHeight: 1.35, color: card.matched ? "#86efac" : "#e9e3ff" }}>
                     {card.content}
                   </span>
                 )
