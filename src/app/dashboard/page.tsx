@@ -40,17 +40,16 @@ function Countdown({ examDate }: { examDate: Date }) {
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
+  const secs = Math.floor((diff % (1000 * 60)) / 1000)
   const d = examDate.getDate()
   const m = examDate.getMonth() + 1
   const dateStr = `${d}/${m}`
-
-  const secs = Math.floor((diff % (1000 * 60)) / 1000)
 
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{ fontSize: 10, color: "#c8b99a", marginBottom: 3 }}>{dateStr} | 09:00</div>
       <div style={{ fontSize: 12, fontWeight: 700, color: "#f0ddb4", letterSpacing: 1 }}>
-        {days}D {String(hours).padStart(2, "0")}:{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
+        {days > 0 ? `${days}D ` : ""}{String(hours).padStart(2, "0")}:{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
       </div>
     </div>
   )
@@ -81,6 +80,13 @@ export default function DashboardPage() {
   const isAdmin = session?.user?.isAdmin ?? false
 
   const courses = ALL_COURSES.filter(c => isAdmin || !c.adminOnly)
+
+  const nextExamId = (() => {
+    const now = Date.now()
+    return courses
+      .filter(c => c.examDate && c.examDate.getTime() > now)
+      .sort((a, b) => a.examDate!.getTime() - b.examDate!.getTime())[0]?.id ?? null
+  })()
 
   function isLocked(courseId: string): boolean {
     if (isAdmin) return false
@@ -138,7 +144,7 @@ export default function DashboardPage() {
           const wrapper = (
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               {card}
-              {examDate ? <Countdown examDate={examDate} /> : <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div>}
+              {id === nextExamId && examDate ? <Countdown examDate={examDate} /> : !examDate || examDate.getTime() <= Date.now() ? <div style={{ textAlign: "center", fontSize: 18, color: "#22c55e", fontWeight: 700 }}>✓</div> : null}
             </div>
           )
 
