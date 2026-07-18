@@ -111,7 +111,7 @@ export default function AssessmentPage() {
           <div style={{ fontSize: 40, marginBottom: 16 }}>📭</div>
           <p style={{ color: "var(--muted)", marginBottom: 24 }}>אין שאלות עדיין בקורס זה</p>
           <button
-            onClick={seedAndLoad}
+            onClick={() => seedAndLoad()}
             disabled={seeding}
             style={{ padding: "12px 28px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
           >
