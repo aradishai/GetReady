@@ -326,7 +326,7 @@ export default function AssessmentPage() {
           <button onClick={() => router.push("/bonus")} style={{ padding: "5px 11px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 7, color: "var(--foreground)", cursor: "pointer", fontSize: 12 }}>
             חזור
           </button>
-          <span style={{ color: "var(--muted)", fontSize: 12 }}>שלב 11 — משחק זיכרון</span>
+          <span style={{ color: "var(--muted)", fontSize: 12 }}>שלב 11 / 11 — משחק זיכרון</span>
         </div>
         <MemoryGame onComplete={(w) => { setMemoryWrong(w); setPhase("done") }} />
       </div>
@@ -350,9 +350,9 @@ export default function AssessmentPage() {
         <button onClick={() => router.push("/bonus")} style={{ padding: "5px 11px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 7, color: "var(--foreground)", cursor: "pointer", fontSize: 12, flexShrink: 0 }}>
           חזור
         </button>
-        <span style={{ color: "var(--muted)", fontSize: 12, flexShrink: 0 }}>שאלה {currentIndex + 1} / {questions.length}</span>
+        <span style={{ color: "var(--muted)", fontSize: 12, flexShrink: 0 }}>שאלה {currentIndex + 1} / {questions.length + 1}</span>
         <div style={{ flex: 1, height: 3, borderRadius: 4, background: "var(--card-border)", overflow: "hidden" }}>
-          <div style={{ height: "100%", background: "#7c3aed", width: `${(currentIndex / questions.length) * 100}%`, transition: "width 0.3s" }} />
+          <div style={{ height: "100%", background: "#7c3aed", width: `${(currentIndex / (questions.length + 1)) * 100}%`, transition: "width 0.3s" }} />
         </div>
         {isAdmin && (
           <button onClick={resetSeed} disabled={seeding} style={{ padding: "4px 8px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 10, flexShrink: 0 }}>
