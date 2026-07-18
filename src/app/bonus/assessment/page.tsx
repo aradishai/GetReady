@@ -181,36 +181,36 @@ export default function AssessmentPage() {
   ]
 
   return (
-    <div style={{ maxWidth: 540, margin: "0 auto", padding: "24px 18px 100px" }} dir="rtl">
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <button onClick={() => router.push("/bonus")} style={{ padding: "7px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 13, flexShrink: 0 }}>
+    <div style={{ maxWidth: 480, margin: "0 auto", padding: "12px 14px 70px" }} dir="rtl">
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+        <button onClick={() => router.push("/bonus")} style={{ padding: "5px 11px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 7, color: "var(--foreground)", cursor: "pointer", fontSize: 12, flexShrink: 0 }}>
           חזור
         </button>
-        <span style={{ color: "var(--muted)", fontSize: 13, flexShrink: 0 }}>שאלה {currentIndex + 1} / {questions.length}</span>
-        <div style={{ flex: 1, height: 4, borderRadius: 4, background: "var(--card-border)", overflow: "hidden" }}>
+        <span style={{ color: "var(--muted)", fontSize: 12, flexShrink: 0 }}>שאלה {currentIndex + 1} / {questions.length}</span>
+        <div style={{ flex: 1, height: 3, borderRadius: 4, background: "var(--card-border)", overflow: "hidden" }}>
           <div style={{ height: "100%", background: "#7c3aed", width: `${((currentIndex) / questions.length) * 100}%`, transition: "width 0.3s" }} />
         </div>
         {isAdmin && (
-          <button onClick={resetSeed} disabled={seeding} style={{ padding: "5px 10px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 11, flexShrink: 0 }}>
+          <button onClick={resetSeed} disabled={seeding} style={{ padding: "4px 8px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 10, flexShrink: 0 }}>
             {seeding ? "..." : "⟳ אפס"}
           </button>
         )}
       </div>
 
       {topicImage && (
-        <div style={{ marginBottom: 20, borderRadius: 14, overflow: "hidden", background: "var(--card)", border: "1px solid var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ marginBottom: 10, borderRadius: 12, overflow: "hidden", background: "var(--card)", border: "1px solid var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={topicImage} alt={q.topic} style={{ width: "100%", maxHeight: 220, objectFit: "contain", display: "block" }} />
+          <img src={topicImage} alt={q.topic} style={{ width: "100%", maxHeight: 130, objectFit: "contain", display: "block" }} />
         </div>
       )}
 
-      <div style={{ marginBottom: 4, fontSize: 12, color: "#a78bfa", fontWeight: 600 }}>{q.topic}</div>
+      <div style={{ marginBottom: 3, fontSize: 10, color: "#a78bfa", fontWeight: 600 }}>{q.topic}</div>
 
-      <div style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.6, marginBottom: 20, color: "var(--foreground)" }}>
+      <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.5, marginBottom: 12, color: "var(--foreground)" }}>
         {q.question}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         {answers.map(({ letter, text }) => {
           const isCorrect = letter === q.correctAnswer
           const isSelected = letter === selected
@@ -231,17 +231,17 @@ export default function AssessmentPage() {
               disabled={!!selected}
               style={{
                 width: "100%",
-                padding: "14px 16px",
-                borderRadius: 12,
+                padding: "10px 12px",
+                borderRadius: 10,
                 border,
                 background: bg,
                 color,
                 cursor: selected ? "default" : "pointer",
                 textAlign: "right",
-                fontSize: 14,
-                lineHeight: 1.5,
+                fontSize: 13,
+                lineHeight: 1.4,
                 display: "flex",
-                gap: 10,
+                gap: 8,
                 alignItems: "flex-start",
                 transition: "all 0.15s",
               }}
@@ -256,16 +256,16 @@ export default function AssessmentPage() {
       </div>
 
       {selected && q.explanation ? (
-        <div style={{ marginTop: 14, padding: "12px 16px", borderRadius: 10, background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", fontSize: 13, color: "var(--muted)", lineHeight: 1.6 }}>
+        <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 8, background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", fontSize: 12, color: "var(--muted)", lineHeight: 1.5 }}>
           {q.explanation}
         </div>
       ) : null}
 
-      <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+      <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
         {currentIndex > 0 && (
           <button
             onClick={prev}
-            style={{ flex: 1, padding: "14px", background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--card-border)", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+            style={{ flex: 1, padding: "11px", background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--card-border)", borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: "pointer" }}
           >
             → הקודם
           </button>
@@ -273,7 +273,7 @@ export default function AssessmentPage() {
         {selected && (
           <button
             onClick={next}
-            style={{ flex: 2, padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
+            style={{ flex: 2, padding: "11px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}
           >
             {currentIndex + 1 >= questions.length ? "סיים" : "← הבא"}
           </button>
