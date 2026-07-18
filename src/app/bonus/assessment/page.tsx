@@ -33,38 +33,64 @@ export default function AssessmentPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  const isAdmin = session?.user?.isAdmin ?? false
+  const isPaid = (session?.user as { isPaid?: boolean })?.isPaid ?? false
+
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
-  const [score, setScore] = useState(0)
+  const [answeredCorrectly, setAnsweredCorrectly] = useState<boolean[]>([])
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(true)
   const [seeding, setSeeding] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    if (status === "authenticated" && !session?.user?.isAdmin) router.push("/dashboard")
-  }, [status, session, router])
+    if (status === "authenticated" && !isAdmin && !isPaid) router.push("/dashboard")
+  }, [status, isAdmin, isPaid, router])
 
   const loadQuestions = useCallback(async () => {
     setLoading(true)
     const res = await fetch("/api/admin/questions?courseId=bonus")
     const data = await res.json()
     if (Array.isArray(data) && data.length > 0) {
-      setQuestions(data.sort((a: Question, b: Question) => a.position - b.position))
+      const sorted = data.sort((a: Question, b: Question) => a.position - b.position)
+      setQuestions(sorted)
+      setAnsweredCorrectly(new Array(sorted.length).fill(null))
     }
     setLoading(false)
   }, [])
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.isAdmin) {
-      loadQuestions()
-    }
-  }, [status, session, loadQuestions])
+    if (status !== "authenticated") return
+    if (!isAdmin && !isPaid) return
 
-  async function seedAndLoad(reset = false) {
+    const init = async () => {
+      setLoading(true)
+      const res = await fetch("/api/admin/questions?courseId=bonus")
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        const sorted = data.sort((a: Question, b: Question) => a.position - b.position)
+        setQuestions(sorted)
+        setAnsweredCorrectly(new Array(sorted.length).fill(null))
+        setLoading(false)
+      } else if (isAdmin) {
+        // auto-seed silently for admin
+        await fetch("/api/admin/seed-bonus", { method: "POST" })
+        await loadQuestions()
+      } else {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [status, isAdmin, isPaid, loadQuestions])
+
+  async function resetSeed() {
     setSeeding(true)
-    await fetch(`/api/admin/seed-bonus${reset ? "?reset=true" : ""}`, { method: "POST" })
+    await fetch("/api/admin/seed-bonus?reset=true", { method: "POST" })
+    setCurrentIndex(0)
+    setSelected(null)
+    setDone(false)
     await loadQuestions()
     setSeeding(false)
   }
@@ -72,9 +98,12 @@ export default function AssessmentPage() {
   function handleAnswer(letter: string) {
     if (selected) return
     setSelected(letter)
-    if (letter === questions[currentIndex].correctAnswer) {
-      setScore(s => s + 1)
-    }
+    const correct = letter === questions[currentIndex].correctAnswer
+    setAnsweredCorrectly(prev => {
+      const next = [...prev]
+      next[currentIndex] = correct
+      return next
+    })
   }
 
   function next() {
@@ -86,10 +115,16 @@ export default function AssessmentPage() {
     }
   }
 
+  function prev() {
+    if (currentIndex === 0) return
+    setCurrentIndex(i => i - 1)
+    setSelected(null)
+  }
+
   function restart() {
     setCurrentIndex(0)
     setSelected(null)
-    setScore(0)
+    setAnsweredCorrectly(new Array(questions.length).fill(null))
     setDone(false)
   }
 
@@ -108,15 +143,7 @@ export default function AssessmentPage() {
           חזור
         </button>
         <div style={{ textAlign: "center", paddingTop: 60 }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>📭</div>
-          <p style={{ color: "var(--muted)", marginBottom: 24 }}>אין שאלות עדיין בקורס זה</p>
-          <button
-            onClick={() => seedAndLoad()}
-            disabled={seeding}
-            style={{ padding: "12px 28px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
-          >
-            {seeding ? "טוען שאלות..." : "אתחל שאלות"}
-          </button>
+          <p style={{ color: "var(--muted)" }}>תוכן בקרוב</p>
         </div>
       </div>
     )
@@ -125,12 +152,13 @@ export default function AssessmentPage() {
   const q = questions[currentIndex]
   const topicImage = TOPIC_IMAGES[q?.topic]
 
+  const score = answeredCorrectly.filter(v => v === true).length
+
   if (done) {
     const pct = Math.round((score / questions.length) * 100)
     return (
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "32px 18px 100px" }}>
         <div style={{ textAlign: "center", paddingTop: 40 }}>
-          <div style={{ fontSize: 56, marginBottom: 16 }}>{pct >= 80 ? "🏆" : pct >= 50 ? "💪" : "📚"}</div>
           <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8 }}>סיימת!</h2>
           <p style={{ fontSize: 18, color: "var(--muted)", marginBottom: 24 }}>
             {score} / {questions.length} נכונות · {pct}%
@@ -157,17 +185,19 @@ export default function AssessmentPage() {
 
   return (
     <div style={{ maxWidth: 540, margin: "0 auto", padding: "24px 18px 100px" }} dir="rtl">
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-        <button onClick={() => router.push("/bonus")} style={{ padding: "7px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 13 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <button onClick={() => router.push("/bonus")} style={{ padding: "7px 14px", background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", cursor: "pointer", fontSize: 13, flexShrink: 0 }}>
           חזור
         </button>
-        <span style={{ color: "var(--muted)", fontSize: 13 }}>שאלה {currentIndex + 1} / {questions.length}</span>
-        <button onClick={() => seedAndLoad(true)} disabled={seeding} style={{ marginRight: "auto", padding: "5px 10px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 11 }}>
-          {seeding ? "..." : "⟳ אפס"}
-        </button>
+        <span style={{ color: "var(--muted)", fontSize: 13, flexShrink: 0 }}>שאלה {currentIndex + 1} / {questions.length}</span>
         <div style={{ flex: 1, height: 4, borderRadius: 4, background: "var(--card-border)", overflow: "hidden" }}>
           <div style={{ height: "100%", background: "#7c3aed", width: `${((currentIndex) / questions.length) * 100}%`, transition: "width 0.3s" }} />
         </div>
+        {isAdmin && (
+          <button onClick={resetSeed} disabled={seeding} style={{ padding: "5px 10px", background: "transparent", border: "1px solid var(--card-border)", borderRadius: 6, color: "var(--muted)", cursor: "pointer", fontSize: 11, flexShrink: 0 }}>
+            {seeding ? "..." : "⟳ אפס"}
+          </button>
+        )}
       </div>
 
       {topicImage && (
@@ -234,14 +264,24 @@ export default function AssessmentPage() {
         </div>
       ) : null}
 
-      {selected && (
-        <button
-          onClick={next}
-          style={{ marginTop: 14, width: "100%", padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
-        >
-          {currentIndex + 1 >= questions.length ? "סיים" : "הבא ←"}
-        </button>
-      )}
+      <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+        {currentIndex > 0 && (
+          <button
+            onClick={prev}
+            style={{ flex: 1, padding: "14px", background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--card-border)", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+          >
+            → הקודם
+          </button>
+        )}
+        {selected && (
+          <button
+            onClick={next}
+            style={{ flex: 2, padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
+          >
+            {currentIndex + 1 >= questions.length ? "סיים" : "← הבא"}
+          </button>
+        )}
+      </div>
     </div>
   )
 }

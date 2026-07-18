@@ -17,8 +17,8 @@ const ALL_COURSES = [
   { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון",         examDate: new Date("2026-07-19T09:00:00") },
   { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות",              examDate: new Date("2026-07-24T09:00:00") },
   { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים",             examDate: new Date("2026-07-29T09:00:00") },
-  { id: "bonus", img: "", name: "שאלות בונוס", adminOnly: true },
-] as { id: string; img: string; name: string; adminOnly?: boolean; examDate?: Date }[]
+  { id: "bonus", img: "", name: "שאלות בונוס", paidOnly: true },
+] as { id: string; img: string; name: string; adminOnly?: boolean; paidOnly?: boolean; examDate?: Date }[]
 
 function useNow() {
   const [now, setNow] = useState(() => new Date())
@@ -80,7 +80,12 @@ export default function DashboardPage() {
 
   const isAdmin = session?.user?.isAdmin ?? false
 
-  const courses = ALL_COURSES.filter(c => isAdmin || !c.adminOnly)
+  const isPaid = user?.isPaid ?? false
+  const courses = ALL_COURSES.filter(c => {
+    if (c.adminOnly) return isAdmin
+    if (c.paidOnly) return isAdmin || isPaid
+    return true
+  })
 
   const nextExamId = (() => {
     const now = Date.now()
@@ -130,9 +135,8 @@ export default function DashboardPage() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={img} alt={name} style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }} />
               ) : (
-                <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #0f0c1a, #1a0a2e 40%, #2d1854 70%, #1a0f35)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, boxShadow: "inset 0 0 40px rgba(139,92,246,0.15)" }}>
-                  <span style={{ fontSize: 32 }}>⭐</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#f0ddb4", textAlign: "center", padding: "0 8px" }}>{name}</span>
+                <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg, #0f0c1a, #1a0a2e 40%, #2d1854 70%, #1a0f35)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 40px rgba(139,92,246,0.15)" }}>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: "#f0ddb4", textAlign: "center", padding: "0 12px" }}>{name}</span>
                 </div>
               )}
               {locked && (

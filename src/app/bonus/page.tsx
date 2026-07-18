@@ -12,10 +12,13 @@ export default function BonusPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  const isPaid = (session?.user as { isPaid?: boolean })?.isPaid ?? false
+  const isAdmin = session?.user?.isAdmin ?? false
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
-    if (status === "authenticated" && !session?.user?.isAdmin) router.push("/dashboard")
-  }, [status, session, router])
+    if (status === "authenticated" && !isAdmin && !isPaid) router.push("/dashboard")
+  }, [status, isAdmin, isPaid, router])
 
   return (
     <div style={{ maxWidth: 500, margin: "0 auto", padding: "32px 18px 100px" }}>
@@ -26,8 +29,7 @@ export default function BonusPage() {
         חזור
       </button>
 
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6 }}>⭐ שאלות בונוס</h1>
-      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 28 }}>שאלות מיוחדות לפי תחום</p>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>שאלות בונוס</h1>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {BONUS_SECTIONS.map(s => (
