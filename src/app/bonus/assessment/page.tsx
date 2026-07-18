@@ -112,6 +112,10 @@ function MemoryGame({ onComplete }: { onComplete: (wrong: number) => void }) {
     setFlipped(prev => [...prev, uid])
   }
 
+  const visibleCards = cards.filter(c => !c.matched)
+  const foundPairs = MMPI_PAIRS.filter(p => cards.some(c => c.pairId === p.id && c.matched))
+                               .sort((a, b) => a.id - b.id)
+
   return (
     <div dir="rtl" style={{ padding: "0 0 20px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -120,49 +124,65 @@ function MemoryGame({ onComplete }: { onComplete: (wrong: number) => void }) {
           {matched}/10 · {wrong} טעויות
         </span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
-        {cards.map(card => {
-          const isUp = flipped.includes(card.uid) || card.matched
-          return (
+
+      {visibleCards.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6, marginBottom: 16 }}>
+          {visibleCards.map(card => {
+            const isUp = flipped.includes(card.uid)
+            return (
+              <div
+                key={card.uid}
+                onClick={() => flip(card.uid)}
+                style={{
+                  height: 80,
+                  borderRadius: 9,
+                  cursor: isUp ? "default" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "4px 5px",
+                  textAlign: "center",
+                  transition: "background 0.2s, border 0.2s",
+                  background: isUp ? "#1e1535" : "#0f0c1a",
+                  border: isUp ? "1px solid #7c3aed" : "1px solid rgba(124,58,237,0.25)",
+                  userSelect: "none",
+                }}
+              >
+                {isUp ? (
+                  card.kind === "num" ? (
+                    <span style={{ fontSize: 24, fontWeight: 900, color: "#c4b5fd" }}>{card.content}</span>
+                  ) : (
+                    <span style={{ fontSize: 11, lineHeight: 1.35, color: "#e9e3ff" }}>{card.content}</span>
+                  )
+                ) : (
+                  <span style={{ fontSize: 20, color: "rgba(167,139,250,0.25)" }}>?</span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {foundPairs.length > 0 && (
+        <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(124,58,237,0.25)" }}>
+          {foundPairs.map((p, i) => (
             <div
-              key={card.uid}
-              onClick={() => flip(card.uid)}
+              key={p.id}
               style={{
-                height: 80,
-                borderRadius: 9,
-                cursor: card.matched || isUp ? "default" : "pointer",
-                display: "flex",
+                display: "grid",
+                gridTemplateColumns: "36px 1fr",
                 alignItems: "center",
-                justifyContent: "center",
-                padding: "4px 5px",
-                textAlign: "center",
-                transition: "background 0.2s, border 0.2s",
-                background: card.matched ? "#14532d" : isUp ? "#1e1535" : "#0f0c1a",
-                border: card.matched
-                  ? "1px solid #22c55e"
-                  : isUp
-                    ? "1px solid #7c3aed"
-                    : "1px solid rgba(124,58,237,0.25)",
-                userSelect: "none",
+                padding: "9px 14px",
+                background: i % 2 === 0 ? "rgba(124,58,237,0.06)" : "transparent",
+                borderBottom: i < foundPairs.length - 1 ? "1px solid rgba(124,58,237,0.1)" : "none",
               }}
             >
-              {isUp ? (
-                card.kind === "num" ? (
-                  <span style={{ fontSize: 24, fontWeight: 900, color: card.matched ? "#86efac" : "#c4b5fd" }}>
-                    {card.content}
-                  </span>
-                ) : (
-                  <span style={{ fontSize: 11, lineHeight: 1.35, color: card.matched ? "#86efac" : "#e9e3ff" }}>
-                    {card.content}
-                  </span>
-                )
-              ) : (
-                <span style={{ fontSize: 20, color: "rgba(167,139,250,0.25)" }}>?</span>
-              )}
+              <span style={{ fontSize: 17, fontWeight: 900, color: "#a78bfa", textAlign: "center" }}>{p.num}</span>
+              <span style={{ fontSize: 12, color: "var(--foreground)", lineHeight: 1.4 }}>{p.def}</span>
             </div>
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
