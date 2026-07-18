@@ -13,6 +13,7 @@ interface Question {
   answerC: string
   answerD: string
   correctAnswer: string
+  explanation: string
   position: number
 }
 
@@ -223,10 +224,16 @@ export default function AssessmentPage() {
         })}
       </div>
 
+      {selected && q.explanation ? (
+        <div style={{ marginTop: 14, padding: "12px 16px", borderRadius: 10, background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", fontSize: 13, color: "var(--muted)", lineHeight: 1.6 }}>
+          {q.explanation}
+        </div>
+      ) : null}
+
       {selected && (
         <button
           onClick={next}
-          style={{ marginTop: 20, width: "100%", padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
+          style={{ marginTop: 14, width: "100%", padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}
         >
           {currentIndex + 1 >= questions.length ? "סיים" : "הבא ←"}
         </button>
