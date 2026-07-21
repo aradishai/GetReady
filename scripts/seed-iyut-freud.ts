@@ -274,12 +274,12 @@ const QUESTIONS = [
 ]
 
 async function main() {
-  const existing = await prisma.question.count({
-    where: { courseId: "course-iyut", topic: TOPIC },
+  const existing = await prisma.question.findFirst({
+    where: { courseId: "course-iyut", question: QUESTIONS[0].question },
   })
 
-  if (existing > 0) {
-    console.log(`כבר קיימות ${existing} שאלות ב-${TOPIC}, מדלג`)
+  if (existing) {
+    console.log(`${TOPIC} already seeded, skipping`)
     return
   }
 
