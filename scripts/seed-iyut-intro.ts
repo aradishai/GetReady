@@ -112,7 +112,7 @@ async function main() {
   let added = 0
   for (const q of QUESTIONS) {
     await prisma.question.create({
-      data: { courseId: "course-iyut", topic: TOPIC, position: 10, sourceType: "Manual", ...q },
+      data: { courseId: "course-iyut", topic: TOPIC, position: 0, sourceType: "Manual", ...q },
     })
     added++
   }
