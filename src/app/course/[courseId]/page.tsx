@@ -21,7 +21,6 @@ const COURSE_META: Record<string, { name: string; img: string; color: string }> 
   "course-social":     { name: "פסיכולוגיה חברתית",  img: "/icon-social.jpeg",     color: "#f97316" },
   "course-iyut":       { name: "אישיות",              img: "/icon-iyut.jpeg",        color: "#a855f7" },
   "course-assessment": { name: "אבחון ומיון",         img: "/icon-assessment.jpeg", color: "#eab308" },
-  "course-chevrot":    { name: "חברות בישראל",        img: "/icon-chevrot.jpg",     color: "#ef4444" },
   "course-orgs":       { name: "ארגונים",             img: "/icon-orgs.jpeg",       color: "#38bdf8" },
 }
 

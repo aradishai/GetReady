@@ -212,7 +212,6 @@ export default function AdminPage() {
     "course-social": "#f97316",
     "course-iyut": "#a855f7",
     "course-assessment": "#eab308",
-    "course-chevrot": "#ef4444",
     "course-orgs": "#38bdf8",
   }
   const tabs: { key: Tab; label: string }[] = [
