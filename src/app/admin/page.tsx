@@ -261,16 +261,16 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--card-border)" }}>
+      <div style={{ display: "flex", gap: 2, marginBottom: 20, borderBottom: "1px solid var(--card-border)", overflowX: "auto" }}>
         {tabs.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             style={{
-              padding: "10px 16px", borderRadius: "8px 8px 0 0", border: "none",
+              padding: "10px 12px", borderRadius: "8px 8px 0 0", border: "none", flexShrink: 0, whiteSpace: "nowrap",
               background: tab === key ? "var(--card)" : "transparent",
               color: tab === key ? "var(--foreground)" : "var(--muted)",
-              cursor: "pointer", fontSize: 14, fontWeight: tab === key ? 600 : 400,
+              cursor: "pointer", fontSize: 13, fontWeight: tab === key ? 600 : 400,
               borderBottom: tab === key ? "2px solid var(--primary)" : "2px solid transparent",
             }}
           >
@@ -476,7 +476,7 @@ export default function AdminPage() {
                           <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                             <span style={{ fontWeight: 800, fontSize: 13, color: "var(--muted)", minWidth: 20, paddingTop: 1 }}>#{i + 1}</span>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 6 }}>{q.question}</div>
+                              <div style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 6, wordBreak: "break-word" }}>{q.question}</div>
                               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                                 <span style={{ fontSize: 11, color: "var(--muted)", background: "rgba(255,255,255,0.04)", border: "1px solid var(--card-border)", padding: "2px 8px", borderRadius: 6 }}>{q.topic}</span>
                                 <span style={{ fontSize: 12, color: "var(--muted)" }}>{q.wrong} טעויות מתוך {q.total}</span>
