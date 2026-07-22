@@ -254,7 +254,7 @@ export default function CoursePage() {
       )}
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", gap: isMobile ? 10 : 10, marginBottom: 0 }}>
+      <div style={{ display: "flex", gap: isMobile ? 10 : 10, marginBottom: courseId === "course-assessment" ? 10 : 0 }}>
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -277,6 +277,31 @@ export default function CoursePage() {
         </Link>
       </div>
 
+      {courseId === "course-assessment" && (
+        <Link href="/course/course-assessment/mmpi" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: isMobile ? "13px 16px" : "14px 20px",
+            borderRadius: isMobile ? 12 : 14,
+            background: "linear-gradient(135deg, #1e1535 0%, #130d2b 100%)",
+            border: "1px solid rgba(124,58,237,0.35)",
+            cursor: "pointer",
+            transition: "border-color 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.7)")}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.35)")}
+          >
+            <span style={{ fontSize: isMobile ? 22 : 24 }}>🧠</span>
+            <div>
+              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#c4b5fd" }}>תרגול זיכרון — סקאלות MMPI</div>
+              <div style={{ fontSize: isMobile ? 11 : 12, color: "var(--muted)", marginTop: 2 }}>התאם מספרי סקאלה להגדרות</div>
+            </div>
+            <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(167,139,250,0.6)" }}>←</span>
+          </div>
+        </Link>
+      )}
 
     </div>
   )
