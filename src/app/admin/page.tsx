@@ -4,7 +4,14 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-type Tab = "users" | "questions" | "courses" | "practice"
+type Tab = "users" | "questions" | "courses" | "practice" | "stats"
+
+interface AdminStats {
+  weakTopics: { topic: string; total: number; correct: number; pct: number }[]
+  hardQuestions: { id: string; question: string; topic: string; total: number; wrong: number; pct: number }[]
+  courseName: string
+  courseDate: string
+}
 
 interface User {
   id: string
@@ -55,6 +62,7 @@ export default function AdminPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
+  const [adminStats, setAdminStats] = useState<AdminStats | null>(null)
   const [userSearch, setUserSearch] = useState("")
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [openCourseIds, setOpenCourseIds] = useState<Set<string>>(new Set())
@@ -87,6 +95,21 @@ export default function AdminPage() {
       setUsers(u); setQuestions(q); setCourses(c); setPracticeStats(ps); setLoading(false)
     })
   }, [session])
+
+  useEffect(() => {
+    if (tab !== "stats" || adminStats || !session?.user?.isAdmin) return
+    const schedule = [
+      { id: "course-iyut", name: "אישיות", date: "2026-07-24" },
+      { id: "course-orgs", name: "ארגונים", date: "2026-07-29" },
+      { id: "course-psychodiag", name: "פסיכודיאגנוסטיקה", date: "2026-08-07" },
+    ]
+    const todayStr = new Date().toISOString().split("T")[0]
+    const next = schedule.find(e => e.date >= todayStr)
+    if (!next) return
+    fetch(`/api/admin/stats?courseId=${next.id}`)
+      .then(r => r.json())
+      .then(data => setAdminStats({ ...data, courseName: next.name, courseDate: next.date }))
+  }, [tab, adminStats, session])
 
   async function togglePaid(userId: string, isPaid: boolean) {
     await fetch("/api/admin/users", {
@@ -195,6 +218,7 @@ export default function AdminPage() {
   const tabs: { key: Tab; label: string }[] = [
     { key: "users", label: "משתמשים" },
     { key: "practice", label: "תרגול" },
+    { key: "stats", label: "סטטיסטיקות" },
     { key: "questions", label: "שאלות" },
     { key: "courses", label: "קורסים" },
   ]
@@ -390,6 +414,83 @@ export default function AdminPage() {
                   )
                 })}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Stats Tab */}
+      {tab === "stats" && (
+        <div>
+          {!adminStats ? (
+            <p style={{ color: "var(--muted)" }}>טוען נתונים...</p>
+          ) : (
+            <>
+              {/* Weak Topics */}
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+                  <h3 style={{ fontWeight: 700, margin: 0 }}>נושאים הכי חלשים</h3>
+                  <span style={{ fontSize: 12, color: "var(--muted)" }}>
+                    <strong style={{ color: "var(--foreground)" }}>{adminStats.courseName}</strong> — {adminStats.courseDate.split("-").slice(1).reverse().join(".")}
+                  </span>
+                </div>
+                {adminStats.weakTopics.length === 0 ? (
+                  <p style={{ color: "var(--muted)", fontSize: 13 }}>אין מספיק נתונים עדיין (נדרשים לפחות 5 ניסיונות לנושא)</p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {adminStats.weakTopics.map((t, i) => {
+                      const color = t.pct >= 75 ? "var(--success)" : t.pct >= 50 ? "var(--warning)" : "var(--danger)"
+                      const medals = ["🥇", "🥈", "🥉"]
+                      return (
+                        <div key={t.topic} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "14px 16px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <span style={{ fontSize: 18 }}>{medals[i]}</span>
+                              <span style={{ fontWeight: 600, fontSize: 14 }}>{t.topic}</span>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <span style={{ fontSize: 12, color: "var(--muted)" }}>{t.correct}/{t.total}</span>
+                              <span style={{ fontWeight: 800, fontSize: 16, color }}>{t.pct}%</span>
+                            </div>
+                          </div>
+                          <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
+                            <div style={{ height: "100%", width: `${t.pct}%`, background: color, borderRadius: 4, transition: "width 0.4s" }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Hard Questions */}
+              <div>
+                <h3 style={{ fontWeight: 700, marginBottom: 14 }}>10 שאלות הכי קשות</h3>
+                {adminStats.hardQuestions.length === 0 ? (
+                  <p style={{ color: "var(--muted)", fontSize: 13 }}>אין מספיק נתונים עדיין (נדרשים לפחות 3 ניסיונות לשאלה)</p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {adminStats.hardQuestions.map((q, i) => {
+                      const color = q.pct >= 75 ? "var(--success)" : q.pct >= 50 ? "var(--warning)" : "var(--danger)"
+                      return (
+                        <div key={q.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
+                          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                            <span style={{ fontWeight: 800, fontSize: 13, color: "var(--muted)", minWidth: 20, paddingTop: 1 }}>#{i + 1}</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 6 }}>{q.question}</div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 11, color: "var(--muted)", background: "rgba(255,255,255,0.04)", border: "1px solid var(--card-border)", padding: "2px 8px", borderRadius: 6 }}>{q.topic}</span>
+                                <span style={{ fontSize: 12, color: "var(--muted)" }}>{q.wrong} טעויות מתוך {q.total}</span>
+                                <span style={{ fontWeight: 700, fontSize: 13, color }}>{q.pct}% דיוק</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}
