@@ -202,6 +202,15 @@ export default function AdminPage() {
   const inputStyle = { width: "100%", padding: "8px 12px", background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }
   const selectStyle = { padding: "8px 12px", background: "var(--muted-bg)", border: "1px solid var(--card-border)", borderRadius: 8, color: "var(--foreground)", fontSize: 13 }
 
+  const today = new Date().toISOString().split("T")[0]
+  const EXAM_SCHEDULE = [
+    { id: "course-iyut", name: "אישיות", date: "2026-07-24" },
+    { id: "course-orgs", name: "ארגונים", date: "2026-07-29" },
+    { id: "course-psychodiag", name: "פסיכודיאגנוסטיקה", date: "2026-08-07" },
+  ]
+  const upcomingExams = EXAM_SCHEDULE.filter(e => e.date >= today)
+  const nextExam = upcomingExams[0] ?? null
+
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
@@ -335,33 +344,51 @@ export default function AdminPage() {
       {/* Practice Tab */}
       {tab === "practice" && (
         <div>
-          <h3 style={{ fontWeight: 700, marginBottom: 14 }}>תרגול לפי משתמש וקורס</h3>
+          <div style={{ marginBottom: 14, display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+            <h3 style={{ fontWeight: 700, margin: 0 }}>תרגול לפי משתמש וקורס</h3>
+            {nextExam && (
+              <span style={{ fontSize: 12, color: "var(--muted)" }}>
+                ממוין לפי מבחן הבא: <strong style={{ color: "var(--foreground)" }}>{nextExam.name}</strong> ({nextExam.date.split("-").slice(1).reverse().join(".")})
+              </span>
+            )}
+          </div>
           {Object.keys(practiceStats).length === 0 ? (
             <p style={{ color: "var(--muted)" }}>אין נתוני תרגול עדיין</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {users.filter(u => practiceStats[u.id]).sort((a, b) => {
-                const aHas = (practiceStats[a.id] || []).some(s => s.courseId === "course-assessment") ? 1 : 0
-                const bHas = (practiceStats[b.id] || []).some(s => s.courseId === "course-assessment") ? 1 : 0
-                return bHas - aHas
-              }).map(u => (
-                <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
-                  <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{u.name}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {(practiceStats[u.id] || []).filter(s => s.courseId !== "course-social").sort((a, b) => b.total - a.total).map(s => {
-                      const pct = Math.round((s.correct / s.total) * 100)
-                      const color = pct >= 75 ? "var(--success)" : pct >= 50 ? "var(--warning)" : "var(--danger)"
-                      return (
-                        <div key={s.courseId} style={{ padding: "5px 10px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid var(--card-border)", fontSize: 12 }}>
-                          <span style={{ color: "var(--muted)" }}>{s.courseName}: </span>
-                          <span style={{ fontWeight: 700, color }}>{s.correct}/{s.total}</span>
-                          <span style={{ color: "var(--muted)", marginRight: 4 }}>({pct}%)</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
+              {users
+                .filter(u => {
+                  if (!practiceStats[u.id]) return false
+                  const s = practiceStats[u.id] || []
+                  return upcomingExams.some(e => s.some(r => r.courseId === e.id))
+                })
+                .sort((a, b) => {
+                  const aHas = nextExam && (practiceStats[a.id] || []).some(s => s.courseId === nextExam.id) ? 1 : 0
+                  const bHas = nextExam && (practiceStats[b.id] || []).some(s => s.courseId === nextExam.id) ? 1 : 0
+                  return bHas - aHas
+                })
+                .map(u => {
+                  const statMap = Object.fromEntries((practiceStats[u.id] || []).map(s => [s.courseId, s]))
+                  const badges = upcomingExams.flatMap(e => statMap[e.id] ? [statMap[e.id]] : [])
+                  return (
+                    <div key={u.id} style={{ background: "var(--card)", border: "1px solid var(--card-border)", borderRadius: 12, padding: "12px 14px" }}>
+                      <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{u.name}</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {badges.map(s => {
+                          const pct = Math.round((s.correct / s.total) * 100)
+                          const color = pct >= 75 ? "var(--success)" : pct >= 50 ? "var(--warning)" : "var(--danger)"
+                          return (
+                            <div key={s.courseId} style={{ padding: "5px 10px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid var(--card-border)", fontSize: 12 }}>
+                              <span style={{ color: "var(--muted)" }}>{s.courseName}: </span>
+                              <span style={{ fontWeight: 700, color }}>{s.correct}/{s.total}</span>
+                              <span style={{ color: "var(--muted)", marginRight: 4 }}>({pct}%)</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
             </div>
           )}
         </div>
