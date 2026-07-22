@@ -104,7 +104,22 @@ export async function GET(req: NextRequest) {
     const extra = pool.sort(() => Math.random() - 0.5).slice(0, slots)
     const shuffled = [...guaranteed, ...extra].sort(() => Math.random() - 0.5).slice(0, limit)
 
-    return NextResponse.json(shuffled)
+    // Unseen questions first
+    let answeredSet = new Set<string>()
+    if (requestedCourseId) {
+      const answered = await prisma.practiceAnswer.findMany({
+        where: { userId: session.user.id, courseId: requestedCourseId },
+        select: { questionId: true },
+        distinct: ["questionId"],
+      })
+      answeredSet = new Set(answered.map(a => a.questionId))
+    }
+    const unseenFirst = [
+      ...shuffled.filter(q => !answeredSet.has(q.id)),
+      ...shuffled.filter(q => answeredSet.has(q.id)),
+    ]
+
+    return NextResponse.json(unseenFirst)
   } catch {
     return NextResponse.json({ error: "שגיאה בטעינת שאלות" }, { status: 500 })
   }
