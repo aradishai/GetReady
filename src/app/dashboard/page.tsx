@@ -63,6 +63,22 @@ function Countdown({ examDate }: { examDate: Date }) {
 const TOPIC_MEDALS = ["🥇", "🥈", "🥉"]
 
 function StatsPanel({ stats }: { stats: StatsData | null }) {
+  const router = useRouter()
+  const [currentQ, setCurrentQ] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    if (!stats || stats.hardQuestions.length <= 1) return
+    const t = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setCurrentQ(i => (i + 1) % stats.hardQuestions.length)
+        setVisible(true)
+      }, 300)
+    }, 15000)
+    return () => clearInterval(t)
+  }, [stats?.hardQuestions.length])
+
   if (!stats) {
     return (
       <div style={{
@@ -77,13 +93,12 @@ function StatsPanel({ stats }: { stats: StatsData | null }) {
     )
   }
 
-  if (!stats.next) {
-    return null
-  }
+  if (!stats.next) return null
 
   const d = new Date(stats.next.date)
   const dateStr = `${d.getDate()}/${d.getMonth() + 1}`
   const hasData = stats.weakTopics.length > 0 || stats.hardQuestions.length > 0
+  const q = stats.hardQuestions[currentQ]
 
   return (
     <div style={{
@@ -136,28 +151,66 @@ function StatsPanel({ stats }: { stats: StatsData | null }) {
             </div>
           )}
 
-          {/* Hard questions */}
-          {stats.hardQuestions.length > 0 && (
+          {/* Hard questions carousel */}
+          {stats.hardQuestions.length > 0 && q && (
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(167,139,250,0.7)", marginBottom: 8, letterSpacing: 0.3 }}>
-                שאלות קשות
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(167,139,250,0.7)", letterSpacing: 0.3 }}>
+                  שאלות קשות
+                </div>
+                <div style={{ fontSize: 10, color: "var(--muted)" }}>
+                  {currentQ + 1} / {stats.hardQuestions.length}
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {stats.hardQuestions.map((q, i) => (
-                  <div key={q.id} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "#7c3aed", minWidth: 16, paddingTop: 1 }}>{i + 1}.</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 11, color: "var(--foreground)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                        {q.question}
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
-                        <span style={{ fontSize: 10, color: "rgba(167,139,250,0.6)", background: "rgba(124,58,237,0.1)", padding: "1px 6px", borderRadius: 4 }}>{q.topic}</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#ef4444" }}>{q.pct}% דיוק</span>
-                      </div>
-                    </div>
+
+              {/* Carousel card */}
+              <div
+                onClick={() => router.push(`/practice?courseId=${stats.next!.id}&topics=${encodeURIComponent(q.topic)}`)}
+                style={{
+                  background: "rgba(124,58,237,0.07)",
+                  border: "1px solid rgba(124,58,237,0.25)",
+                  borderRadius: 12,
+                  padding: "12px 14px",
+                  cursor: "pointer",
+                  transition: "opacity 0.3s, border-color 0.15s",
+                  opacity: visible ? 1 : 0,
+                }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.6)")}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.25)")}
+              >
+                <div style={{ fontSize: 12, color: "var(--foreground)", lineHeight: 1.6, marginBottom: 10 }}>
+                  {q.question}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 10, color: "rgba(167,139,250,0.7)", background: "rgba(124,58,237,0.12)", padding: "2px 7px", borderRadius: 4 }}>{q.topic}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#ef4444" }}>{q.pct}% דיוק</span>
                   </div>
-                ))}
+                  <span style={{ fontSize: 10, color: "rgba(167,139,250,0.5)" }}>לחץ לתרגול ←</span>
+                </div>
               </div>
+
+              {/* Dots */}
+              {stats.hardQuestions.length > 1 && (
+                <div style={{ display: "flex", justifyContent: "center", gap: 5, marginTop: 10 }}>
+                  {stats.hardQuestions.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { setVisible(false); setTimeout(() => { setCurrentQ(i); setVisible(true) }, 200) }}
+                      style={{
+                        width: i === currentQ ? 18 : 6,
+                        height: 6,
+                        borderRadius: 3,
+                        background: i === currentQ ? "#a78bfa" : "rgba(167,139,250,0.2)",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        transition: "width 0.3s, background 0.3s",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

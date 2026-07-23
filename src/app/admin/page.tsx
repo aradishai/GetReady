@@ -214,6 +214,7 @@ export default function AdminPage() {
     "course-assessment": "#eab308",
     "course-orgs": "#38bdf8",
   }
+  const visibleCourses = courses.filter(c => c.id !== "bonus")
   const tabs: { key: Tab; label: string }[] = [
     { key: "users", label: "משתמשים" },
     { key: "practice", label: "תרגול" },
@@ -564,7 +565,7 @@ export default function AdminPage() {
           {questionsView === "positions" && (
             <div style={{ background: "var(--card)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 14, padding: 16, marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "#f59e0b" }}>מיקום לפי נושא — חל על כל השאלות בנושא</div>
-              {courses.filter(c => c.isActive).map(course => {
+              {visibleCourses.filter(c => c.isActive).map(course => {
                 const courseQs = questions.filter(q => q.course.name === course.name)
                 const topicsInCourse = Array.from(new Set(courseQs.map(q => q.topic))).sort()
                 const color = COURSE_COLORS[course.id] ?? "var(--primary)"
@@ -611,7 +612,7 @@ export default function AdminPage() {
                 >
                   כל הקורסים
                 </button>
-                {courses.filter(c => c.isActive).map(c => {
+                {visibleCourses.filter(c => c.isActive).map(c => {
                   const color = COURSE_COLORS[c.id] ?? "var(--primary)"
                   const active = filterCourseId === c.id
                   return (
@@ -743,7 +744,7 @@ export default function AdminPage() {
 
           {/* Course accordions */}
           {questionsView === "browse" && !filterCourseId && <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {courses.map(course => {
+            {visibleCourses.map(course => {
               const courseQs = questions.filter(q => q.course.name === course.name)
               const isOpen = openCourseIds.has(course.id)
               const color = COURSE_COLORS[course.id] ?? "var(--primary)"
