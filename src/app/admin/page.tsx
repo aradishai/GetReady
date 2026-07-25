@@ -73,6 +73,8 @@ export default function AdminPage() {
   const [questionsView, setQuestionsView] = useState<"browse" | "positions">("browse")
   // topic positions: { [courseId_topic]: position }
   const [topicPositions, setTopicPositions] = useState<Record<string, number>>({})
+  const [editingTopicKey, setEditingTopicKey] = useState<string | null>(null)
+  const [editingTopicName, setEditingTopicName] = useState("")
   const [newQ, setNewQ] = useState({
     courseId: "", question: "", answerA: "", answerB: "", answerC: "", answerD: "",
     correctAnswer: "A", explanation: "", topic: "", difficulty: "Medium",
@@ -165,6 +167,19 @@ export default function AdminPage() {
     const courseName = courses.find(c => c.id === courseId)?.name ?? ""
     setQuestions(prev => prev.map(q => q.course.name === courseName && q.topic === topic ? { ...q, position } : q))
     alert(`עודכן! ${data.count} שאלות קיבלו מיקום ${position}`)
+  }
+
+  async function renameTopic(courseId: string, oldTopic: string, newTopic: string) {
+    if (!newTopic.trim() || newTopic === oldTopic) { setEditingTopicKey(null); return }
+    const res = await fetch("/api/admin/questions/rename-topic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ courseId, oldTopic, newTopic: newTopic.trim() }),
+    })
+    const data = await res.json()
+    if (!res.ok) { alert(data.error || "שגיאה בשינוי שם"); return }
+    setQuestions(prev => prev.map(q => q.course.name === (courses.find(c => c.id === courseId)?.name ?? "") && q.topic === oldTopic ? { ...q, topic: newTopic.trim() } : q))
+    setEditingTopicKey(null)
   }
 
   async function deleteQuestion(id: string) {
@@ -576,9 +591,46 @@ export default function AdminPage() {
                       {topicsInCourse.map(topic => {
                         const key = `${course.id}__${topic}`
                         const currentPos = topicPositions[key] ?? (courseQs.find(q => q.topic === topic)?.position ?? 0)
+                        const isEditingName = editingTopicKey === key
                         return (
-                          <div key={topic} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <div style={{ flex: 1, fontSize: 13, color: "var(--foreground)" }}>{topic}</div>
+                          <div key={topic} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            {/* Topic name — normal or editing */}
+                            {isEditingName ? (
+                              <input
+                                autoFocus
+                                value={editingTopicName}
+                                onChange={e => setEditingTopicName(e.target.value)}
+                                onKeyDown={e => {
+                                  if (e.key === "Enter") renameTopic(course.id, topic, editingTopicName)
+                                  if (e.key === "Escape") setEditingTopicKey(null)
+                                }}
+                                style={{ ...inputStyle, flex: 1, fontSize: 13 }}
+                              />
+                            ) : (
+                              <div style={{ flex: 1, fontSize: 13, color: "var(--foreground)" }}>{topic}</div>
+                            )}
+
+                            {/* Edit name button / confirm-cancel */}
+                            {isEditingName ? (
+                              <>
+                                <button
+                                  onClick={() => renameTopic(course.id, topic, editingTopicName)}
+                                  style={{ padding: "5px 10px", background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 700 }}
+                                >✓</button>
+                                <button
+                                  onClick={() => setEditingTopicKey(null)}
+                                  style={{ padding: "5px 10px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}
+                                >✕</button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={() => { setEditingTopicKey(key); setEditingTopicName(topic) }}
+                                style={{ padding: "4px 8px", background: "transparent", color: "var(--muted)", border: "1px solid var(--card-border)", borderRadius: 6, cursor: "pointer", fontSize: 11 }}
+                                title="ערוך שם נושא"
+                              >✏️</button>
+                            )}
+
+                            {/* Position input + save */}
                             <input
                               type="number"
                               value={topicPositions[key] ?? currentPos}
