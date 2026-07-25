@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client"
+﻿import { PrismaClient } from "../src/generated/prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
@@ -26,24 +26,20 @@ const QUESTIONS = [
 ]
 
 async function main() {
-  const existing = await prisma.question.findFirst({
-    where: { courseId: "course-iyut", topic: TOPIC, question: QUESTIONS[0].question },
-  })
-
-  if (existing) {
-    console.log(`${TOPIC} part 2 already seeded, skipping`)
-    return
-  }
-
   let added = 0
   for (const q of QUESTIONS) {
-    await prisma.question.create({
-      data: { courseId: "course-iyut", topic: TOPIC, position: 15, sourceType: "Manual", correctAnswer: "B", difficulty: "Hard", ...q },
+    const exists = await prisma.question.findFirst({
+      where: { courseId: "course-iyut", topic: TOPIC, question: q.question },
     })
-    added++
+    if (!exists) {
+      await prisma.question.create({
+        data: { courseId: "course-iyut", topic: TOPIC, position: 15, sourceType: "Manual", correctAnswer: "B", difficulty: "Hard", ...q },
+      })
+      added++
+    }
   }
-
-  console.log(`נוספו ${added} שאלות לקורס אישיות (${TOPIC} part 2)`)
+  if (added > 0) console.log(`נוספו ${added} שאלות לקורס אישיות (${TOPIC} part 2)`)
+  else console.log(`${TOPIC} כבר קיים, דילוג`)
 }
 
 main()

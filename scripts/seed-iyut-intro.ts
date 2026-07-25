@@ -100,24 +100,20 @@ const QUESTIONS = [
 ]
 
 async function main() {
-  const existing = await prisma.question.findFirst({
-    where: { courseId: "course-iyut", question: QUESTIONS[0].question },
-  })
-
-  if (existing) {
-    console.log(`${TOPIC} already seeded, skipping`)
-    return
-  }
-
   let added = 0
   for (const q of QUESTIONS) {
-    await prisma.question.create({
-      data: { courseId: "course-iyut", topic: TOPIC, position: 0, sourceType: "Manual", ...q },
+    const exists = await prisma.question.findFirst({
+      where: { courseId: "course-iyut", topic: TOPIC, question: q.question },
     })
-    added++
+    if (!exists) {
+      await prisma.question.create({
+        data: { courseId: "course-iyut", topic: TOPIC, position: 0, sourceType: "Manual", ...q },
+      })
+      added++
+    }
   }
-
-  console.log(`נוספו ${added} שאלות לקורס אישיות (${TOPIC})`)
+  if (added > 0) console.log(`נוספו ${added} שאלות לקורס אישיות (${TOPIC})`)
+  else console.log(`${TOPIC} כבר קיים, דילוג`)
 }
 
 main()
