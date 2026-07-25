@@ -182,6 +182,20 @@ export default function AdminPage() {
     setEditingTopicKey(null)
   }
 
+  async function deleteTopic(courseId: string, topic: string) {
+    const courseQs = questions.filter(q => q.course.name === (courses.find(c => c.id === courseId)?.name ?? "") && q.topic === topic)
+    if (!confirm(`למחוק את כל ${courseQs.length} השאלות בנושא "${topic}"? פעולה זו אינה הפיכה.`)) return
+    const res = await fetch("/api/admin/questions/delete-topic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ courseId, topic }),
+    })
+    const data = await res.json()
+    if (!res.ok) { alert(data.error || "שגיאה במחיקה"); return }
+    const courseName = courses.find(c => c.id === courseId)?.name ?? ""
+    setQuestions(prev => prev.filter(q => !(q.course.name === courseName && q.topic === topic)))
+  }
+
   async function deleteQuestion(id: string) {
     if (!confirm("למחוק שאלה זו?")) return
     await fetch(`/api/admin/questions?id=${id}`, { method: "DELETE" })
@@ -642,6 +656,13 @@ export default function AdminPage() {
                               style={{ padding: "5px 12px", background: "rgba(245,158,11,0.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12, fontWeight: 600 }}
                             >
                               שמור
+                            </button>
+                            <button
+                              onClick={() => deleteTopic(course.id, topic)}
+                              style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", color: "var(--danger)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 7, cursor: "pointer", fontSize: 12 }}
+                              title="מחק כל שאלות הנושא"
+                            >
+                              🗑
                             </button>
                           </div>
                         )
