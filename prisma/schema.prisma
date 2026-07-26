@@ -189,6 +189,11 @@ model UserCourseRecord {
   @@unique([userId, courseId])
 }
 
+model SeedLog {
+  scriptName String   @id
+  ranAt      DateTime @default(now())
+}
+
 model PracticeAnswer {
   id         String   @id @default(cuid())
   userId     String
