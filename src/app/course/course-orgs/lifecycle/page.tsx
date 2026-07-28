@@ -99,24 +99,30 @@ const STAGES = [
   },
 ]
 
-type Prop = "paei" | "phase" | "focus" | "crisis" | "solution"
+type Prop = "name" | "paei" | "focus" | "crisis" | "solution"
 
 const PROP_LABELS: Record<Prop, string> = {
-  paei: "קוד PAEI",
-  phase: "שלב",
-  focus: "מיקוד / תיאור",
-  crisis: "משבר",
-  solution: "פתרון",
+  name: "שם השלב",
+  paei: "אותיות השלב",
+  focus: "מיקוד השלב",
+  crisis: "משבר השלב",
+  solution: "איך ניתן לפתור את המשבר",
 }
 
-const ALL_PROPS: Prop[] = ["paei", "phase", "focus", "crisis", "solution"]
+const ALL_PROPS: Prop[] = ["name", "paei", "focus", "crisis", "solution"]
 
 type Difficulty = "easy" | "medium" | "hard"
 
-const HIDDEN_BY_DIFFICULTY: Record<Difficulty, Prop[]> = {
-  easy: ["crisis", "solution"],
-  medium: ["focus", "crisis", "solution"],
-  hard: ["phase", "focus", "crisis", "solution"],
+const HIDE_COUNT: Record<Difficulty, number> = { easy: 2, medium: 3, hard: 4 }
+
+function generateHiddenProps(difficulty: Difficulty): Record<number, Prop[]> {
+  const count = HIDE_COUNT[difficulty]
+  const map: Record<number, Prop[]> = {}
+  for (let i = 0; i < 10; i++) {
+    const shuffled = [...ALL_PROPS].sort(() => Math.random() - 0.5)
+    map[i] = shuffled.slice(0, count)
+  }
+  return map
 }
 
 function wordSimilarity(user: string, correct: string): number {
@@ -230,7 +236,7 @@ function TimelineExercise() {
 
   return (
     <div style={{ direction: "rtl" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 20 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 20 }}>
         {items.map((name, i) => {
           const isCorrect = checked && name === STAGES[i].name
           const isWrong   = checked && name !== STAGES[i].name
@@ -253,8 +259,8 @@ function TimelineExercise() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                padding: "11px 14px",
+                gap: 8,
+                padding: "7px 10px",
                 borderRadius: 10,
                 border: `1.5px solid ${isCorrect ? "#4ade80" : isWrong ? "#f87171" : isOver ? COLOR : "rgba(255,255,255,0.13)"}`,
                 background: isCorrect ? "rgba(74,222,128,0.1)" : isWrong ? "rgba(248,113,113,0.09)" : isOver ? `${COLOR}18` : "var(--card)",
@@ -304,23 +310,30 @@ function TimelineExercise() {
 // ────────────────────────────────────────────────────
 function FillExercise() {
   const [diff, setDiff] = useState<Difficulty>("easy")
+  const [hiddenPropsMap, setHiddenPropsMap] = useState<Record<number, Prop[]>>(() => generateHiddenProps("easy"))
   const [stageIdx, setStageIdx] = useState(0)
   const [order] = useState(() => [...STAGES].sort(() => Math.random() - 0.5))
   const [answers, setAnswers] = useState<Record<number, Partial<Record<Prop, string>>>>({})
   const [checked, setChecked] = useState<Record<number, boolean>>({})
   const [done, setDone] = useState(false)
 
-  function reset() { setStageIdx(0); setAnswers({}); setChecked({}); setDone(false) }
+  function reset(d: Difficulty = diff) {
+    setStageIdx(0); setAnswers({}); setChecked({}); setDone(false)
+    setHiddenPropsMap(generateHiddenProps(d))
+  }
 
   const stage = order[stageIdx]
-  const hidden = HIDDEN_BY_DIFFICULTY[diff]
+  const hidden = hiddenPropsMap[stageIdx] ?? []
+  const nameIsHidden = hidden.includes("name")
   const isChecked = !!checked[stageIdx]
   const curAnswers = answers[stageIdx] ?? {}
   const allAnswered = hidden.every(p => (curAnswers[p] ?? "").trim() !== "")
 
   function stageSim(idx: number) {
     const s = order[idx]; const ans = answers[idx] ?? {}
-    return Math.round(hidden.reduce((sum, p) => sum + wordSimilarity(ans[p] ?? "", s[p]), 0) / hidden.length)
+    const h = hiddenPropsMap[idx] ?? []
+    if (!h.length) return 0
+    return Math.round(h.reduce((sum, p) => sum + wordSimilarity(ans[p] ?? "", s[p]), 0) / h.length)
   }
 
   const totalChecked = Object.keys(checked).length
@@ -349,7 +362,7 @@ function FillExercise() {
             totalGood >= 7 ? "טוב מאוד! עוד קצת תרגול ותגיע לשלמות" :
               "המשך להתאמן — מחזור החיים דורש חזרות"}
         </div>
-        <button onClick={reset} style={{ padding: "12px 32px", borderRadius: 12, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
+        <button onClick={() => reset()} style={{ padding: "12px 32px", borderRadius: 12, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
           תרגל שוב
         </button>
       </div>
@@ -363,7 +376,7 @@ function FillExercise() {
       {/* Difficulty */}
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         {(["easy", "medium", "hard"] as Difficulty[]).map(d => (
-          <button key={d} onClick={() => { setDiff(d); reset() }} style={{
+          <button key={d} onClick={() => { setDiff(d); reset(d) }} style={{
             flex: 1, padding: "7px 0", borderRadius: 8,
             border: `1.5px solid ${diff === d ? COLOR : "rgba(255,255,255,0.12)"}`,
             background: diff === d ? `${COLOR}22` : "transparent",
@@ -388,7 +401,9 @@ function FillExercise() {
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
         border: `1.5px solid ${COLOR}44`, borderRadius: 14, padding: 16, marginBottom: 16,
       }}>
-        <div style={{ fontSize: 26, fontWeight: 900, marginBottom: 18, color: COLOR }}>{stage.name}</div>
+        <div style={{ fontSize: 26, fontWeight: 900, marginBottom: 18, color: nameIsHidden ? "rgba(255,255,255,0.3)" : COLOR }}>
+          {nameIsHidden ? "???" : stage.name}
+        </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {ALL_PROPS.map(prop => {
