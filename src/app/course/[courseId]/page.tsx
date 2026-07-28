@@ -278,25 +278,46 @@ export default function CoursePage() {
       </div>
 
       {courseId === "course-orgs" && (
-        <Link href="/course/course-orgs/lifecycle" style={{ textDecoration: "none", display: "block", marginBottom: 10 }}>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            padding: isMobile ? "13px 16px" : "14px 20px",
-            borderRadius: isMobile ? 12 : 14,
-            background: "linear-gradient(135deg, #0c1f2e 0%, #071826 100%)",
-            border: "1px solid rgba(56,189,248,0.3)",
-            cursor: "pointer",
-            transition: "border-color 0.15s",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.7)")}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)")}
-          >
-            <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגול ממוקד מחזור חיים ארגוני</div>
-            <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(125,211,252,0.6)" }}>←</span>
-          </div>
-        </Link>
+        <>
+          <Link href="/course/course-orgs/lifecycle" style={{ textDecoration: "none", display: "block", marginBottom: 10 }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: isMobile ? "13px 16px" : "14px 20px",
+              borderRadius: isMobile ? 12 : 14,
+              background: "linear-gradient(135deg, #0c1f2e 0%, #071826 100%)",
+              border: "1px solid rgba(56,189,248,0.3)",
+              cursor: "pointer",
+              transition: "border-color 0.15s",
+            }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.7)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)")}
+            >
+              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגול ממוקד מחזור חיים ארגוני</div>
+              <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(125,211,252,0.6)" }}>←</span>
+            </div>
+          </Link>
+          <Link href="/course/course-orgs/hofstede" style={{ textDecoration: "none", display: "block", marginBottom: 10 }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: isMobile ? "13px 16px" : "14px 20px",
+              borderRadius: isMobile ? 12 : 14,
+              background: "linear-gradient(135deg, #0c1f2e 0%, #071826 100%)",
+              border: "1px solid rgba(56,189,248,0.3)",
+              cursor: "pointer",
+              transition: "border-color 0.15s",
+            }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.7)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)")}
+            >
+              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגול ממוקד המודל של הופשטדה</div>
+              <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(125,211,252,0.6)" }}>←</span>
+            </div>
+          </Link>
+        </>
       )}
 
       {courseId === "course-assessment" && (
