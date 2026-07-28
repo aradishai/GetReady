@@ -234,11 +234,25 @@ function FillExercise({ stages }: { stages: Stage[] }) {
 
             return (
               <div key={actionIdx}>
-                <div style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 5 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <span style={{ fontSize: 13, fontWeight: 700, color: COLOR, flexShrink: 0 }}>{action.label}.</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)" }}>{action.first}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)", flexShrink: 0 }}>{action.first}</span>
+                  <textarea
+                    value={userAnswer}
+                    onChange={e => setAnswer(key, e.target.value)}
+                    readOnly={isChecked}
+                    placeholder="המשך..."
+                    rows={1}
+                    style={{
+                      flex: 1, boxSizing: "border-box",
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1.5px solid rgba(255,255,255,0.15)",
+                      borderRadius: 8, color: "var(--foreground)", fontSize: 13,
+                      padding: "5px 8px", resize: "none", direction: "rtl",
+                      fontFamily: "inherit", lineHeight: 1.4, outline: "none",
+                    }}
+                  />
                 </div>
-                <AnswerField value={userAnswer} onChange={v => setAnswer(key, v)} readOnly={isChecked} placeholder="המשך המשפט..." rows={1} />
                 {isChecked && <RevealBox label="תשובה נכונה:" value={`${action.first} ${action.rest}`} />}
               </div>
             )
