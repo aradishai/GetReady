@@ -119,30 +119,14 @@ const HIDDEN_BY_DIFFICULTY: Record<Difficulty, Prop[]> = {
   hard: ["phase", "focus", "crisis", "solution"],
 }
 
-function getOptions(prop: Prop, correct: string, count = 4): string[] {
-  const all = STAGES.map(s => s[prop]).filter((v, i, a) => a.indexOf(v) === i)
-  const distractors = all.filter(v => v !== correct)
-  const shuffled = [...distractors].sort(() => Math.random() - 0.5)
-  const picked = shuffled.slice(0, count - 1)
-  return [correct, ...picked].sort(() => Math.random() - 0.5)
-}
-
-interface StageOptions {
-  paei: string[]
-  phase: string[]
-  focus: string[]
-  crisis: string[]
-  solution: string[]
-}
-
-function buildOptions(stage: typeof STAGES[0]): StageOptions {
-  return {
-    paei: getOptions("paei", stage.paei),
-    phase: ["צמיחה", "הזדקנות"],
-    focus: getOptions("focus", stage.focus),
-    crisis: getOptions("crisis", stage.crisis),
-    solution: getOptions("solution", stage.solution),
-  }
+function wordSimilarity(user: string, correct: string): number {
+  if (!user.trim()) return 0
+  const norm = (s: string) =>
+    s.replace(/[^א-תA-Za-z0-9\s]/g, " ").toLowerCase().split(/\s+/).filter(Boolean)
+  const userWords = new Set(norm(user))
+  const correctWords = norm(correct)
+  if (!correctWords.length) return 0
+  return Math.round(correctWords.filter(w => userWords.has(w)).length / correctWords.length * 100)
 }
 
 // ────────────────────────────────────────────────────
@@ -324,94 +308,67 @@ function FillExercise() {
   const [order] = useState(() => [...STAGES].sort(() => Math.random() - 0.5))
   const [answers, setAnswers] = useState<Record<number, Partial<Record<Prop, string>>>>({})
   const [checked, setChecked] = useState<Record<number, boolean>>({})
-  const [optionsMap] = useState<StageOptions[]>(() => STAGES.map(s => buildOptions(s)))
   const [done, setDone] = useState(false)
 
-  function reset() {
-    setStageIdx(0)
-    setAnswers({})
-    setChecked({})
-    setDone(false)
-  }
+  function reset() { setStageIdx(0); setAnswers({}); setChecked({}); setDone(false) }
 
   const stage = order[stageIdx]
-  const stageOriginalIdx = STAGES.findIndex(s => s.name === stage.name)
-  const opts = optionsMap[stageOriginalIdx]
   const hidden = HIDDEN_BY_DIFFICULTY[diff]
   const isChecked = !!checked[stageIdx]
-
   const curAnswers = answers[stageIdx] ?? {}
-  const allAnswered = hidden.every(p => curAnswers[p] !== undefined)
+  const allAnswered = hidden.every(p => (curAnswers[p] ?? "").trim() !== "")
+
+  function stageSim(idx: number) {
+    const s = order[idx]; const ans = answers[idx] ?? {}
+    return Math.round(hidden.reduce((sum, p) => sum + wordSimilarity(ans[p] ?? "", s[p]), 0) / hidden.length)
+  }
 
   const totalChecked = Object.keys(checked).length
-  const totalCorrect = Object.entries(checked).filter(([idxStr]) => {
-    const idx = parseInt(idxStr)
-    const s = order[idx]
-    const ans = answers[idx] ?? {}
-    return hidden.every(p => ans[p] === s[p])
-  }).length
+  const totalGood = Object.keys(checked).filter(k => stageSim(parseInt(k)) >= 60).length
 
   function setAnswer(prop: Prop, val: string) {
     if (isChecked) return
     setAnswers(prev => ({ ...prev, [stageIdx]: { ...(prev[stageIdx] ?? {}), [prop]: val } }))
   }
 
-  function checkStage() {
-    setChecked(prev => ({ ...prev, [stageIdx]: true }))
-  }
-
   function nextStage() {
-    if (stageIdx < order.length - 1) {
-      setStageIdx(i => i + 1)
-    } else {
-      setDone(true)
-    }
+    if (stageIdx < order.length - 1) setStageIdx(i => i + 1); else setDone(true)
   }
 
   if (done) {
     return (
       <div style={{ textAlign: "center", direction: "rtl", paddingTop: 20 }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>
-          {totalCorrect === 10 ? "🏆" : totalCorrect >= 7 ? "⭐" : "📚"}
+          {totalGood === 10 ? "🏆" : totalGood >= 7 ? "⭐" : "📚"}
         </div>
-        <div style={{ fontSize: 24, fontWeight: 800, color: totalCorrect === 10 ? "#4ade80" : COLOR, marginBottom: 8 }}>
-          {totalCorrect}/10 שלבים נכונים
+        <div style={{ fontSize: 24, fontWeight: 800, color: totalGood === 10 ? "#4ade80" : COLOR, marginBottom: 8 }}>
+          {totalGood}/10 שלבים (מעל 60%)
         </div>
         <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 24 }}>
-          {totalCorrect === 10 ? "מושלם! שלטת בכל שלבי מחזור החיים" :
-            totalCorrect >= 7 ? "טוב מאוד! עוד קצת תרגול ותגיע לשלמות" :
+          {totalGood === 10 ? "מושלם! שלטת בכל שלבי מחזור החיים" :
+            totalGood >= 7 ? "טוב מאוד! עוד קצת תרגול ותגיע לשלמות" :
               "המשך להתאמן — מחזור החיים דורש חזרות"}
         </div>
-        <button
-          onClick={reset}
-          style={{ padding: "12px 32px", borderRadius: 12, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 15, cursor: "pointer" }}
-        >
+        <button onClick={reset} style={{ padding: "12px 32px", borderRadius: 12, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
           תרגל שוב
         </button>
       </div>
     )
   }
 
+  const curStageSim = isChecked ? stageSim(stageIdx) : null
+
   return (
     <div style={{ direction: "rtl" }}>
       {/* Difficulty */}
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         {(["easy", "medium", "hard"] as Difficulty[]).map(d => (
-          <button
-            key={d}
-            onClick={() => { setDiff(d); reset() }}
-            style={{
-              flex: 1,
-              padding: "7px 0",
-              borderRadius: 8,
-              border: `1.5px solid ${diff === d ? COLOR : "rgba(255,255,255,0.12)"}`,
-              background: diff === d ? `${COLOR}22` : "transparent",
-              color: diff === d ? COLOR : "var(--muted)",
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: "pointer",
-            }}
-          >
+          <button key={d} onClick={() => { setDiff(d); reset() }} style={{
+            flex: 1, padding: "7px 0", borderRadius: 8,
+            border: `1.5px solid ${diff === d ? COLOR : "rgba(255,255,255,0.12)"}`,
+            background: diff === d ? `${COLOR}22` : "transparent",
+            color: diff === d ? COLOR : "var(--muted)", fontWeight: 700, fontSize: 13, cursor: "pointer",
+          }}>
             {d === "easy" ? "קל" : d === "medium" ? "בינוני" : "קשה"}
           </button>
         ))}
@@ -420,7 +377,7 @@ function FillExercise() {
       {/* Progress */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <span style={{ fontSize: 12, color: "var(--muted)" }}>שלב {stageIdx + 1} מתוך {order.length}</span>
-        <span style={{ fontSize: 12, color: COLOR, fontWeight: 700 }}>{totalCorrect}/{totalChecked} נכון</span>
+        <span style={{ fontSize: 12, color: COLOR, fontWeight: 700 }}>{totalGood}/{totalChecked} מעל 60%</span>
       </div>
       <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 4, marginBottom: 18, overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${(stageIdx / 10) * 100}%`, background: COLOR, borderRadius: 4, transition: "width 0.3s" }} />
@@ -429,113 +386,79 @@ function FillExercise() {
       {/* Stage card */}
       <div style={{
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
-        border: `1.5px solid ${COLOR}44`,
-        borderRadius: 14,
-        padding: 16,
-        marginBottom: 16,
+        border: `1.5px solid ${COLOR}44`, borderRadius: 14, padding: 16, marginBottom: 16,
       }}>
-        <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 16, color: COLOR }}>{stage.name}</div>
+        <div style={{ fontSize: 26, fontWeight: 900, marginBottom: 18, color: COLOR }}>{stage.name}</div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {ALL_PROPS.map(prop => {
             const isHidden = hidden.includes(prop)
             const correctVal = stage[prop]
-            const answer = curAnswers[prop]
-            const isWrong = isChecked && answer !== undefined && answer !== correctVal
-            const options = opts[prop]
+            const userAnswer = curAnswers[prop] ?? ""
+            const sim = isChecked ? wordSimilarity(userAnswer, correctVal) : 0
+            const simColor = sim >= 80 ? "#4ade80" : sim >= 50 ? COLOR : "#f87171"
 
             return (
-              <div key={prop} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600 }}>{PROP_LABELS[prop]}</div>
+              <div key={prop}>
+                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 5 }}>{PROP_LABELS[prop]}</div>
                 {!isHidden ? (
-                  <div style={{
-                    padding: "7px 12px",
-                    borderRadius: 8,
-                    background: "rgba(255,255,255,0.06)",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--foreground)",
-                  }}>
+                  <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 800, color: "var(--foreground)", lineHeight: 1.5 }}>
                     {correctVal}
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    {options.map(opt => {
-                      const isSel = answer === opt
-                      const isCorrectOpt = opt === correctVal
-                      const bg = isSel && isWrong ? "rgba(248,113,113,0.2)"
-                        : isCorrectOpt && isChecked ? "rgba(74,222,128,0.2)"
-                          : isSel ? `${COLOR}22`
-                            : "transparent"
-                      const border = isSel && isWrong ? "#f87171"
-                        : isCorrectOpt && isChecked ? "#4ade80"
-                          : isSel ? COLOR
-                            : "rgba(255,255,255,0.12)"
-                      return (
-                        <button
-                          key={opt}
-                          onClick={() => setAnswer(prop, opt)}
-                          style={{
-                            padding: "7px 12px",
-                            borderRadius: 8,
-                            border: `1.5px solid ${border}`,
-                            background: bg,
-                            color: "var(--foreground)",
-                            fontSize: 13,
-                            fontWeight: isSel || (isCorrectOpt && isChecked) ? 600 : 400,
-                            cursor: isChecked ? "default" : "pointer",
-                            textAlign: "right",
-                            transition: "all 0.12s",
-                          }}
-                        >
-                          {opt}
-                          {isCorrectOpt && isChecked && " ✓"}
-                          {isSel && isWrong && " ✗"}
-                        </button>
-                      )
-                    })}
+                  <div>
+                    <textarea
+                      value={userAnswer}
+                      onChange={e => setAnswer(prop, e.target.value)}
+                      readOnly={isChecked}
+                      placeholder="כתוב תשובה..."
+                      rows={2}
+                      style={{
+                        width: "100%", boxSizing: "border-box",
+                        background: "rgba(255,255,255,0.06)",
+                        border: `1.5px solid ${isChecked ? simColor + "66" : "rgba(255,255,255,0.15)"}`,
+                        borderRadius: 8, color: "var(--foreground)", fontSize: 13,
+                        padding: "8px 12px", resize: "none", direction: "rtl",
+                        fontFamily: "inherit", lineHeight: 1.5, outline: "none",
+                      }}
+                    />
+                    {isChecked && (
+                      <div style={{ marginTop: 6, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: `1px solid ${COLOR}33` }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                          <div style={{ flex: 1 }}>
+                            <span style={{ fontSize: 11, color: "var(--muted)" }}>תשובה נכונה: </span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: COLOR, lineHeight: 1.5 }}>{correctVal}</span>
+                          </div>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: simColor, flexShrink: 0 }}>{sim}%</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )
           })}
         </div>
+
+        {isChecked && curStageSim !== null && (
+          <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 13, color: "var(--muted)" }}>ציון שלב זה</span>
+            <span style={{ fontSize: 18, fontWeight: 900, color: curStageSim >= 80 ? "#4ade80" : curStageSim >= 50 ? COLOR : "#f87171" }}>
+              {curStageSim}%
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Action */}
       {!isChecked ? (
-        <button
-          disabled={!allAnswered}
-          onClick={checkStage}
-          style={{
-            width: "100%",
-            padding: "12px 0",
-            borderRadius: 10,
-            border: "none",
-            background: allAnswered ? COLOR : "rgba(255,255,255,0.1)",
-            color: allAnswered ? "#0f172a" : "var(--muted)",
-            fontWeight: 700,
-            fontSize: 14,
-            cursor: allAnswered ? "pointer" : "not-allowed",
-          }}
-        >
+        <button disabled={!allAnswered} onClick={() => setChecked(prev => ({ ...prev, [stageIdx]: true }))}
+          style={{ width: "100%", padding: "12px 0", borderRadius: 10, border: "none", background: allAnswered ? COLOR : "rgba(255,255,255,0.1)", color: allAnswered ? "#0f172a" : "var(--muted)", fontWeight: 700, fontSize: 14, cursor: allAnswered ? "pointer" : "not-allowed" }}>
           בדוק
         </button>
       ) : (
-        <button
-          onClick={nextStage}
-          style={{
-            width: "100%",
-            padding: "12px 0",
-            borderRadius: 10,
-            border: "none",
-            background: COLOR,
-            color: "#0f172a",
-            fontWeight: 700,
-            fontSize: 14,
-            cursor: "pointer",
-          }}
-        >
+        <button onClick={nextStage}
+          style={{ width: "100%", padding: "12px 0", borderRadius: 10, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
           {stageIdx < order.length - 1 ? "הבא" : "סיום"}
         </button>
       )}
