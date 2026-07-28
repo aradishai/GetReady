@@ -12,114 +12,137 @@ const STAGES = [
     name: "חיזור",
     paei: "paEi",
     phase: "צמיחה",
-    driver: "יזמות (E)",
-    feature: "גיבוש רעיון לפני הקמת הארגון",
-    crisis: "כיבוי התשוקה / מוות מוקדם",
+    focus: "רעיון יזמי (E) של המייסדים",
+    crisis: "\"או שזה רק רומן?\" – הרעיון לא יוצא לפועל כי ההתלהבות דעכה או שהמייסד פנה לעיסוק אחר",
+    solution: "מעבר מהחלום לעשייה בפועל (שלב הינקות)",
   },
   {
     order: 2,
     name: "ינקות",
     paei: "Paei",
     phase: "צמיחה",
-    driver: "ביצוע (P)",
-    feature: "מעבר לעשייה מעשית, מעשים מקדימים תכנון",
-    crisis: "מוות מוקדם (חוסר משאבים)",
+    focus: "ביצועיזם (P); עבודה קשה, הוצאת הרעיון לפועל",
+    crisis: "\"מוות מוקדם\" – נסיבות רגולטוריות (חוסר אישורים) או נסיבות חיצוניות/פיננסיות (חוסר תקציב/הלוואות)",
+    solution: "גיוס משאבים, קבלת אישורים והתגברות על מכשולים טכניים",
   },
   {
     order: 3,
     name: "זינוק",
     paei: "PaEi",
     phase: "צמיחה",
-    driver: "ביצוע ויזמות (P+E)",
-    feature: "צמיחה מהירה וזיהוי הזדמנויות",
-    crisis: "מלכודת המייסד",
+    focus: "שילוב של יצירתיות (E) וביצוע (P); התרחבות וצמיחה מהירה",
+    crisis: "\"מלכודת המייסד\" – המייסד לא משחרר שליטה, קורס תחת העומס, או מתקשה להתמודד עם הבירוקרטיה הנחוצה",
+    solution: "המייסד לוקח צעד אחורה ומביא מנכ\"ל מקצועי לניהול הארגון",
   },
   {
     order: 4,
     name: "התבגרות",
     paei: "pAEi",
     phase: "צמיחה",
-    driver: "מינהול ויזמות (A+E)",
-    feature: "בניית מבנה ונהלים, כאבי גדילה",
-    crisis: "גירושין (מייסד מול מקצוענים)",
+    focus: "בניית תשתית ארגונית מסודרת (A) לצד יזמות (E)",
+    crisis: "\"משבר גירושים\" – קצר ומאבקי כוח בין המנכ\"ל המקצועי לבעלים או בין המייסדים לבין עצמם",
+    solution: "גישור או מכירת חלק מהארגון",
   },
   {
     order: 5,
     name: "שיא",
     paei: "PAEI",
     phase: "צמיחה",
-    driver: "כל ארבעת התפקידים מאוזנים",
-    feature: "איזון בין יעילות לחדשנות",
-    crisis: "שמירה על השיא לאורך זמן",
+    focus: "איזון בין שליטה לגמישות, פרו-אקטיביות, יצירתיות ואינטגרציה פנימית וחיצונית",
+    crisis: "אי יישום המאפיינים (כמו קיפאון או חוסר פרו-אקטיביות) מוביל למחצית השנייה של החיים",
+    solution: "יישום המאפיינים גמישות, פרו-אקטיביות, יצירתיות ואינטגרציה פנימית וחיצונית",
   },
   {
     order: 6,
     name: "רגיעה",
     paei: "PAeI",
     phase: "הזדקנות",
-    driver: "ביצוע, מינהול ותיאום (ירידה ב-E)",
-    feature: "שביעות רצון, ירידה בחדשנות",
-    crisis: "תחילת הדעיכה הסמויה",
+    focus: "הארגון נראה בשיאו (רווחים גבוהים), אך היצירתיות (e) מתחילה לקטון",
+    crisis: "שאננות, תחושת ביטחון מופרזת והפסקת השקעה במחקר ופיתוח",
+    solution: "הסתמכות על הצלחות העבר והתעלמות מהצורך להתחדש",
   },
   {
     order: 7,
     name: "אריסטוקרטיה",
     paei: "pAeI",
     phase: "הזדקנות",
-    driver: "מינהול ותיאום (A+I)",
-    feature: "יוקרה ופורמליות, הסתמכות על עבר",
-    crisis: "ניתוק מהמציאות העסקית",
+    focus: "עייפות, אדישות כלפי לקוחות ודגש על טקסים וסמלי סטטוס (\"ארמונות מתפוררים\")",
+    crisis: "אובדן הביצועיזם (p) והיצירתיות (e); הארגון מתנתק מהשטח",
+    solution: "שיתופי פעולה עם ארגונים מזדקנים אחרים או קניית סטארטאפים",
   },
   {
     order: 8,
     name: "בירוקרטיה מוקדמת",
     paei: "A-i-",
     phase: "הזדקנות",
-    driver: "מינהול (A)",
-    feature: "מאבקי כוח, האשמות פנימיות",
-    crisis: "פוליטיקה פנים-ארגונית",
+    focus: "אין ביצועים או יזמות; נשארים רק חוקים ומעט אינטגרציה פנימית חסרת תועלת",
+    crisis: "המשך הדעיכה הטבעית והיעדר כוח אדם ביצועיסטי",
+    solution: "מכירת חטיבות או נכסים כדי להרוויח זמן כמו בנייני חברה או זכויות שידור",
   },
   {
     order: 9,
     name: "בירוקרטיה",
     paei: "--A-",
     phase: "הזדקנות",
-    driver: "מינהול בלבד (A)",
-    feature: "נוהלים נוקשים, ריחוק מהלקוח",
-    crisis: "תלות מוחלטת בגורם חיצוני",
+    focus: "הארגון מורכב אך ורק מחוקים ונהלים חונקים; מנותק לחלוטין מהעולם",
+    crisis: "הגעה לשלב הסופי לפני קריסה; איבוד כל תפקוד ניהולי פרט למינהל",
+    solution: "ניסיון \"לסחוט\" את הכסף האחרון שנשאר ומכירת שאריות נכסים",
   },
   {
     order: 10,
     name: "מוות",
     paei: "----",
     phase: "הזדקנות",
-    driver: "אין תפקיד פעיל",
-    feature: "הפסקת פעילות ופירוק",
-    crisis: "אין דרך חזרה",
+    focus: "סוף מחזור החיים הארגוני",
+    crisis: "לאור כל השלבים שקדמו לו",
+    solution: "אין – הארגון חדל מלהתקיים",
   },
 ]
 
-type Prop = "paei" | "phase" | "driver" | "feature" | "crisis"
+type Prop = "paei" | "phase" | "focus" | "crisis" | "solution"
+
 const PROP_LABELS: Record<Prop, string> = {
   paei: "קוד PAEI",
   phase: "שלב",
-  driver: "כוח מניע",
-  feature: "מאפיין מרכזי",
-  crisis: "משבר / סיכון",
+  focus: "מיקוד / תיאור",
+  crisis: "משבר",
+  solution: "פתרון",
 }
 
-const ALL_PROPS: Prop[] = ["paei", "phase", "driver", "feature", "crisis"]
+const ALL_PROPS: Prop[] = ["paei", "phase", "focus", "crisis", "solution"]
+
+type Difficulty = "easy" | "medium" | "hard"
+
+const HIDDEN_BY_DIFFICULTY: Record<Difficulty, Prop[]> = {
+  easy: ["crisis", "solution"],
+  medium: ["focus", "crisis", "solution"],
+  hard: ["phase", "focus", "crisis", "solution"],
+}
 
 function getOptions(prop: Prop, correct: string, count = 4): string[] {
   const all = STAGES.map(s => s[prop]).filter((v, i, a) => a.indexOf(v) === i)
   const distractors = all.filter(v => v !== correct)
-  const picked: string[] = []
   const shuffled = [...distractors].sort(() => Math.random() - 0.5)
-  for (const d of shuffled) {
-    if (picked.length >= count - 1) break
-    picked.push(d)
-  }
+  const picked = shuffled.slice(0, count - 1)
   return [correct, ...picked].sort(() => Math.random() - 0.5)
+}
+
+interface StageOptions {
+  paei: string[]
+  phase: string[]
+  focus: string[]
+  crisis: string[]
+  solution: string[]
+}
+
+function buildOptions(stage: typeof STAGES[0]): StageOptions {
+  return {
+    paei: getOptions("paei", stage.paei),
+    phase: ["צמיחה", "הזדקנות"],
+    focus: getOptions("focus", stage.focus),
+    crisis: getOptions("crisis", stage.crisis),
+    solution: getOptions("solution", stage.solution),
+  }
 }
 
 // ────────────────────────────────────────────────────
@@ -144,10 +167,8 @@ function TimelineExercise() {
     if (checked) return
     if (!selected) return
     const newOrder = [...order]
-    // If there's already something in this slot, move it back (swap or clear)
     const prevIdx = newOrder.indexOf(selected)
     if (prevIdx !== -1) newOrder[prevIdx] = null
-    // If slot had something, move that back to free
     newOrder[idx] = selected
     setOrder(newOrder)
     setSelected(null)
@@ -170,11 +191,6 @@ function TimelineExercise() {
 
   return (
     <div style={{ direction: "rtl" }}>
-      <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 16, lineHeight: 1.5 }}>
-        סדר את 10 שלבי מחזור החיים לפי סדרם — מחיזור עד מוות.
-        <br />לחץ על שם שלב ואז על המיקום הנכון.
-      </p>
-
       {/* Slots */}
       <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 20 }}>
         {STAGES.map((stage, i) => {
@@ -182,14 +198,7 @@ function TimelineExercise() {
           const isCorrect = checked && placed === stage.name
           const isWrong = checked && placed !== null && placed !== stage.name
           return (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{
                 width: 28,
                 height: 28,
@@ -313,32 +322,6 @@ function TimelineExercise() {
 // ────────────────────────────────────────────────────
 // FILL IN EXERCISE
 // ────────────────────────────────────────────────────
-type Difficulty = "easy" | "medium" | "hard"
-
-const HIDDEN_BY_DIFFICULTY: Record<Difficulty, Prop[]> = {
-  easy: ["feature", "crisis"],
-  medium: ["driver", "feature", "crisis"],
-  hard: ["phase", "driver", "feature", "crisis"],
-}
-
-interface StageOptions {
-  paei: string[]
-  phase: string[]
-  driver: string[]
-  feature: string[]
-  crisis: string[]
-}
-
-function buildOptions(stage: typeof STAGES[0]): StageOptions {
-  return {
-    paei: getOptions("paei", stage.paei),
-    phase: ["צמיחה", "הזדקנות"],
-    driver: getOptions("driver", stage.driver),
-    feature: getOptions("feature", stage.feature),
-    crisis: getOptions("crisis", stage.crisis),
-  }
-}
-
 function FillExercise() {
   const [diff, setDiff] = useState<Difficulty>("easy")
   const [stageIdx, setStageIdx] = useState(0)
@@ -359,11 +342,18 @@ function FillExercise() {
   const stageOriginalIdx = STAGES.findIndex(s => s.name === stage.name)
   const opts = optionsMap[stageOriginalIdx]
   const hidden = HIDDEN_BY_DIFFICULTY[diff]
-  const shown = ALL_PROPS.filter(p => !hidden.includes(p))
   const isChecked = !!checked[stageIdx]
 
   const curAnswers = answers[stageIdx] ?? {}
   const allAnswered = hidden.every(p => curAnswers[p] !== undefined)
+
+  const totalChecked = Object.keys(checked).length
+  const totalCorrect = Object.entries(checked).filter(([idxStr]) => {
+    const idx = parseInt(idxStr)
+    const s = order[idx]
+    const ans = answers[idx] ?? {}
+    return hidden.every(p => ans[p] === s[p])
+  }).length
 
   function setAnswer(prop: Prop, val: string) {
     if (isChecked) return
@@ -381,15 +371,6 @@ function FillExercise() {
       setDone(true)
     }
   }
-
-  // Score
-  const totalChecked = Object.keys(checked).length
-  const totalCorrect = Object.entries(checked).filter(([idxStr]) => {
-    const idx = parseInt(idxStr)
-    const s = order[idx]
-    const ans = answers[idx] ?? {}
-    return hidden.every(p => ans[p] === s[p])
-  }).length
 
   if (done) {
     return (
@@ -464,7 +445,6 @@ function FillExercise() {
             const isHidden = hidden.includes(prop)
             const correctVal = stage[prop]
             const answer = curAnswers[prop]
-            const isRight = isChecked && answer === correctVal
             const isWrong = isChecked && answer !== undefined && answer !== correctVal
             const options = opts[prop]
 
@@ -486,12 +466,13 @@ function FillExercise() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                     {options.map(opt => {
                       const isSel = answer === opt
+                      const isCorrectOpt = opt === correctVal
                       const bg = isSel && isWrong ? "rgba(248,113,113,0.2)"
-                        : opt === correctVal && isChecked ? "rgba(74,222,128,0.2)"
+                        : isCorrectOpt && isChecked ? "rgba(74,222,128,0.2)"
                           : isSel ? `${COLOR}22`
                             : "transparent"
                       const border = isSel && isWrong ? "#f87171"
-                        : opt === correctVal && isChecked ? "#4ade80"
+                        : isCorrectOpt && isChecked ? "#4ade80"
                           : isSel ? COLOR
                             : "rgba(255,255,255,0.12)"
                       return (
@@ -505,14 +486,14 @@ function FillExercise() {
                             background: bg,
                             color: "var(--foreground)",
                             fontSize: 13,
-                            fontWeight: isSel || (opt === correctVal && isChecked) ? 600 : 400,
+                            fontWeight: isSel || (isCorrectOpt && isChecked) ? 600 : 400,
                             cursor: isChecked ? "default" : "pointer",
                             textAlign: "right",
                             transition: "all 0.12s",
                           }}
                         >
                           {opt}
-                          {opt === correctVal && isChecked && " ✓"}
+                          {isCorrectOpt && isChecked && " ✓"}
                           {isSel && isWrong && " ✗"}
                         </button>
                       )
@@ -559,7 +540,7 @@ function FillExercise() {
             cursor: "pointer",
           }}
         >
-          {stageIdx < order.length - 1 ? "הבא ←" : "סיום"}
+          {stageIdx < order.length - 1 ? "הבא" : "סיום"}
         </button>
       )}
     </div>
@@ -598,16 +579,10 @@ export default function LifecyclePage() {
           marginBottom: 16,
         }}
       >
-        ← חזרה לקורס
+        חזרה לקורס
       </button>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-        <span style={{ fontSize: 24 }}>🔄</span>
-        <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>מחזור החיים הארגוני</h1>
-      </div>
-      <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 20 }}>
-        תרגולים אינטראקטיביים — מודל אדיג&#39;ס
-      </div>
+      <h1 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 20px" }}>מחזור החיים הארגוני</h1>
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
