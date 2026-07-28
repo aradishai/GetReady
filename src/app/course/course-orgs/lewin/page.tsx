@@ -60,17 +60,50 @@ const DEFAULT_STAGES: Stage[] = [
 ]
 
 type Difficulty = "easy" | "medium" | "hard"
+type HiddenKey = "name" | "goal" | "a0" | "a1" | "a2" | "a3" | "a4"
 
-const HIDE_COUNT: Record<Difficulty, number> = { easy: 2, medium: 3, hard: 4 }
+const ALL_KEYS: HiddenKey[] = ["name", "goal", "a0", "a1", "a2", "a3", "a4"]
+const HIDE_COUNT: Record<Difficulty, number> = { easy: 2, medium: 4, hard: 6 }
 
-function generateHiddenActions(difficulty: Difficulty, stageCount: number): Record<number, number[]> {
+function generateHidden(difficulty: Difficulty, stageCount: number): Record<number, HiddenKey[]> {
   const count = HIDE_COUNT[difficulty]
-  const map: Record<number, number[]> = {}
+  const map: Record<number, HiddenKey[]> = {}
   for (let i = 0; i < stageCount; i++) {
-    const shuffled = [0, 1, 2, 3, 4].sort(() => Math.random() - 0.5)
+    const shuffled = [...ALL_KEYS].sort(() => Math.random() - 0.5)
     map[i] = shuffled.slice(0, count)
   }
   return map
+}
+
+function AnswerField({ value, onChange, readOnly, placeholder, rows }: {
+  value: string; onChange: (v: string) => void; readOnly: boolean; placeholder: string; rows: number
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      rows={rows}
+      style={{
+        width: "100%", boxSizing: "border-box",
+        background: "rgba(255,255,255,0.06)",
+        border: "1.5px solid rgba(255,255,255,0.15)",
+        borderRadius: 8, color: "var(--foreground)", fontSize: 13,
+        padding: "7px 10px", resize: "none", direction: "rtl",
+        fontFamily: "inherit", lineHeight: 1.5, outline: "none",
+      }}
+    />
+  )
+}
+
+function RevealBox({ label, value }: { label?: string; value: string }) {
+  return (
+    <div style={{ marginTop: 5, padding: "7px 10px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: `1px solid ${COLOR}33` }}>
+      {label && <span style={{ fontSize: 11, color: "var(--muted)" }}>{label} </span>}
+      <span style={{ fontSize: 13, fontWeight: 800, color: GREEN, lineHeight: 1.5 }}>{value}</span>
+    </div>
+  )
 }
 
 // ────────────────────────────────────────────────────
@@ -78,27 +111,27 @@ function generateHiddenActions(difficulty: Difficulty, stageCount: number): Reco
 // ────────────────────────────────────────────────────
 function FillExercise({ stages }: { stages: Stage[] }) {
   const [diff, setDiff] = useState<Difficulty>("easy")
-  const [hiddenMap, setHiddenMap] = useState<Record<number, number[]>>(() => generateHiddenActions("easy", stages.length))
+  const [hiddenMap, setHiddenMap] = useState<Record<number, HiddenKey[]>>(() => generateHidden("easy", stages.length))
   const [stageIdx, setStageIdx] = useState(0)
   const [order] = useState(() => [...stages].sort(() => Math.random() - 0.5))
-  const [answers, setAnswers] = useState<Record<number, Record<number, string>>>({})
+  const [answers, setAnswers] = useState<Record<number, Record<HiddenKey, string>>>({})
   const [checked, setChecked] = useState<Record<number, boolean>>({})
   const [done, setDone] = useState(false)
 
   function reset(d: Difficulty = diff) {
     setStageIdx(0); setAnswers({}); setChecked({}); setDone(false)
-    setHiddenMap(generateHiddenActions(d, stages.length))
+    setHiddenMap(generateHidden(d, stages.length))
   }
 
   const stage = order[stageIdx]
-  const hiddenIndices = hiddenMap[stageIdx] ?? []
+  const hidden = hiddenMap[stageIdx] ?? []
   const isChecked = !!checked[stageIdx]
-  const curAnswers = answers[stageIdx] ?? {}
-  const allAnswered = hiddenIndices.every(i => (curAnswers[i] ?? "").trim() !== "")
+  const curAnswers = answers[stageIdx] ?? {} as Record<HiddenKey, string>
+  const allAnswered = hidden.every(k => (curAnswers[k] ?? "").trim() !== "")
 
-  function setAnswer(actionIdx: number, val: string) {
+  function setAnswer(key: HiddenKey, val: string) {
     if (isChecked) return
-    setAnswers(prev => ({ ...prev, [stageIdx]: { ...(prev[stageIdx] ?? {}), [actionIdx]: val } }))
+    setAnswers(prev => ({ ...prev, [stageIdx]: { ...(prev[stageIdx] ?? {}), [key]: val } }))
   }
 
   function next() {
@@ -118,6 +151,9 @@ function FillExercise({ stages }: { stages: Stage[] }) {
       </div>
     )
   }
+
+  const nameHidden = hidden.includes("name")
+  const goalHidden = hidden.includes("goal")
 
   return (
     <div style={{ direction: "rtl" }}>
@@ -148,22 +184,42 @@ function FillExercise({ stages }: { stages: Stage[] }) {
         background: "linear-gradient(140deg, var(--card) 0%, var(--card-border) 100%)",
         border: `1.5px solid ${COLOR}44`, borderRadius: 14, padding: 16, marginBottom: 16,
       }}>
-        <div style={{ fontSize: 22, fontWeight: 900, marginBottom: 14, color: COLOR }}>{stage.name}</div>
+        {/* Stage name */}
+        <div style={{ fontSize: 22, fontWeight: 900, marginBottom: 14, color: nameHidden ? "rgba(255,255,255,0.3)" : COLOR }}>
+          {nameHidden ? "???" : stage.name}
+        </div>
+
+        {/* Name field when hidden */}
+        {nameHidden && (
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 5 }}>שם השלב</div>
+            <AnswerField value={curAnswers["name"] ?? ""} onChange={v => setAnswer("name", v)} readOnly={isChecked} placeholder="שם השלב..." rows={1} />
+            {isChecked && <RevealBox label="תשובה נכונה:" value={stage.name} />}
+          </div>
+        )}
 
         {/* Goal */}
         <div style={{ marginBottom: 18 }}>
           <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 5 }}>מטרת השלב</div>
-          <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 800, color: "var(--foreground)", lineHeight: 1.5 }}>
-            {stage.goal}
-          </div>
+          {!goalHidden ? (
+            <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 800, color: "var(--foreground)", lineHeight: 1.5 }}>
+              {stage.goal}
+            </div>
+          ) : (
+            <>
+              <AnswerField value={curAnswers["goal"] ?? ""} onChange={v => setAnswer("goal", v)} readOnly={isChecked} placeholder="מטרת השלב..." rows={2} />
+              {isChecked && <RevealBox label="תשובה נכונה:" value={stage.goal} />}
+            </>
+          )}
         </div>
 
         {/* Actions */}
         <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 10 }}>5 פעולות לביצועו</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {stage.actions.map((action, actionIdx) => {
-            const isHidden = hiddenIndices.includes(actionIdx)
-            const userAnswer = curAnswers[actionIdx] ?? ""
+            const key = `a${actionIdx}` as HiddenKey
+            const isHidden = hidden.includes(key)
+            const userAnswer = curAnswers[key] ?? ""
 
             if (!isHidden) {
               return (
@@ -182,29 +238,8 @@ function FillExercise({ stages }: { stages: Stage[] }) {
                   <span style={{ fontSize: 13, fontWeight: 700, color: COLOR, flexShrink: 0 }}>{action.label}.</span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)" }}>{action.first}</span>
                 </div>
-                <textarea
-                  value={userAnswer}
-                  onChange={e => setAnswer(actionIdx, e.target.value)}
-                  readOnly={isChecked}
-                  placeholder="המשך המשפט..."
-                  rows={1}
-                  style={{
-                    width: "100%", boxSizing: "border-box",
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1.5px solid rgba(255,255,255,0.15)",
-                    borderRadius: 8, color: "var(--foreground)", fontSize: 13,
-                    padding: "7px 10px", resize: "none", direction: "rtl",
-                    fontFamily: "inherit", lineHeight: 1.5, outline: "none",
-                  }}
-                />
-                {isChecked && (
-                  <div style={{ marginTop: 5, padding: "7px 10px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: `1px solid ${COLOR}33` }}>
-                    <span style={{ fontSize: 11, color: "var(--muted)" }}>תשובה נכונה: </span>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: GREEN, lineHeight: 1.5 }}>
-                      {action.first} {action.rest}
-                    </span>
-                  </div>
-                )}
+                <AnswerField value={userAnswer} onChange={v => setAnswer(key, v)} readOnly={isChecked} placeholder="המשך המשפט..." rows={1} />
+                {isChecked && <RevealBox label="תשובה נכונה:" value={`${action.first} ${action.rest}`} />}
               </div>
             )
           })}
