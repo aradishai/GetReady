@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 
@@ -146,170 +146,166 @@ function buildOptions(stage: typeof STAGES[0]): StageOptions {
 }
 
 // ────────────────────────────────────────────────────
-// TIMELINE EXERCISE
+// TIMELINE EXERCISE — drag to sort
 // ────────────────────────────────────────────────────
 function TimelineExercise() {
-  const [order, setOrder] = useState<(string | null)[]>(() => Array(10).fill(null))
-  const [shuffled] = useState(() => [...STAGES].sort(() => Math.random() - 0.5))
+  const [items, setItems] = useState(() => [...STAGES].sort(() => Math.random() - 0.5).map(s => s.name))
   const [checked, setChecked] = useState(false)
-  const [selected, setSelected] = useState<string | null>(null)
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [overIdx, setOverIdx] = useState<number | null>(null)
 
-  const usedSlots = new Set(order.filter(Boolean))
-  const correct = order.filter((n, i) => n === STAGES[i].name).length
+  // touch refs
+  const touchFromIdx = useRef<number | null>(null)
+  const touchOverIdx = useRef<number | null>(null)
+  const ghostEl = useRef<HTMLDivElement | null>(null)
 
-  function handleCardClick(name: string) {
-    if (checked) return
-    if (selected === name) { setSelected(null); return }
-    setSelected(name)
+  function reorder(from: number, to: number) {
+    setItems(prev => {
+      const next = [...prev]
+      const [removed] = next.splice(from, 1)
+      next.splice(to, 0, removed)
+      return next
+    })
   }
 
-  function handleSlotClick(idx: number) {
-    if (checked) return
-    if (!selected) return
-    const newOrder = [...order]
-    const prevIdx = newOrder.indexOf(selected)
-    if (prevIdx !== -1) newOrder[prevIdx] = null
-    newOrder[idx] = selected
-    setOrder(newOrder)
-    setSelected(null)
+  // ── desktop drag ──
+  function onDragStart(idx: number) { setDragIdx(idx) }
+  function onDragEnter(idx: number) { if (dragIdx !== null && dragIdx !== idx) setOverIdx(idx) }
+  function onDragOver(e: React.DragEvent) { e.preventDefault() }
+  function onDrop(idx: number) {
+    if (dragIdx !== null && dragIdx !== idx) reorder(dragIdx, idx)
+    setDragIdx(null); setOverIdx(null)
+  }
+  function onDragEnd() { setDragIdx(null); setOverIdx(null) }
+
+  // ── touch drag ──
+  function onTouchStart(e: React.TouchEvent<HTMLDivElement>, idx: number) {
+    touchFromIdx.current = idx
+    touchOverIdx.current = idx
+    setDragIdx(idx)
+    const touch = e.touches[0]
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ghost = e.currentTarget.cloneNode(true) as HTMLDivElement
+    ghost.style.cssText = [
+      "position:fixed",
+      `left:${rect.left}px`,
+      `top:${rect.top}px`,
+      `width:${rect.width}px`,
+      "opacity:0.92",
+      "pointer-events:none",
+      "z-index:9999",
+      "box-shadow:0 10px 32px rgba(0,0,0,0.55)",
+      "border-radius:10px",
+      `transform:translateY(${touch.clientY - rect.top - rect.height / 2}px)`,
+    ].join(";")
+    document.body.appendChild(ghost)
+    ghostEl.current = ghost
   }
 
-  function removeFromSlot(idx: number) {
-    if (checked) return
-    const newOrder = [...order]
-    newOrder[idx] = null
-    setOrder(newOrder)
+  function onTouchMove(e: React.TouchEvent) {
+    e.preventDefault()
+    const touch = e.touches[0]
+    if (ghostEl.current) {
+      const w = ghostEl.current.offsetWidth
+      ghostEl.current.style.left = `${touch.clientX - w / 2}px`
+      ghostEl.current.style.top = `${touch.clientY - ghostEl.current.offsetHeight / 2}px`
+      ghostEl.current.style.transform = ""
+    }
+    // find element under finger
+    if (ghostEl.current) ghostEl.current.style.visibility = "hidden"
+    const el = document.elementFromPoint(touch.clientX, touch.clientY)
+    if (ghostEl.current) ghostEl.current.style.visibility = ""
+    let node = el as HTMLElement | null
+    while (node) {
+      const attr = node.getAttribute?.("data-drag-idx")
+      if (attr !== null && attr !== undefined) {
+        const i = parseInt(attr)
+        touchOverIdx.current = i
+        setOverIdx(i)
+        break
+      }
+      node = node.parentElement
+    }
   }
+
+  function onTouchEnd() {
+    if (ghostEl.current) { document.body.removeChild(ghostEl.current); ghostEl.current = null }
+    const from = touchFromIdx.current
+    const to = touchOverIdx.current
+    if (from !== null && to !== null && from !== to) reorder(from, to)
+    touchFromIdx.current = null; touchOverIdx.current = null
+    setDragIdx(null); setOverIdx(null)
+  }
+
+  const score = items.filter((name, i) => name === STAGES[i].name).length
 
   function reset() {
-    setOrder(Array(10).fill(null))
+    setItems([...STAGES].sort(() => Math.random() - 0.5).map(s => s.name))
     setChecked(false)
-    setSelected(null)
   }
-
-  const allFilled = order.every(Boolean)
 
   return (
     <div style={{ direction: "rtl" }}>
-      {/* Slots */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 20 }}>
-        {STAGES.map((stage, i) => {
-          const placed = order[i]
-          const isCorrect = checked && placed === stage.name
-          const isWrong = checked && placed !== null && placed !== stage.name
+      <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 20 }}>
+        {items.map((name, i) => {
+          const isCorrect = checked && name === STAGES[i].name
+          const isWrong   = checked && name !== STAGES[i].name
+          const isOver    = !checked && overIdx === i && dragIdx !== null && dragIdx !== i
+          const isDragging = dragIdx === i
+
           return (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                background: i < 5 ? `${COLOR}22` : "rgba(248,113,113,0.15)",
-                border: `1.5px solid ${i < 5 ? COLOR : "#f87171"}`,
+            <div
+              key={name}
+              data-drag-idx={i}
+              draggable={!checked}
+              onDragStart={() => onDragStart(i)}
+              onDragEnter={() => onDragEnter(i)}
+              onDragOver={onDragOver}
+              onDrop={() => onDrop(i)}
+              onDragEnd={onDragEnd}
+              onTouchStart={e => onTouchStart(e, i)}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                fontSize: 12,
-                fontWeight: 700,
-                color: i < 5 ? COLOR : "#f87171",
-                flexShrink: 0,
-              }}>
-                {i + 1}
-              </div>
-              <div
-                onClick={() => placed ? removeFromSlot(i) : handleSlotClick(i)}
-                style={{
-                  flex: 1,
-                  minHeight: 38,
-                  border: `1.5px dashed ${isCorrect ? "#4ade80" : isWrong ? "#f87171" : placed ? COLOR : "rgba(255,255,255,0.2)"}`,
-                  borderRadius: 8,
-                  background: isCorrect ? "rgba(74,222,128,0.12)" : isWrong ? "rgba(248,113,113,0.12)" : placed ? `${COLOR}18` : "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  paddingRight: 12,
-                  cursor: placed ? "pointer" : selected ? "pointer" : "default",
-                  fontSize: 14,
-                  fontWeight: placed ? 600 : 400,
-                  color: placed ? "var(--foreground)" : "var(--muted)",
-                  transition: "all 0.15s",
-                }}
-              >
-                {placed ?? "לחץ למיקום"}
-                {placed && !checked && (
-                  <span style={{ marginRight: "auto", marginLeft: 8, fontSize: 10, color: "var(--muted)" }}>✕</span>
-                )}
-                {isCorrect && <span style={{ marginRight: "auto", marginLeft: 8 }}>✓</span>}
-                {isWrong && <span style={{ marginRight: "auto", marginLeft: 8, color: "#f87171", fontSize: 11 }}>✕ {stage.name}</span>}
-              </div>
+                gap: 10,
+                padding: "11px 14px",
+                borderRadius: 10,
+                border: `1.5px solid ${isCorrect ? "#4ade80" : isWrong ? "#f87171" : isOver ? COLOR : "rgba(255,255,255,0.13)"}`,
+                background: isCorrect ? "rgba(74,222,128,0.1)" : isWrong ? "rgba(248,113,113,0.09)" : isOver ? `${COLOR}18` : "var(--card)",
+                opacity: isDragging ? 0.3 : 1,
+                cursor: checked ? "default" : "grab",
+                userSelect: "none",
+                touchAction: "none",
+                transition: "border-color 0.1s, background 0.1s, opacity 0.1s",
+              }}
+            >
+              {!checked && (
+                <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 18, lineHeight: 1, flexShrink: 0 }}>⠿</span>
+              )}
+              <span style={{ fontSize: 14, fontWeight: 600, flex: 1 }}>{name}</span>
+              {isCorrect && <span style={{ color: "#4ade80", fontWeight: 700 }}>✓</span>}
+              {isWrong   && <span style={{ color: "#f87171", fontSize: 12 }}>{STAGES[i].name}</span>}
             </div>
           )
         })}
       </div>
 
-      {/* Stage cards */}
-      {!checked && (
-        <>
-          <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 8 }}>
-            {selected ? `בחרת: "${selected}" — לחץ על מיקום` : "בחר שלב:"}
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-            {shuffled.map(s => {
-              const isPlaced = usedSlots.has(s.name)
-              const isSel = selected === s.name
-              return (
-                <button
-                  key={s.name}
-                  disabled={isPlaced}
-                  onClick={() => handleCardClick(s.name)}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: 8,
-                    border: `1.5px solid ${isSel ? COLOR : isPlaced ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.2)"}`,
-                    background: isSel ? `${COLOR}30` : isPlaced ? "rgba(255,255,255,0.04)" : "var(--card)",
-                    color: isPlaced ? "var(--muted)" : "var(--foreground)",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: isPlaced ? "not-allowed" : "pointer",
-                    opacity: isPlaced ? 0.4 : 1,
-                    transition: "all 0.12s",
-                  }}
-                >
-                  {s.name}
-                </button>
-              )
-            })}
-          </div>
-        </>
-      )}
-
-      {/* Buttons */}
       <div style={{ display: "flex", gap: 10 }}>
         {!checked ? (
           <button
-            disabled={!allFilled}
             onClick={() => setChecked(true)}
-            style={{
-              flex: 1,
-              padding: "11px 0",
-              borderRadius: 10,
-              border: "none",
-              background: allFilled ? COLOR : "rgba(255,255,255,0.1)",
-              color: allFilled ? "#0f172a" : "var(--muted)",
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: allFilled ? "pointer" : "not-allowed",
-            }}
+            style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "none", background: COLOR, color: "#0f172a", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
           >
             בדוק
           </button>
         ) : (
           <>
-            <div style={{ flex: 1, textAlign: "center", padding: "11px 0", background: "rgba(255,255,255,0.06)", borderRadius: 10, fontSize: 15, fontWeight: 800, color: correct === 10 ? "#4ade80" : COLOR }}>
-              {correct}/10 נכון
+            <div style={{ flex: 1, textAlign: "center", padding: "11px 0", background: "rgba(255,255,255,0.06)", borderRadius: 10, fontSize: 15, fontWeight: 800, color: score === 10 ? "#4ade80" : COLOR }}>
+              {score}/10 נכון
             </div>
-            <button
-              onClick={reset}
-              style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1.5px solid ${COLOR}`, background: "transparent", color: COLOR, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
-            >
+            <button onClick={reset} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1.5px solid ${COLOR}`, background: "transparent", color: COLOR, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
               נסה שוב
             </button>
           </>
