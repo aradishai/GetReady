@@ -293,11 +293,7 @@ export default function CoursePage() {
             onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.7)")}
             onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)")}
           >
-            <span style={{ fontSize: isMobile ? 22 : 24 }}>🔄</span>
-            <div>
-              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגולים — מחזור החיים הארגוני</div>
-              <div style={{ fontSize: isMobile ? 11 : 12, color: "var(--muted)", marginTop: 2 }}>סידור ציר זמן ומילוי פרטים לפי רמת קושי</div>
-            </div>
+            <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגול ממוקד מחזור חיים ארגוני</div>
             <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(125,211,252,0.6)" }}>←</span>
           </div>
         </Link>
