@@ -101,12 +101,20 @@ const STAGES = [
 
 type Prop = "name" | "paei" | "focus" | "crisis" | "solution"
 
-const PROP_LABELS: Record<Prop, string> = {
+const PROP_LABELS_GROWTH: Record<Prop, string> = {
   name: "שם השלב",
   paei: "אותיות השלב",
   focus: "מיקוד השלב",
   crisis: "משבר השלב",
   solution: "איך ניתן לפתור את המשבר",
+}
+
+const PROP_LABELS_AGING: Record<Prop, string> = {
+  name: "שם השלב",
+  paei: "אותיות השלב",
+  focus: "תיאור השלב",
+  crisis: "איך הגענו לשלב",
+  solution: "ניסיון לפתרון",
 }
 
 const ALL_PROPS: Prop[] = ["name", "paei", "focus", "crisis", "solution"]
@@ -123,16 +131,6 @@ function generateHiddenProps(difficulty: Difficulty): Record<number, Prop[]> {
     map[i] = shuffled.slice(0, count)
   }
   return map
-}
-
-function wordSimilarity(user: string, correct: string): number {
-  if (!user.trim()) return 0
-  const norm = (s: string) =>
-    s.replace(/[^א-תA-Za-z0-9\s]/g, " ").toLowerCase().split(/\s+/).filter(Boolean)
-  const userWords = new Set(norm(user))
-  const correctWords = norm(correct)
-  if (!correctWords.length) return 0
-  return Math.round(correctWords.filter(w => userWords.has(w)).length / correctWords.length * 100)
 }
 
 // ────────────────────────────────────────────────────
@@ -328,16 +326,7 @@ function FillExercise() {
   const isChecked = !!checked[stageIdx]
   const curAnswers = answers[stageIdx] ?? {}
   const allAnswered = hidden.every(p => (curAnswers[p] ?? "").trim() !== "")
-
-  function stageSim(idx: number) {
-    const s = order[idx]; const ans = answers[idx] ?? {}
-    const h = hiddenPropsMap[idx] ?? []
-    if (!h.length) return 0
-    return Math.round(h.reduce((sum, p) => sum + wordSimilarity(ans[p] ?? "", s[p]), 0) / h.length)
-  }
-
-  const totalChecked = Object.keys(checked).length
-  const totalGood = Object.keys(checked).filter(k => stageSim(parseInt(k)) >= 60).length
+  const propLabels = stage.phase === "צמיחה" ? PROP_LABELS_GROWTH : PROP_LABELS_AGING
 
   function setAnswer(prop: Prop, val: string) {
     if (isChecked) return
@@ -351,25 +340,13 @@ function FillExercise() {
   if (done) {
     return (
       <div style={{ textAlign: "center", direction: "rtl", paddingTop: 20 }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>
-          {totalGood === 10 ? "🏆" : totalGood >= 7 ? "⭐" : "📚"}
-        </div>
-        <div style={{ fontSize: 24, fontWeight: 800, color: totalGood === 10 ? "#4ade80" : COLOR, marginBottom: 8 }}>
-          {totalGood}/10 שלבים (מעל 60%)
-        </div>
-        <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 24 }}>
-          {totalGood === 10 ? "מושלם! שלטת בכל שלבי מחזור החיים" :
-            totalGood >= 7 ? "טוב מאוד! עוד קצת תרגול ותגיע לשלמות" :
-              "המשך להתאמן — מחזור החיים דורש חזרות"}
-        </div>
+        <div style={{ fontSize: 24, fontWeight: 800, color: COLOR, marginBottom: 16 }}>סיימת את כל 10 השלבים!</div>
         <button onClick={() => reset()} style={{ padding: "12px 32px", borderRadius: 12, border: "none", background: COLOR, color: "#0f172a", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
           תרגל שוב
         </button>
       </div>
     )
   }
-
-  const curStageSim = isChecked ? stageSim(stageIdx) : null
 
   return (
     <div style={{ direction: "rtl" }}>
@@ -388,9 +365,8 @@ function FillExercise() {
       </div>
 
       {/* Progress */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+      <div style={{ marginBottom: 12 }}>
         <span style={{ fontSize: 12, color: "var(--muted)" }}>שלב {stageIdx + 1} מתוך {order.length}</span>
-        <span style={{ fontSize: 12, color: COLOR, fontWeight: 700 }}>{totalGood}/{totalChecked} מעל 60%</span>
       </div>
       <div style={{ background: "rgba(255,255,255,0.07)", borderRadius: 4, height: 4, marginBottom: 18, overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${(stageIdx / 10) * 100}%`, background: COLOR, borderRadius: 4, transition: "width 0.3s" }} />
@@ -410,12 +386,10 @@ function FillExercise() {
             const isHidden = hidden.includes(prop)
             const correctVal = stage[prop]
             const userAnswer = curAnswers[prop] ?? ""
-            const sim = isChecked ? wordSimilarity(userAnswer, correctVal) : 0
-            const simColor = sim >= 80 ? "#4ade80" : sim >= 50 ? COLOR : "#f87171"
 
             return (
               <div key={prop}>
-                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 5 }}>{PROP_LABELS[prop]}</div>
+                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 5 }}>{propLabels[prop]}</div>
                 {!isHidden ? (
                   <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 800, color: "var(--foreground)", lineHeight: 1.5 }}>
                     {correctVal}
@@ -431,7 +405,7 @@ function FillExercise() {
                       style={{
                         width: "100%", boxSizing: "border-box",
                         background: "rgba(255,255,255,0.06)",
-                        border: `1.5px solid ${isChecked ? simColor + "66" : "rgba(255,255,255,0.15)"}`,
+                        border: "1.5px solid rgba(255,255,255,0.15)",
                         borderRadius: 8, color: "var(--foreground)", fontSize: 13,
                         padding: "8px 12px", resize: "none", direction: "rtl",
                         fontFamily: "inherit", lineHeight: 1.5, outline: "none",
@@ -439,13 +413,8 @@ function FillExercise() {
                     />
                     {isChecked && (
                       <div style={{ marginTop: 6, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: `1px solid ${COLOR}33` }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
-                          <div style={{ flex: 1 }}>
-                            <span style={{ fontSize: 11, color: "var(--muted)" }}>תשובה נכונה: </span>
-                            <span style={{ fontSize: 13, fontWeight: 800, color: COLOR, lineHeight: 1.5 }}>{correctVal}</span>
-                          </div>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: simColor, flexShrink: 0 }}>{sim}%</span>
-                        </div>
+                        <span style={{ fontSize: 11, color: "var(--muted)" }}>תשובה נכונה: </span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: COLOR, lineHeight: 1.5 }}>{correctVal}</span>
                       </div>
                     )}
                   </div>
@@ -454,15 +423,6 @@ function FillExercise() {
             )
           })}
         </div>
-
-        {isChecked && curStageSim !== null && (
-          <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, color: "var(--muted)" }}>ציון שלב זה</span>
-            <span style={{ fontSize: 18, fontWeight: 900, color: curStageSim >= 80 ? "#4ade80" : curStageSim >= 50 ? COLOR : "#f87171" }}>
-              {curStageSim}%
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Action */}
