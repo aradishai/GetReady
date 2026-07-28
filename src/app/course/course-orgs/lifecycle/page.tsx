@@ -5,8 +5,19 @@ import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 
 const COLOR = "#38bdf8"
+const GREEN = "#4ade80"
 
-const STAGES = [
+type Stage = {
+  order: number
+  name: string
+  paei: string
+  phase: string
+  focus: string
+  crisis: string
+  solution: string
+}
+
+const STAGES: Stage[] = [
   {
     order: 1,
     name: "חיזור",
@@ -136,8 +147,8 @@ function generateHiddenProps(difficulty: Difficulty): Record<number, Prop[]> {
 // ────────────────────────────────────────────────────
 // TIMELINE EXERCISE — drag to sort
 // ────────────────────────────────────────────────────
-function TimelineExercise() {
-  const [items, setItems] = useState(() => [...STAGES].sort(() => Math.random() - 0.5).map(s => s.name))
+function TimelineExercise({ stages }: { stages: Stage[] }) {
+  const [items, setItems] = useState(() => [...stages].sort(() => Math.random() - 0.5).map(s => s.name))
   const [checked, setChecked] = useState(false)
   const [dragIdx, setDragIdx] = useState<number | null>(null)
   const [overIdx, setOverIdx] = useState<number | null>(null)
@@ -225,10 +236,10 @@ function TimelineExercise() {
     setDragIdx(null); setOverIdx(null)
   }
 
-  const score = items.filter((name, i) => name === STAGES[i].name).length
+  const score = items.filter((name, i) => name === stages[i].name).length
 
   function reset() {
-    setItems([...STAGES].sort(() => Math.random() - 0.5).map(s => s.name))
+    setItems([...stages].sort(() => Math.random() - 0.5).map(s => s.name))
     setChecked(false)
   }
 
@@ -236,8 +247,8 @@ function TimelineExercise() {
     <div style={{ direction: "rtl" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 20 }}>
         {items.map((name, i) => {
-          const isCorrect = checked && name === STAGES[i].name
-          const isWrong   = checked && name !== STAGES[i].name
+          const isCorrect = checked && name === stages[i].name
+          const isWrong   = checked && name !== stages[i].name
           const isOver    = !checked && overIdx === i && dragIdx !== null && dragIdx !== i
           const isDragging = dragIdx === i
 
@@ -274,7 +285,7 @@ function TimelineExercise() {
               )}
               <span style={{ fontSize: 14, fontWeight: 600, flex: 1 }}>{name}</span>
               {isCorrect && <span style={{ color: "#4ade80", fontWeight: 700 }}>✓</span>}
-              {isWrong   && <span style={{ color: "#f87171", fontSize: 12 }}>{STAGES[i].name}</span>}
+              {isWrong   && <span style={{ color: "#f87171", fontSize: 12 }}>{stages[i].name}</span>}
             </div>
           )
         })}
@@ -290,8 +301,8 @@ function TimelineExercise() {
           </button>
         ) : (
           <>
-            <div style={{ flex: 1, textAlign: "center", padding: "11px 0", background: "rgba(255,255,255,0.06)", borderRadius: 10, fontSize: 15, fontWeight: 800, color: score === 10 ? "#4ade80" : COLOR }}>
-              {score}/10 נכון
+            <div style={{ flex: 1, textAlign: "center", padding: "11px 0", background: "rgba(255,255,255,0.06)", borderRadius: 10, fontSize: 15, fontWeight: 800, color: score === stages.length ? GREEN : COLOR }}>
+              {score}/{stages.length} נכון
             </div>
             <button onClick={reset} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1.5px solid ${COLOR}`, background: "transparent", color: COLOR, fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
               נסה שוב
@@ -306,11 +317,11 @@ function TimelineExercise() {
 // ────────────────────────────────────────────────────
 // FILL IN EXERCISE
 // ────────────────────────────────────────────────────
-function FillExercise() {
+function FillExercise({ stages }: { stages: Stage[] }) {
   const [diff, setDiff] = useState<Difficulty>("easy")
   const [hiddenPropsMap, setHiddenPropsMap] = useState<Record<number, Prop[]>>(() => generateHiddenProps("easy"))
   const [stageIdx, setStageIdx] = useState(0)
-  const [order] = useState(() => [...STAGES].sort(() => Math.random() - 0.5))
+  const [order] = useState(() => [...stages].sort(() => Math.random() - 0.5))
   const [answers, setAnswers] = useState<Record<number, Partial<Record<Prop, string>>>>({})
   const [checked, setChecked] = useState<Record<number, boolean>>({})
   const [done, setDone] = useState(false)
@@ -414,7 +425,7 @@ function FillExercise() {
                     {isChecked && (
                       <div style={{ marginTop: 6, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: `1px solid ${COLOR}33` }}>
                         <span style={{ fontSize: 11, color: "var(--muted)" }}>תשובה נכונה: </span>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: COLOR, lineHeight: 1.5 }}>{correctVal}</span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: GREEN, lineHeight: 1.5 }}>{correctVal}</span>
                       </div>
                     )}
                   </div>
@@ -442,39 +453,170 @@ function FillExercise() {
 }
 
 // ────────────────────────────────────────────────────
+// ADMIN EDIT MODE
+// ────────────────────────────────────────────────────
+const EDIT_FIELDS: { key: keyof Stage; label: string }[] = [
+  { key: "name",     label: "שם השלב" },
+  { key: "paei",     label: "אותיות" },
+  { key: "phase",    label: "שלב (צמיחה / הזדקנות)" },
+  { key: "focus",    label: "מיקוד / תיאור" },
+  { key: "crisis",   label: "משבר / כניסה לשלב" },
+  { key: "solution", label: "פתרון / ניסיון" },
+]
+
+function AdminEditMode({ stages, onSave, onCancel }: {
+  stages: Stage[]
+  onSave: (s: Stage[]) => void
+  onCancel: () => void
+}) {
+  const [data, setData] = useState<Stage[]>(stages.map(s => ({ ...s })))
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  function update(idx: number, field: keyof Stage, val: string) {
+    setData(prev => prev.map((s, i) => i === idx ? { ...s, [field]: val } : s))
+  }
+
+  async function save() {
+    setSaving(true); setError("")
+    try {
+      const res = await fetch("/api/admin/lifecycle-stages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stages: data }),
+      })
+      if (res.ok) onSave(data)
+      else setError("שגיאה בשמירה")
+    } catch {
+      setError("שגיאה בשמירה")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div style={{ maxWidth: 600, margin: "0 auto", padding: "12px 14px 80px", direction: "rtl" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <h1 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>עריכת שלבי מחזור החיים</h1>
+        <button onClick={onCancel} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "var(--muted)", cursor: "pointer", fontSize: 13 }}>
+          ביטול
+        </button>
+      </div>
+
+      {data.map((stage, idx) => (
+        <div key={stage.order} style={{ marginBottom: 24, padding: 16, borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "var(--card)" }}>
+          <div style={{ fontSize: 15, fontWeight: 800, color: COLOR, marginBottom: 14 }}>
+            {stage.order}. {stage.name}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {EDIT_FIELDS.map(({ key, label }) => (
+              <div key={key}>
+                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, marginBottom: 4 }}>{label}</div>
+                <textarea
+                  value={stage[key]}
+                  onChange={e => update(idx, key, e.target.value)}
+                  rows={key === "name" || key === "paei" || key === "phase" ? 1 : 3}
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    borderRadius: 8, color: "var(--foreground)", fontSize: 13,
+                    padding: "7px 10px", resize: "vertical", direction: "rtl",
+                    fontFamily: "inherit", lineHeight: 1.5, outline: "none",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {error && <div style={{ color: "#f87171", marginBottom: 12, fontSize: 13 }}>{error}</div>}
+
+      <button
+        onClick={save}
+        disabled={saving}
+        style={{ width: "100%", padding: "13px 0", borderRadius: 12, border: "none", background: saving ? "rgba(255,255,255,0.1)" : GREEN, color: "#0f172a", fontWeight: 800, fontSize: 15, cursor: saving ? "not-allowed" : "pointer" }}
+      >
+        {saving ? "שומר..." : "שמור הכל"}
+      </button>
+    </div>
+  )
+}
+
+// ────────────────────────────────────────────────────
 // MAIN PAGE
 // ────────────────────────────────────────────────────
 type Tab = "timeline" | "fill"
 
 export default function LifecyclePage() {
   const router = useRouter()
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const [tab, setTab] = useState<Tab>("timeline")
+  const [stages, setStages] = useState<Stage[] | null>(null)
+  const [editMode, setEditMode] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
   }, [status, router])
 
-  if (status === "loading") return null
+  useEffect(() => {
+    fetch("/api/admin/lifecycle-stages")
+      .then(r => r.json())
+      .then(data => setStages(data.stages ?? STAGES))
+      .catch(() => setStages(STAGES))
+  }, [])
+
+  if (status === "loading" || !stages) return null
+
+  const isAdmin = !!(session?.user as { isAdmin?: boolean })?.isAdmin
+
+  if (editMode && isAdmin) {
+    return (
+      <AdminEditMode
+        stages={stages}
+        onSave={s => { setStages(s); setEditMode(false) }}
+        onCancel={() => setEditMode(false)}
+      />
+    )
+  }
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "12px 14px 60px", direction: "rtl" }}>
-      <button
-        onClick={() => router.push("/course/course-orgs")}
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--card-border)",
-          borderRadius: 10,
-          color: "var(--foreground)",
-          cursor: "pointer",
-          fontSize: 13,
-          fontWeight: 600,
-          padding: "7px 14px",
-          marginBottom: 16,
-        }}
-      >
-        חזרה לקורס
-      </button>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <button
+          onClick={() => router.push("/course/course-orgs")}
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--card-border)",
+            borderRadius: 10,
+            color: "var(--foreground)",
+            cursor: "pointer",
+            fontSize: 13,
+            fontWeight: 600,
+            padding: "7px 14px",
+          }}
+        >
+          חזרה לקורס
+        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setEditMode(true)}
+            style={{
+              background: "transparent",
+              border: `1px solid ${COLOR}66`,
+              borderRadius: 10,
+              color: COLOR,
+              cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+              padding: "7px 14px",
+            }}
+          >
+            עריכת תוכן
+          </button>
+        )}
+      </div>
 
       <h1 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 20px" }}>מחזור החיים הארגוני</h1>
 
@@ -502,7 +644,7 @@ export default function LifecyclePage() {
         ))}
       </div>
 
-      {tab === "timeline" ? <TimelineExercise /> : <FillExercise />}
+      {tab === "timeline" ? <TimelineExercise stages={stages} /> : <FillExercise stages={stages} />}
     </div>
   )
 }

@@ -194,6 +194,12 @@ model SeedLog {
   ranAt      DateTime @default(now())
 }
 
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model PracticeAnswer {
   id         String   @id @default(cuid())
   userId     String
