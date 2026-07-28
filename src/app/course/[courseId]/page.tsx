@@ -254,7 +254,7 @@ export default function CoursePage() {
       )}
 
       {/* Mode buttons */}
-      <div style={{ display: "flex", gap: isMobile ? 10 : 10, marginBottom: courseId === "course-assessment" ? 10 : 0 }}>
+      <div style={{ display: "flex", gap: isMobile ? 10 : 10, marginBottom: courseId === "course-assessment" || courseId === "course-orgs" ? 10 : 0 }}>
         <Link href={`/practice?courseId=${courseId}`} style={{ textDecoration: "none", flex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -276,6 +276,32 @@ export default function CoursePage() {
           />
         </Link>
       </div>
+
+      {courseId === "course-orgs" && (
+        <Link href="/course/course-orgs/lifecycle" style={{ textDecoration: "none", display: "block", marginBottom: 10 }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: isMobile ? "13px 16px" : "14px 20px",
+            borderRadius: isMobile ? 12 : 14,
+            background: "linear-gradient(135deg, #0c1f2e 0%, #071826 100%)",
+            border: "1px solid rgba(56,189,248,0.3)",
+            cursor: "pointer",
+            transition: "border-color 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.7)")}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)")}
+          >
+            <span style={{ fontSize: isMobile ? 22 : 24 }}>🔄</span>
+            <div>
+              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#7dd3fc" }}>תרגולים — מחזור החיים הארגוני</div>
+              <div style={{ fontSize: isMobile ? 11 : 12, color: "var(--muted)", marginTop: 2 }}>סידור ציר זמן ומילוי פרטים לפי רמת קושי</div>
+            </div>
+            <span style={{ marginRight: "auto", fontSize: 16, color: "rgba(125,211,252,0.6)" }}>←</span>
+          </div>
+        </Link>
+      )}
 
       {courseId === "course-assessment" && (
         <Link href="/course/course-assessment/mmpi" style={{ textDecoration: "none", display: "block" }}>
