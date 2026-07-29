@@ -22,6 +22,7 @@ const COURSE_META: Record<string, { name: string; img: string; color: string }> 
   "course-iyut":       { name: "אישיות",              img: "/icon-iyut.jpeg",        color: "#a855f7" },
   "course-assessment": { name: "אבחון ומיון",         img: "/icon-assessment.jpeg", color: "#eab308" },
   "course-orgs":       { name: "ארגונים",             img: "/icon-orgs.jpeg",       color: "#38bdf8" },
+  "course-anthro":     { name: "אנתרופולוגיה",        img: "/icon-anthro.png",      color: "#f97316" },
 }
 
 interface CourseResult {

@@ -23,6 +23,7 @@ const ALL_COURSES = [
   { id: "course-assessment", img: "/icon-assessment.jpeg", name: "אבחון ומיון",         examDate: new Date("2026-07-19T09:00:00") },
   { id: "course-iyut",       img: "/icon-iyut.jpeg",       name: "אישיות",              examDate: new Date("2026-07-24T09:00:00") },
   { id: "course-orgs",       img: "/icon-orgs.jpeg",       name: "ארגונים",             examDate: new Date("2026-07-29T09:00:00") },
+  { id: "course-anthro",    img: "/icon-anthro.png",      name: "אנתרופולוגיה",        examDate: new Date("2026-08-03T09:00:00") },
 ] as { id: string; img: string; name: string; adminOnly?: boolean; paidOnly?: boolean; examDate?: Date }[]
 
 function useNow() {

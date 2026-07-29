@@ -7,6 +7,7 @@ import { QUESTIONS_IYUT } from "@/data/q-iyut"
 import { QUESTIONS_CHEVROT } from "@/data/q-chevrot"
 import { QUESTIONS_ASSESSMENT } from "@/data/q-assessment"
 import { QUESTIONS_ORGS } from "@/data/q-orgs"
+import { QUESTIONS_ANTHRO } from "@/data/q-anthro"
 
 const SEED_SECRET = "getready-seed-2024"
 
@@ -17,6 +18,7 @@ const COURSES = [
   { id: "course-assessment", name: "אבחון ומיון", description: "אבחון ומיון פסיכולוגי" },
   { id: "course-chevrot", name: "חברות בישראל", description: "סוציולוגיה של החברה הישראלית" },
   { id: "course-orgs", name: "ארגונים", description: "פסיכולוגיה ארגונית" },
+  { id: "course-anthro", name: "אנתרופולוגיה", description: "אנתרופולוגיה תרבותית וחברתית" },
 ]
 
 async function runSeed(secret: string | null) {
@@ -56,6 +58,7 @@ async function runSeed(secret: string | null) {
       ["course-chevrot", QUESTIONS_CHEVROT],
       ["course-assessment", QUESTIONS_ASSESSMENT],
       ["course-orgs", QUESTIONS_ORGS],
+      ["course-anthro", QUESTIONS_ANTHRO],
     ]
 
     for (const [courseId, questions] of courseQuestions) {
