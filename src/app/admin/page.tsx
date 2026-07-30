@@ -242,6 +242,7 @@ export default function AdminPage() {
     "course-iyut": "#a855f7",
     "course-assessment": "#eab308",
     "course-orgs": "#38bdf8",
+    "course-anthro": "#ef4444",
   }
   const visibleCourses = courses.filter(c => c.id !== "bonus")
   const tabs: { key: Tab; label: string }[] = [
