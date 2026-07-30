@@ -11,12 +11,6 @@ interface UserData {
   isSocialLocked: boolean
 }
 
-interface StatsData {
-  next: { id: string; name: string; date: string } | null
-  weakTopics: { topic: string; total: number; correct: number; pct: number }[]
-  hardQuestions: { id: string; question: string; topic: string; total: number; wrong: number; pct: number }[]
-}
-
 const ALL_COURSES = [
   { id: "course-social",     img: "/icon-social.jpeg",     name: "פסיכולוגיה חברתית" },
   { id: "course-psychodiag", img: "/icon-psychodiag.jpg",  name: "פסיכודיאגנוסטיקה",  examDate: new Date("2026-08-07T09:00:00") },
@@ -61,171 +55,10 @@ function Countdown({ examDate }: { examDate: Date }) {
   )
 }
 
-const TOPIC_MEDALS = ["🥇", "🥈", "🥉"]
-
-function StatsPanel({ stats }: { stats: StatsData | null }) {
-  const router = useRouter()
-  const [currentQ, setCurrentQ] = useState(0)
-  const [visible, setVisible] = useState(true)
-
-  useEffect(() => {
-    if (!stats || stats.hardQuestions.length <= 1) return
-    const t = setInterval(() => {
-      setVisible(false)
-      setTimeout(() => {
-        setCurrentQ(i => (i + 1) % stats.hardQuestions.length)
-        setVisible(true)
-      }, 300)
-    }, 15000)
-    return () => clearInterval(t)
-  }, [stats?.hardQuestions.length])
-
-  if (!stats) {
-    return (
-      <div style={{
-        background: "linear-gradient(140deg, var(--card) 0%, #0f0c1a 100%)",
-        border: "1px solid rgba(124,58,237,0.2)",
-        borderRadius: 16,
-        padding: "16px 18px",
-        textAlign: "center",
-      }}>
-        <div style={{ fontSize: 12, color: "var(--muted)" }}>טוען סטטיסטיקות...</div>
-      </div>
-    )
-  }
-
-  if (!stats.next) return null
-
-  const d = new Date(stats.next.date)
-  const dateStr = `${d.getDate()}/${d.getMonth() + 1}`
-  const hasData = stats.weakTopics.length > 0 || stats.hardQuestions.length > 0
-  const q = stats.hardQuestions[currentQ]
-
-  return (
-    <div style={{
-      background: "linear-gradient(140deg, #0a0712 0%, #110d20 100%)",
-      border: "1px solid rgba(124,58,237,0.28)",
-      borderRadius: 16,
-      padding: "16px 18px",
-      boxShadow: "0 0 32px rgba(124,58,237,0.08)",
-    }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#c4b5fd" }}>סטטיסטיקות הכיתה</div>
-          <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>
-            {stats.next.name} · מבחן {dateStr}
-          </div>
-        </div>
-        <span style={{ fontSize: 20 }}>📊</span>
-      </div>
-
-      {!hasData ? (
-        <div style={{ textAlign: "center", padding: "12px 0", fontSize: 12, color: "var(--muted)" }}>
-          מתמלא כשמשתמשים מתרגלים
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
-          {/* Weak topics */}
-          {stats.weakTopics.length > 0 && (
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(167,139,250,0.7)", marginBottom: 8, letterSpacing: 0.3 }}>
-                נושאים לחיזוק
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                {stats.weakTopics.map((t, i) => (
-                  <div key={t.topic} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 14, flexShrink: 0 }}>{TOPIC_MEDALS[i]}</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                        <span style={{ fontSize: 11, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.topic}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: t.pct < 50 ? "#ef4444" : "#f97316", flexShrink: 0, marginRight: 6 }}>{t.pct}%</span>
-                      </div>
-                      <div style={{ height: 4, background: "rgba(255,255,255,0.07)", borderRadius: 4, overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${t.pct}%`, background: t.pct < 50 ? "#ef4444" : "#f97316", borderRadius: 4, transition: "width 0.6s" }} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Hard questions carousel */}
-          {stats.hardQuestions.length > 0 && q && (
-            <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(167,139,250,0.7)", letterSpacing: 0.3 }}>
-                  שאלות קשות
-                </div>
-                <div style={{ fontSize: 10, color: "var(--muted)" }}>
-                  {currentQ + 1} / {stats.hardQuestions.length}
-                </div>
-              </div>
-
-              {/* Carousel card */}
-              <div
-                onClick={() => router.push(`/practice?courseId=${stats.next!.id}&topics=${encodeURIComponent(q.topic)}`)}
-                style={{
-                  background: "rgba(124,58,237,0.07)",
-                  border: "1px solid rgba(124,58,237,0.25)",
-                  borderRadius: 12,
-                  padding: "12px 14px",
-                  cursor: "pointer",
-                  transition: "opacity 0.3s, border-color 0.15s",
-                  opacity: visible ? 1 : 0,
-                }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.6)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.25)")}
-              >
-                <div style={{ fontSize: 12, color: "var(--foreground)", lineHeight: 1.6, marginBottom: 10 }}>
-                  {q.question}
-                </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 10, color: "rgba(167,139,250,0.7)", background: "rgba(124,58,237,0.12)", padding: "2px 7px", borderRadius: 4 }}>{q.topic}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#ef4444" }}>{q.pct}% דיוק</span>
-                  </div>
-                  <span style={{ fontSize: 10, color: "rgba(167,139,250,0.5)" }}>לחץ לתרגול ←</span>
-                </div>
-              </div>
-
-              {/* Dots */}
-              {stats.hardQuestions.length > 1 && (
-                <div style={{ display: "flex", justifyContent: "center", gap: 5, marginTop: 10 }}>
-                  {stats.hardQuestions.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { setVisible(false); setTimeout(() => { setCurrentQ(i); setVisible(true) }, 200) }}
-                      style={{
-                        width: i === currentQ ? 18 : 6,
-                        height: 6,
-                        borderRadius: 3,
-                        background: i === currentQ ? "#a78bfa" : "rgba(167,139,250,0.2)",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: 0,
-                        transition: "width 0.3s, background 0.3s",
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [user, setUser] = useState<UserData | null>(null)
-  const [stats, setStats] = useState<StatsData | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -235,13 +68,6 @@ export default function DashboardPage() {
     if (session?.user)
       fetch("/api/user/me").then(r => r.json()).then(setUser)
   }, [session])
-
-  useEffect(() => {
-    if (!user) return
-    const isAdmin = session?.user?.isAdmin ?? false
-    if (!isAdmin && !user.isPaid) return
-    fetch("/api/stats").then(r => r.json()).then(setStats)
-  }, [user, session])
 
   if (status === "loading" || !user) {
     return (
@@ -335,12 +161,6 @@ export default function DashboardPage() {
           )
         })}
       </div>
-
-      {(isAdmin || isPaid) && (
-        <div style={{ maxWidth: 520, margin: "18px auto 0" }}>
-          <StatsPanel stats={stats} />
-        </div>
-      )}
 
     </div>
   )
